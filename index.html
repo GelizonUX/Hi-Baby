@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Tracker Pro</title>
+  <style>
+    :root {
+      --bg: #081120;
+      --panel: rgba(16, 24, 40, 0.82);
+      --panel-strong: rgba(11, 18, 32, 0.94);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.10);
+      --soft: rgba(255, 255, 255, 0.06);
+      --input: rgba(255, 255, 255, 0.06);
+      --accent: #67e8f9;
+      --accent-2: #8b5cf6;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
+      --page:
+        radial-gradient(circle at top left, rgba(103, 232, 249, 0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 26%),
+        linear-gradient(180deg, #081120 0%, #07111c 100%);
+    }
+
+    body.light {
+      --bg: #eef4ff;
+      --panel: rgba(255, 255, 255, 0.86);
+      --panel-strong: rgba(255, 255, 255, 0.97);
+      --text: #0f172a;
+      --muted: #475569;
+      --border: rgba(15, 23, 42, 0.08);
+      --soft: rgba(15, 23, 42, 0.05);
+      --input: rgba(15, 23, 42, 0.04);
+      --accent: #0891b2;
+      --accent-2: #7c3aed;
+      --green: #15803d;
+      --red: #dc2626;
+      --yellow: #b45309;
+      --shadow: 0 16px 36px rgba(15, 23, 42, 0.10);
+      --page:
+        radial-gradient(circle at top left, rgba(8, 145, 178, 0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.12), transparent 26%),
+        linear-gradient(180deg, #f8fbff 0%, #edf3ff 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, sans-serif;
+      background: var(--page);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--border);
+      padding: 20px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.12), rgba(139, 92, 246, 0.12));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .brand h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .nav {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav button,
+    .btn,
+    .toggle-btn,
+    .hamburger-btn {
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .nav button {
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 15px;
+    }
+
+    .nav button.active,
+    .nav button:hover {
+      background: var(--soft);
+      border-color: var(--border);
+    }
+
+    .sidebar-actions {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .main {
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    .topbar p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--soft);
+      color: var(--text);
+      border-color: var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      border-color: transparent;
+      font-weight: 700;
+    }
+
+    .btn.danger {
+      background: rgba(239, 68, 68, 0.16);
+      color: white;
+      border-color: rgba(239, 68, 68, 0.24);
+    }
+
+    .btn:hover,
+    .toggle-btn:hover,
+    .card.clickable:hover,
+    .hamburger-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .card.clickable {
+      cursor: pointer;
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.12), rgba(139, 92, 246, 0.10));
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .stat-sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .section-title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      background: var(--panel-strong);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .item-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      background: var(--soft);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .pill.green {
+      color: var(--green);
+      background: rgba(34, 197, 94, 0.12);
+      border-color: rgba(34, 197, 94, 0.22);
+    }
+
+    .pill.red {
+      color: var(--red);
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.22);
+    }
+
+    .pill.yellow {
+      color: var(--yellow);
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.22);
+    }
+
+    .toggle-btn {
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: var(--soft);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .toggle-btn.paid {
+      color: var(--green);
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(34, 197, 94, 0.24);
+      font-weight: 700;
+    }
+
+    .toggle-btn.unpaid {
+      color: var(--yellow);
+      background: rgba(245, 158, 11, 0.16);
+      border-color: rgba(245, 158, 11, 0.24);
+      font-weight: 700;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      background: var(--input);
+      color: var(--text);
+      outline: none;
+    }
+
+    input::placeholder {
+      color: var(--muted);
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      background: var(--soft);
+      border-radius: 18px;
+      padding: 28px 12px;
+    }
+
+    .ledger-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ledger-row:last-child {
+      border-bottom: none;
+    }
+
+    .amount.income {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .amount.expense {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-card {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .mini-card .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .mini-card .value {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .category-card {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .hamburger-btn {
+      display: none;
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      background: var(--soft);
+      color: var(--text);
+      border-color: var(--border);
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .hamburger-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hamburger-lines span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--text);
+    }
+
+    .switch-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .switch-label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .theme-switch {
+      position: relative;
+      width: 58px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--soft);
+      cursor: pointer;
+      transition: 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .theme-switch::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transition: 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    body.light .theme-switch::after {
+      transform: translateX(26px);
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.52);
+      z-index: 999;
+    }
+
+    .mobile-sidebar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(82vw, 320px);
+      height: 100vh;
+      z-index: 1000;
+      padding: 20px 16px;
+      background: var(--panel-strong);
+      border-right: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+    }
+
+    .mobile-sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .mobile-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: var(--soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .mobile-open .mobile-overlay {
+      display: block;
+    }
+
+    .mobile-open .mobile-sidebar {
+      display: block;
+    }
+
+    @media (max-width: 1100px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .categories-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 18px;
+      }
+
+      .hamburger-btn {
+        display: inline-flex;
+      }
+
+      #backBtn {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .stats,
+      .form-grid,
+      .mini-grid,
+      .categories-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar h2 {
+        font-size: 28px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      .row-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+
+  <aside class="mobile-sidebar" id="mobileSidebar">
+    <div class="mobile-sidebar-header">
+      <div class="brand" style="margin-bottom:0; width: calc(100% - 56px);">
+        <h1>Finance Tracker</h1>
+        <p>Your private finance software.</p>
+      </div>
+      <button class="mobile-close" type="button" onclick="closeMobileMenu()">✕</button>
+    </div>
+
+    <div class="nav" id="mobileSidebarNav"></div>
+
+    <div class="sidebar-actions">
+      <div class="switch-wrap">
+        <span class="switch-label">Theme</span>
+        <button class="theme-switch" id="themeSwitchMobile" type="button" aria-label="Toggle theme"></button>
+      </div>
+      <button class="btn danger" id="resetBtnMobile" type="button">Reset all data</button>
+    </div>
+  </aside>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Finance Tracker</h1>
+        <p>Your private finance software with clients, applications, bills, subscriptions, categories, and automated balance tracking.</p>
+      </div>
+
+      <div class="nav" id="desktopNav"></div>
+
+      <div class="sidebar-actions">
+        <div class="switch-wrap">
+          <span class="switch-label">Theme</span>
+          <button class="theme-switch" id="themeSwitchSide" type="button" aria-label="Toggle theme"></button>
+        </div>
+        <button class="btn danger" id="resetBtn" type="button">Reset all data</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Open menu">
+            <span class="hamburger-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+
+          <div>
+            <h2 id="pageTitle">Dashboard</h2>
+            <p id="pageSubtitle">Your complete money overview.</p>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="btn hidden" id="backBtn" type="button">Back to home</button>
+          <div class="switch-wrap">
+            <span class="switch-label">Theme</span>
+            <button class="theme-switch" id="themeSwitchTop" type="button" aria-label="Toggle theme"></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="appView"></div>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "financeTrackerStableV3";
+
+    function makeId() {
+      return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+    }
+
+    const DEFAULT_STATE = {
+      theme: "dark",
+      currentView: "dashboard",
+      selectedCategoryId: null,
+      categories: [
+        { id: makeId(), name: "Groceries" },
+        { id: makeId(), name: "Transport" },
+        { id: makeId(), name: "Business" }
+      ],
+      clients: [],
+      applications: [],
+      bills: [],
+      subscriptions: [],
+      transactions: []
+    };
+
+    function clone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return clone(DEFAULT_STATE);
+
+      try {
+        const parsed = JSON.parse(raw);
+        return {
+          theme: parsed.theme || "dark",
+          currentView: parsed.currentView || "dashboard",
+          selectedCategoryId: parsed.selectedCategoryId || null,
+          categories: Array.isArray(parsed.categories) && parsed.categories.length ? parsed.categories : clone(DEFAULT_STATE.categories),
+          clients: Array.isArray(parsed.clients) ? parsed.clients : [],
+          applications: Array.isArray(parsed.applications) ? parsed.applications : [],
+          bills: Array.isArray(parsed.bills) ? parsed.bills : [],
+          subscriptions: Array.isArray(parsed.subscriptions) ? parsed.subscriptions : [],
+          transactions: Array.isArray(parsed.transactions) ? parsed.transactions : []
+        };
+      } catch (error) {
+        return clone(DEFAULT_STATE);
+      }
+    }
+
+    let state = loadState();
+
+    const NAV_ITEMS = [
+      { key: "dashboard", label: "Dashboard" },
+      { key: "clients", label: "Clients" },
+      { key: "applications", label: "Applications" },
+      { key: "bills", label: "Bills" },
+      { key: "subscriptions", label: "Subscriptions" },
+      { key: "categories", label: "Categories" },
+      { key: "transactions", label: "Transactions" }
+    ];
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function applyTheme() {
+      if (state.theme === "light") {
+        document.body.classList.add("light");
+      } else {
+        document.body.classList.remove("light");
+      }
+    }
+
+    function toggleTheme() {
+      state.theme = state.theme === "dark" ? "light" : "dark";
+      saveState();
+      renderApp();
+    }
+
+    function formatMoney(value) {
+      if (value === "" || value === null || value === undefined) return "Not set";
+      const numeric = Number(value);
+      if (Number.isNaN(numeric)) return String(value);
+      return new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+        maximumFractionDigits: 2
+      }).format(numeric);
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "No date";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return dateString;
+      return date.toLocaleDateString("en-PH", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getCategoryName(categoryId) {
+      if (!categoryId) return "Uncategorized";
+      const found = state.categories.find(function (cat) {
+        return cat.id === categoryId;
+      });
+      return found ? found.name : "Uncategorized";
+    }
+
+    function getApplicationStatusClass(status) {
+      const value = String(status || "").toLowerCase();
+      if (value.includes("hire")) return "green";
+      if (value.includes("reject")) return "red";
+      if (value.includes("follow")) return "yellow";
+      if (value.includes("phase")) return "yellow";
+      return "";
+    }
+
+    function getSummary() {
+      const income = state.transactions
+        .filter(function (t) { return t.type === "income"; })
+        .reduce(function (sum, t) { return sum + Number(t.amount); }, 0);
+
+      const expenses = state.transactions
+        .filter(function (t) { return t.type === "expense"; })
+        .reduce(function (sum, t) { return sum + Number(t.amount); }, 0);
+
+      const balance = income - expenses;
+
+      const debtBills = state.bills
+        .filter(function (b) { return !b.paid; })
+        .reduce(function (sum, b) { return sum + Number(b.amount); }, 0);
+
+      const debtSubs = state.subscriptions
+        .filter(function (s) { return !s.paid; })
+        .reduce(function (sum, s) { return sum + Number(s.amount); }, 0);
+
+      return {
+        income: income,
+        expenses: expenses,
+        balance: balance,
+        debt: debtBills + debtSubs,
+        extraMoney: balance - (debtBills + debtSubs)
+      };
+    }
+
+    function setView(view, categoryId) {
+      state.currentView = view;
+      state.selectedCategoryId = categoryId || null;
+      saveState();
+      renderApp();
+      closeMobileMenu();
+    }
+
+    function goHome() {
+      setView("dashboard");
+    }
+
+    function openMobileMenu() {
+      document.body.classList.add("mobile-open");
+    }
+
+    function closeMobileMenu() {
+      document.body.classList.remove("mobile-open");
+    }
+
+    function createTransaction(data) {
+      const transaction = {
+        id: makeId(),
+        title: data.title,
+        amount: Number(data.amount),
+        type: data.type,
+        categoryId: data.categoryId || null,
+        sourceType: data.sourceType || "manual",
+        sourceId: data.sourceId || null,
+        createdAt: new Date().toISOString()
+      };
+      state.transactions.push(transaction);
+      saveState();
+      return transaction.id;
+    }
+
+    function removeTransactionById(transactionId) {
+      state.transactions = state.transactions.filter(function (t) {
+        return t.id !== transactionId;
+      });
+      saveState();
+    }
+
+    function categoryOptionsHtml(selectedId) {
+      let html = '<option value="">Uncategorized</option>';
+      state.categories.forEach(function (category) {
+        const selected = selectedId === category.id ? ' selected' : '';
+        html += '<option value="' + category.id + '"' + selected + '>' + escapeHtml(category.name) + '</option>';
+      });
+      return html;
+    }
+
+    function applicationStatusOptionsHtml() {
+      return (
+        '<option value="1st Phase">1st Phase</option>' +
+        '<option value="Follow Up">Follow Up</option>' +
+        '<option value="Rejected">Rejected</option>' +
+        '<option value="Hired">Hired</option>' +
+        '<option value="Custom">Custom</option>'
+      );
+    }
+
+    function addCategory(event) {
+      event.preventDefault();
+      const input = document.getElementById("newCategoryName");
+      const name = input.value.trim();
+
+      if (!name) {
+        alert("Enter a category name first.");
+        return;
+      }
+
+      const exists = state.categories.some(function (cat) {
+        return cat.name.toLowerCase() === name.toLowerCase();
+      });
+
+      if (exists) {
+        alert("That category already exists.");
+        return;
+      }
+
+      state.categories.push({
+        id: makeId(),
+        name: name
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function deleteCategory(categoryId) {
+      const hasTransactions = state.transactions.some(function (t) { return t.categoryId === categoryId; });
+      const hasBills = state.bills.some(function (b) { return b.categoryId === categoryId; });
+      const hasSubs = state.subscriptions.some(function (s) { return s.categoryId === categoryId; });
+
+      if (hasTransactions || hasBills || hasSubs) {
+        alert("This category is still being used. Remove or reassign linked items first.");
+        return;
+      }
+
+      state.categories = state.categories.filter(function (cat) {
+        return cat.id !== categoryId;
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function addClient(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("clientName").value.trim();
+      const role = document.getElementById("clientRole").value.trim();
+      const salary = Number(document.getElementById("clientSalary").value);
+      const startDate = document.getElementById("clientStartDate").value;
+
+      if (!name || salary <= 0) {
+        alert("Please enter a client name and valid salary.");
+        return;
+      }
+
+      state.clients.push({
+        id: makeId(),
+        name: name,
+        role: role,
+        salary: salary,
+        startDate: startDate,
+        paid: false,
+        transactionId: null
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function toggleClientPaid(clientId) {
+      const client = state.clients.find(function (item) {
+        return item.id === clientId;
+      });
+
+      if (!client) return;
+
+      if (!client.paid) {
+        const txId = createTransaction({
+          title: client.name + " payment",
+          amount: client.salary,
+          type: "income",
+          sourceType: "client",
+          sourceId: client.id
+        });
+        client.paid = true;
+        client.transactionId = txId;
+      } else {
+        if (client.transactionId) {
+          removeTransactionById(client.transactionId);
+        }
+        client.paid = false;
+        client.transactionId = null;
+      }
+
+      saveState();
+      renderApp();
+    }
+
+    function deleteClient(clientId) {
+      const client = state.clients.find(function (item) {
+        return item.id === clientId;
+      });
+
+      if (!client) return;
+
+      if (client.transactionId) {
+        removeTransactionById(client.transactionId);
+      }
+
+      state.clients = state.clients.filter(function (item) {
+        return item.id !== clientId;
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function addApplication(event) {
+      event.preventDefault();
+
+      const clientName = document.getElementById("applicationClientName").value.trim();
+      const position = document.getElementById("applicationPosition").value.trim();
+      const salary = document.getElementById("applicationSalary").value.trim();
+      const dateApplied = document.getElementById("applicationDateApplied").value;
+      const statusSelect = document.getElementById("applicationStatusSelect").value;
+      const customStatus = document.getElementById("applicationCustomStatus").value.trim();
+
+      let finalStatus = statusSelect;
+      if (statusSelect === "Custom") {
+        finalStatus = customStatus;
+      }
+
+      if (!clientName || !position) {
+        alert("Please enter a client name and position.");
+        return;
+      }
+
+      if (!finalStatus) {
+        alert("Please choose or enter a status.");
+        return;
+      }
+
+      state.applications.push({
+        id: makeId(),
+        clientName: clientName,
+        position: position,
+        salary: salary,
+        dateApplied: dateApplied,
+        status: finalStatus
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function handleApplicationStatusSelectChange() {
+      const select = document.getElementById("applicationStatusSelect");
+      const customInput = document.getElementById("applicationCustomStatus");
+      if (!select || !customInput) return;
+
+      if (select.value === "Custom") {
+        customInput.classList.remove("hidden");
+      } else {
+        customInput.classList.add("hidden");
+        customInput.value = "";
+      }
+    }
+
+    function saveApplicationStatus(applicationId) {
+      const application = state.applications.find(function (item) {
+        return item.id === applicationId;
+      });
+
+      if (!application) return;
+
+      const input = document.getElementById("appStatus_" + applicationId);
+      if (!input) return;
+
+      const newStatus = input.value.trim();
+
+      if (!newStatus) {
+        alert("Please enter a valid status.");
+        return;
+      }
+
+      application.status = newStatus;
+      saveState();
+      renderApp();
+    }
+
+    function deleteApplication(applicationId) {
+      state.applications = state.applications.filter(function (item) {
+        return item.id !== applicationId;
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function addBill(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("billName").value.trim();
+      const amount = Number(document.getElementById("billAmount").value);
+      const dueDate = document.getElementById("billDueDate").value;
+      const categoryId = document.getElementById("billCategory").value || null;
+
+      if (!name || amount <= 0) {
+        alert("Please enter a bill name and valid amount.");
+        return;
+      }
+
+      state.bills.push({
+        id: makeId(),
+        name: name,
+        amount: amount,
+        dueDate: dueDate,
+        categoryId: categoryId,
+        paid: false,
+        transactionId: null
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function toggleBillPaid(billId) {
+      const bill = state.bills.find(function (item) {
+        return item.id === billId;
+      });
+
+      if (!bill) return;
+
+      if (!bill.paid) {
+        const txId = createTransaction({
+          title: bill.name + " bill paid",
+          amount: bill.amount,
+          type: "expense",
+          categoryId: bill.categoryId,
+          sourceType: "bill",
+          sourceId: bill.id
+        });
+        bill.paid = true;
+        bill.transactionId = txId;
+      } else {
+        if (bill.transactionId) {
+          removeTransactionById(bill.transactionId);
+        }
+        bill.paid = false;
+        bill.transactionId = null;
+      }
+
+      saveState();
+      renderApp();
+    }
+
+    function deleteBill(billId) {
+      const bill = state.bills.find(function (item) {
+        return item.id === billId;
+      });
+
+      if (!bill) return;
+
+      if (bill.transactionId) {
+        removeTransactionById(bill.transactionId);
+      }
+
+      state.bills = state.bills.filter(function (item) {
+        return item.id !== billId;
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function addSubscription(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("subscriptionName").value.trim();
+      const amount = Number(document.getElementById("subscriptionAmount").value);
+      const renewal = document.getElementById("subscriptionRenewal").value.trim();
+      const categoryId = document.getElementById("subscriptionCategory").value || null;
+
+      if (!name || amount <= 0) {
+        alert("Please enter a subscription name and valid amount.");
+        return;
+      }
+
+      state.subscriptions.push({
+        id: makeId(),
+        name: name,
+        amount: amount,
+        renewal: renewal,
+        categoryId: categoryId,
+        paid: false,
+        transactionId: null
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function toggleSubscriptionPaid(subscriptionId) {
+      const sub = state.subscriptions.find(function (item) {
+        return item.id === subscriptionId;
+      });
+
+      if (!sub) return;
+
+      if (!sub.paid) {
+        const txId = createTransaction({
+          title: sub.name + " subscription paid",
+          amount: sub.amount,
+          type: "expense",
+          categoryId: sub.categoryId,
+          sourceType: "subscription",
+          sourceId: sub.id
+        });
+        sub.paid = true;
+        sub.transactionId = txId;
+      } else {
+        if (sub.transactionId) {
+          removeTransactionById(sub.transactionId);
+        }
+        sub.paid = false;
+        sub.transactionId = null;
+      }
+
+      saveState();
+      renderApp();
+    }
+
+    function deleteSubscription(subscriptionId) {
+      const sub = state.subscriptions.find(function (item) {
+        return item.id === subscriptionId;
+      });
+
+      if (!sub) return;
+
+      if (sub.transactionId) {
+        removeTransactionById(sub.transactionId);
+      }
+
+      state.subscriptions = state.subscriptions.filter(function (item) {
+        return item.id !== subscriptionId;
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function addManualTransaction(event) {
+      event.preventDefault();
+
+      const title = document.getElementById("manualTitle").value.trim();
+      const amount = Number(document.getElementById("manualAmount").value);
+      const type = document.getElementById("manualType").value;
+      const categoryId = document.getElementById("manualCategory").value || null;
+
+      if (!title || amount <= 0) {
+        alert("Please enter a valid title and amount.");
+        return;
+      }
+
+      createTransaction({
+        title: title,
+        amount: amount,
+        type: type,
+        categoryId: categoryId,
+        sourceType: "manual"
+      });
+
+      renderApp();
+    }
+
+    function deleteTransaction(transactionId) {
+      const txn = state.transactions.find(function (t) {
+        return t.id === transactionId;
+      });
+
+      if (!txn) return;
+
+      if (txn.sourceType !== "manual") {
+        alert("This transaction is linked to a client, bill, or subscription. Manage it from that section.");
+        return;
+      }
+
+      state.transactions = state.transactions.filter(function (t) {
+        return t.id !== transactionId;
+      });
+
+      saveState();
+      renderApp();
+    }
+
+    function resetAllData() {
+      const ok = confirm("This will permanently remove all saved data in this browser. Continue?");
+      if (!ok) return;
+
+      state = clone(DEFAULT_STATE);
+      saveState();
+      renderApp();
+      closeMobileMenu();
+    }
+
+    function getPageMeta() {
+      if (state.currentView === "clients") {
+        return { title: "Clients", subtitle: "Track salaries and post them only when paid.", back: true };
+      }
+      if (state.currentView === "applications") {
+        return { title: "Applications", subtitle: "Track every client application and its latest status.", back: true };
+      }
+      if (state.currentView === "bills") {
+        return { title: "Bills", subtitle: "Track unpaid bills and subtract them when paid.", back: true };
+      }
+      if (state.currentView === "subscriptions") {
+        return { title: "Subscriptions", subtitle: "Track recurring costs and mark them paid when needed.", back: true };
+      }
+      if (state.currentView === "categories") {
+        return { title: "Categories", subtitle: "Build your own custom structure.", back: true };
+      }
+      if (state.currentView === "transactions") {
+        return { title: "Transactions", subtitle: "Your full posted money history.", back: true };
+      }
+      if (state.currentView === "balanceDetail") {
+        return { title: "Main Balance", subtitle: "Everything that affects your current balance.", back: true };
+      }
+      if (state.currentView === "debtDetail") {
+        return { title: "Debt Dashboard", subtitle: "All unpaid bills and subscriptions.", back: true };
+      }
+      if (state.currentView === "extraDetail") {
+        return { title: "Extra Money", subtitle: "Your balance minus unpaid debt.", back: true };
+      }
+      if (state.currentView === "categoryDetail") {
+        return { title: getCategoryName(state.selectedCategoryId), subtitle: "This category's own dashboard.", back: true };
+      }
+      return { title: "Dashboard", subtitle: "Your complete money overview.", back: false };
+    }
+
+    function renderNav() {
+      const desktopNav = document.getElementById("desktopNav");
+      const mobileSidebarNav = document.getElementById("mobileSidebarNav");
+
+      let desktopHtml = "";
+      let mobileHtml = "";
+
+      NAV_ITEMS.forEach(function (item) {
+        const buttonHtml = '<button type="button" class="' + (state.currentView === item.key ? 'active' : '') + '" onclick="setView(\'' + item.key + '\')">' + item.label + '</button>';
+        desktopHtml += buttonHtml;
+        mobileHtml += buttonHtml;
+      });
+
+      desktopNav.innerHTML = desktopHtml;
+      mobileSidebarNav.innerHTML = mobileHtml;
+    }
+
+    function renderDashboardView() {
+      const summary = getSummary();
+      const recentTransactions = clone(state.transactions).sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }).slice(0, 6);
+
+      let categoryCards = "";
+      state.categories.forEach(function (category) {
+        const items = state.transactions.filter(function (t) {
+          return t.categoryId === category.id;
+        });
+        const total = items.reduce(function (sum, t) {
+          return sum + (t.type === "income" ? Number(t.amount) : -Number(t.amount));
+        }, 0);
+
+        categoryCards +=
+          '<div class="category-card" onclick="setView(\'categoryDetail\', \'' + category.id + '\')">' +
+            '<div class="item-title" style="font-size:18px;">' + escapeHtml(category.name) + '</div>' +
+            '<div class="meta"><span>' + items.length + ' entries</span></div>' +
+            '<div style="margin-top:12px;font-size:22px;font-weight:700;">' + formatMoney(total) + '</div>' +
+          '</div>';
+      });
+
+      let recentHtml = "";
+      if (recentTransactions.length) {
+        recentTransactions.forEach(function (txn) {
+          recentHtml +=
+            '<div class="ledger-row">' +
+              '<div>' +
+                '<div style="font-weight:700;">' + escapeHtml(txn.title) + '</div>' +
+                '<div class="meta">' +
+                  '<span>' + escapeHtml(txn.sourceType) + '</span>' +
+                  '<span>' + formatDate(txn.createdAt) + '</span>' +
+                  '<span>' + escapeHtml(getCategoryName(txn.categoryId)) + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="amount ' + txn.type + '">' +
+                (txn.type === "income" ? "+" : "-") + " " + formatMoney(txn.amount) +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        recentHtml = '<div class="empty">No transactions yet. Start with a client payment, bill, subscription, or manual transaction.</div>';
+      }
+
+      return (
+        '<div>' +
+          '<div class="stats">' +
+            '<div class="card clickable" onclick="setView(\'balanceDetail\')">' +
+              '<div class="stat-label">Main Balance</div>' +
+              '<div class="stat-value">' + formatMoney(summary.balance) + '</div>' +
+              '<div class="stat-sub">Posted income minus posted expenses</div>' +
+            '</div>' +
+            '<div class="card clickable" onclick="setView(\'debtDetail\')">' +
+              '<div class="stat-label">Debt</div>' +
+              '<div class="stat-value">' + formatMoney(summary.debt) + '</div>' +
+              '<div class="stat-sub">All unpaid bills and subscriptions</div>' +
+            '</div>' +
+            '<div class="card clickable" onclick="setView(\'extraDetail\')">' +
+              '<div class="stat-label">Extra Money</div>' +
+              '<div class="stat-value">' + formatMoney(summary.extraMoney) + '</div>' +
+              '<div class="stat-sub">Balance minus unpaid debt</div>' +
+            '</div>' +
+            '<div class="card clickable" onclick="setView(\'categories\')">' +
+              '<div class="stat-label">Categories</div>' +
+              '<div class="stat-value">' + state.categories.length + '</div>' +
+              '<div class="stat-sub">Open and manage custom categories</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="content-grid">' +
+            '<div class="card">' +
+              '<div class="section-title">' +
+                '<div>' +
+                  '<h3>Recent Transactions</h3>' +
+                  '<p>Your latest posted activity.</p>' +
+                '</div>' +
+                '<button class="btn" type="button" onclick="setView(\'transactions\')">Open full history</button>' +
+              '</div>' +
+              recentHtml +
+            '</div>' +
+
+            '<div class="stack">' +
+              '<div class="card">' +
+                '<div class="section-title">' +
+                  '<div>' +
+                    '<h3>Quick Numbers</h3>' +
+                    '<p>Your money at a glance.</p>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="mini-grid">' +
+                  '<div class="mini-card"><div class="label">Income Posted</div><div class="value">' + formatMoney(summary.income) + '</div></div>' +
+                  '<div class="mini-card"><div class="label">Expenses Posted</div><div class="value">' + formatMoney(summary.expenses) + '</div></div>' +
+                  '<div class="mini-card"><div class="label">Clients</div><div class="value">' + state.clients.length + '</div></div>' +
+                  '<div class="mini-card"><div class="label">Applications</div><div class="value">' + state.applications.length + '</div></div>' +
+                '</div>' +
+              '</div>' +
+
+              '<div class="card">' +
+                '<div class="section-title">' +
+                  '<div>' +
+                    '<h3>Category Overview</h3>' +
+                    '<p>Open any category dashboard.</p>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="categories-grid">' +
+                  (categoryCards || '<div class="empty">No categories yet.</div>') +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderClientsView() {
+      let listHtml = "";
+      if (state.clients.length) {
+        state.clients.forEach(function (client) {
+          listHtml +=
+            '<div class="item">' +
+              '<div class="item-head">' +
+                '<div>' +
+                  '<div class="item-title">' + escapeHtml(client.name) + '</div>' +
+                  '<div class="meta">' +
+                    '<span>' + escapeHtml(client.role || "No role") + '</span>' +
+                    '<span>Start: ' + formatDate(client.startDate) + '</span>' +
+                    '<span>Salary: ' + formatMoney(client.salary) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="pill-row">' +
+                  '<span class="pill ' + (client.paid ? 'green' : 'yellow') + '">' + (client.paid ? 'Paid' : 'Waiting payment') + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="row-actions">' +
+                '<button class="toggle-btn ' + (client.paid ? 'paid' : 'unpaid') + '" type="button" onclick="toggleClientPaid(\'' + client.id + '\')">' + (client.paid ? 'Mark unpaid' : 'Mark paid') + '</button>' +
+                '<button class="btn danger" type="button" onclick="deleteClient(\'' + client.id + '\')">Delete</button>' +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        listHtml = '<div class="empty">No clients yet.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Add Client</h3>' +
+                '<p>When marked paid, salary is added to your balance automatically.</p>' +
+              '</div>' +
+            '</div>' +
+            '<form class="form-grid" onsubmit="addClient(event)">' +
+              '<div class="field"><label>Client Name</label><input id="clientName" placeholder="Example: Olga" /></div>' +
+              '<div class="field"><label>Role / Job</label><input id="clientRole" placeholder="Video Editing" /></div>' +
+              '<div class="field"><label>Salary</label><input id="clientSalary" type="number" min="0" step="0.01" placeholder="15000" /></div>' +
+              '<div class="field"><label>Start Date</label><input id="clientStartDate" type="date" /></div>' +
+              '<div class="field" style="grid-column:1/-1;"><button class="btn primary" type="submit">Add client</button></div>' +
+            '</form>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Client List</h3>' +
+                '<p>Toggle paid to post or reverse the salary transaction.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="list">' + listHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderApplicationsView() {
+      let listHtml = "";
+      if (state.applications.length) {
+        state.applications.forEach(function (application) {
+          const pillClass = getApplicationStatusClass(application.status);
+
+          listHtml +=
+            '<div class="item">' +
+              '<div class="item-head">' +
+                '<div>' +
+                  '<div class="item-title">' + escapeHtml(application.clientName) + '</div>' +
+                  '<div class="meta">' +
+                    '<span>Position: ' + escapeHtml(application.position) + '</span>' +
+                    '<span>Salary: ' + escapeHtml(application.salary ? formatMoney(application.salary) : "Not set") + '</span>' +
+                    '<span>Date Applied: ' + formatDate(application.dateApplied) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="pill-row">' +
+                  '<span class="pill ' + pillClass + '">' + escapeHtml(application.status) + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="row-actions">' +
+                '<input id="appStatus_' + application.id + '" type="text" value="' + escapeHtml(application.status) + '" placeholder="Update status" style="max-width:220px;" />' +
+                '<button class="btn" type="button" onclick="saveApplicationStatus(\'' + application.id + '\')">Save status</button>' +
+                '<button class="btn danger" type="button" onclick="deleteApplication(\'' + application.id + '\')">Delete</button>' +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        listHtml = '<div class="empty">No applications yet.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Add Application</h3>' +
+                '<p>Track the clients you applied to, their position, salary, applied date, and current status.</p>' +
+              '</div>' +
+            '</div>' +
+            '<form class="form-grid" onsubmit="addApplication(event)">' +
+              '<div class="field"><label>Client Name</label><input id="applicationClientName" placeholder="Company or Client Name" /></div>' +
+              '<div class="field"><label>Position</label><input id="applicationPosition" placeholder="Video Editor" /></div>' +
+              '<div class="field"><label>Salary</label><input id="applicationSalary" placeholder="25000 or Negotiable" /></div>' +
+              '<div class="field"><label>Date Applied</label><input id="applicationDateApplied" type="date" /></div>' +
+              '<div class="field"><label>Status</label><select id="applicationStatusSelect" onchange="handleApplicationStatusSelectChange()">' + applicationStatusOptionsHtml() + '</select></div>' +
+              '<div class="field"><label>Custom Status</label><input id="applicationCustomStatus" class="hidden" placeholder="Type your custom status" /></div>' +
+              '<div class="field" style="grid-column:1/-1;"><button class="btn primary" type="submit">Add application</button></div>' +
+            '</form>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Application List</h3>' +
+                '<p>Update each application status anytime. You can use 1st Phase, Follow Up, Rejected, Hired, or your own custom label.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="list">' + listHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderBillsView() {
+      let listHtml = "";
+      if (state.bills.length) {
+        state.bills.forEach(function (bill) {
+          listHtml +=
+            '<div class="item">' +
+              '<div class="item-head">' +
+                '<div>' +
+                  '<div class="item-title">' + escapeHtml(bill.name) + '</div>' +
+                  '<div class="meta">' +
+                    '<span>Due: ' + formatDate(bill.dueDate) + '</span>' +
+                    '<span>Category: ' + escapeHtml(getCategoryName(bill.categoryId)) + '</span>' +
+                    '<span>Amount: ' + formatMoney(bill.amount) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="pill-row">' +
+                  '<span class="pill ' + (bill.paid ? 'green' : 'red') + '">' + (bill.paid ? 'Paid' : 'Unpaid') + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="row-actions">' +
+                '<button class="toggle-btn ' + (bill.paid ? 'paid' : 'unpaid') + '" type="button" onclick="toggleBillPaid(\'' + bill.id + '\')">' + (bill.paid ? 'Mark unpaid' : 'Mark paid') + '</button>' +
+                '<button class="btn danger" type="button" onclick="deleteBill(\'' + bill.id + '\')">Delete</button>' +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        listHtml = '<div class="empty">No bills yet.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Add Bill</h3>' +
+                '<p>When marked paid, it subtracts from your balance automatically.</p>' +
+              '</div>' +
+            '</div>' +
+            '<form class="form-grid" onsubmit="addBill(event)">' +
+              '<div class="field"><label>Bill Name</label><input id="billName" placeholder="Internet" /></div>' +
+              '<div class="field"><label>Amount</label><input id="billAmount" type="number" min="0" step="0.01" placeholder="1699" /></div>' +
+              '<div class="field"><label>Due Date</label><input id="billDueDate" type="date" /></div>' +
+              '<div class="field"><label>Category</label><select id="billCategory">' + categoryOptionsHtml() + '</select></div>' +
+              '<div class="field" style="grid-column:1/-1;"><button class="btn primary" type="submit">Add bill</button></div>' +
+            '</form>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Bill List</h3>' +
+                '<p>Unpaid bills count as debt. Paid bills become transactions.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="list">' + listHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderSubscriptionsView() {
+      let listHtml = "";
+      if (state.subscriptions.length) {
+        state.subscriptions.forEach(function (sub) {
+          listHtml +=
+            '<div class="item">' +
+              '<div class="item-head">' +
+                '<div>' +
+                  '<div class="item-title">' + escapeHtml(sub.name) + '</div>' +
+                  '<div class="meta">' +
+                    '<span>Renewal: ' + escapeHtml(sub.renewal || "Not set") + '</span>' +
+                    '<span>Category: ' + escapeHtml(getCategoryName(sub.categoryId)) + '</span>' +
+                    '<span>Amount: ' + formatMoney(sub.amount) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="pill-row">' +
+                  '<span class="pill ' + (sub.paid ? 'green' : 'red') + '">' + (sub.paid ? 'Paid' : 'Unpaid') + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="row-actions">' +
+                '<button class="toggle-btn ' + (sub.paid ? 'paid' : 'unpaid') + '" type="button" onclick="toggleSubscriptionPaid(\'' + sub.id + '\')">' + (sub.paid ? 'Mark unpaid' : 'Mark paid') + '</button>' +
+                '<button class="btn danger" type="button" onclick="deleteSubscription(\'' + sub.id + '\')">Delete</button>' +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        listHtml = '<div class="empty">No subscriptions yet.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Add Subscription</h3>' +
+                '<p>Track anything you subscribe to and post it only when paid.</p>' +
+              '</div>' +
+            '</div>' +
+            '<form class="form-grid" onsubmit="addSubscription(event)">' +
+              '<div class="field"><label>Name</label><input id="subscriptionName" placeholder="ChatGPT" /></div>' +
+              '<div class="field"><label>Amount</label><input id="subscriptionAmount" type="number" min="0" step="0.01" placeholder="1200" /></div>' +
+              '<div class="field"><label>Renewal</label><input id="subscriptionRenewal" placeholder="Monthly / Mar 12" /></div>' +
+              '<div class="field"><label>Category</label><select id="subscriptionCategory">' + categoryOptionsHtml() + '</select></div>' +
+              '<div class="field" style="grid-column:1/-1;"><button class="btn primary" type="submit">Add subscription</button></div>' +
+            '</form>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Subscriptions</h3>' +
+                '<p>Unpaid subscriptions stay in debt until you mark them paid.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="list">' + listHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderCategoriesView() {
+      let cardsHtml = "";
+      if (state.categories.length) {
+        state.categories.forEach(function (category) {
+          const items = state.transactions.filter(function (t) { return t.categoryId === category.id; });
+          const income = items.filter(function (t) { return t.type === "income"; }).reduce(function (sum, t) { return sum + Number(t.amount); }, 0);
+          const expense = items.filter(function (t) { return t.type === "expense"; }).reduce(function (sum, t) { return sum + Number(t.amount); }, 0);
+          const net = income - expense;
+
+          cardsHtml +=
+            '<div class="item">' +
+              '<div class="item-head">' +
+                '<div>' +
+                  '<div class="item-title">' + escapeHtml(category.name) + '</div>' +
+                  '<div class="meta">' +
+                    '<span>' + items.length + ' transactions</span>' +
+                    '<span>Income: ' + formatMoney(income) + '</span>' +
+                    '<span>Expense: ' + formatMoney(expense) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="pill-row"><span class="pill">' + formatMoney(net) + '</span></div>' +
+              '</div>' +
+              '<div class="row-actions">' +
+                '<button class="btn" type="button" onclick="setView(\'categoryDetail\', \'' + category.id + '\')">Open category</button>' +
+                '<button class="btn danger" type="button" onclick="deleteCategory(\'' + category.id + '\')">Delete</button>' +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        cardsHtml = '<div class="empty">No custom categories yet.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Create Category</h3>' +
+                '<p>Build your own system. Wants, software, savings, business, anything.</p>' +
+              '</div>' +
+            '</div>' +
+            '<form class="form-grid" onsubmit="addCategory(event)">' +
+              '<div class="field"><label>Category Name</label><input id="newCategoryName" placeholder="Example: Wants" /></div>' +
+              '<div class="field"><label>&nbsp;</label><button class="btn primary" type="submit">Add category</button></div>' +
+            '</form>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Your Categories</h3>' +
+                '<p>Open one to see its own dashboard.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="list">' + cardsHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderTransactionsView() {
+      const sorted = clone(state.transactions).sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      let listHtml = "";
+      if (sorted.length) {
+        sorted.forEach(function (txn) {
+          listHtml +=
+            '<div class="item">' +
+              '<div class="item-head">' +
+                '<div>' +
+                  '<div class="item-title">' + escapeHtml(txn.title) + '</div>' +
+                  '<div class="meta">' +
+                    '<span>Source: ' + escapeHtml(txn.sourceType) + '</span>' +
+                    '<span>Category: ' + escapeHtml(getCategoryName(txn.categoryId)) + '</span>' +
+                    '<span>' + formatDate(txn.createdAt) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="pill-row">' +
+                  '<span class="pill ' + (txn.type === "income" ? 'green' : 'red') + '">' +
+                    (txn.type === "income" ? '+' : '-') + ' ' + formatMoney(txn.amount) +
+                  '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="row-actions">' +
+                (txn.sourceType === "manual"
+                  ? '<button class="btn danger" type="button" onclick="deleteTransaction(\'' + txn.id + '\')">Delete</button>'
+                  : '<button class="btn" type="button">Managed in ' + escapeHtml(txn.sourceType) + '</button>') +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        listHtml = '<div class="empty">No transactions yet.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Add Manual Transaction</h3>' +
+                '<p>Use this for anything outside clients, bills, and subscriptions.</p>' +
+              '</div>' +
+            '</div>' +
+            '<form class="form-grid" onsubmit="addManualTransaction(event)">' +
+              '<div class="field"><label>Title</label><input id="manualTitle" placeholder="Groceries run" /></div>' +
+              '<div class="field"><label>Amount</label><input id="manualAmount" type="number" min="0" step="0.01" placeholder="500" /></div>' +
+              '<div class="field"><label>Type</label><select id="manualType"><option value="expense">Expense</option><option value="income">Income</option></select></div>' +
+              '<div class="field"><label>Category</label><select id="manualCategory">' + categoryOptionsHtml() + '</select></div>' +
+              '<div class="field" style="grid-column:1/-1;"><button class="btn primary" type="submit">Add transaction</button></div>' +
+            '</form>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title">' +
+              '<div>' +
+                '<h3>Full Transaction History</h3>' +
+                '<p>Only manual entries can be deleted here.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="list">' + listHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderBalanceDetailView() {
+      const summary = getSummary();
+      const incomeCount = state.transactions.filter(function (t) { return t.type === "income"; }).length;
+      const expenseCount = state.transactions.filter(function (t) { return t.type === "expense"; }).length;
+
+      return (
+        '<div class="list">' +
+          '<div class="stats">' +
+            '<div class="card"><div class="stat-label">Main Balance</div><div class="stat-value">' + formatMoney(summary.balance) + '</div><div class="stat-sub">Current posted total</div></div>' +
+            '<div class="card"><div class="stat-label">Income</div><div class="stat-value">' + formatMoney(summary.income) + '</div><div class="stat-sub">' + incomeCount + ' income entries</div></div>' +
+            '<div class="card"><div class="stat-label">Expenses</div><div class="stat-value">' + formatMoney(summary.expenses) + '</div><div class="stat-sub">' + expenseCount + ' expense entries</div></div>' +
+            '<div class="card"><div class="stat-label">Net Posted</div><div class="stat-value">' + formatMoney(summary.balance) + '</div><div class="stat-sub">Income minus expenses</div></div>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title"><div><h3>What affects your balance</h3><p>Only posted items count here.</p></div></div>' +
+            '<div class="list">' +
+              '<div class="item"><div class="item-title">Client payments marked paid</div><div class="meta">These are added to balance.</div></div>' +
+              '<div class="item"><div class="item-title">Bills marked paid</div><div class="meta">These subtract from balance.</div></div>' +
+              '<div class="item"><div class="item-title">Subscriptions marked paid</div><div class="meta">These subtract from balance.</div></div>' +
+              '<div class="item"><div class="item-title">Manual transactions</div><div class="meta">Use these for any custom money movement.</div></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderDebtDetailView() {
+      const unpaidBills = state.bills.filter(function (b) { return !b.paid; });
+      const unpaidSubs = state.subscriptions.filter(function (s) { return !s.paid; });
+
+      let itemsHtml = "";
+      unpaidBills.forEach(function (bill) {
+        itemsHtml +=
+          '<div class="item">' +
+            '<div class="item-head">' +
+              '<div>' +
+                '<div class="item-title">' + escapeHtml(bill.name) + '</div>' +
+                '<div class="meta"><span>Bill</span><span>Due: ' + formatDate(bill.dueDate) + '</span><span>' + escapeHtml(getCategoryName(bill.categoryId)) + '</span></div>' +
+              '</div>' +
+              '<div class="pill-row"><span class="pill red">' + formatMoney(bill.amount) + '</span></div>' +
+            '</div>' +
+          '</div>';
+      });
+
+      unpaidSubs.forEach(function (sub) {
+        itemsHtml +=
+          '<div class="item">' +
+            '<div class="item-head">' +
+              '<div>' +
+                '<div class="item-title">' + escapeHtml(sub.name) + '</div>' +
+                '<div class="meta"><span>Subscription</span><span>Renewal: ' + escapeHtml(sub.renewal || "Not set") + '</span><span>' + escapeHtml(getCategoryName(sub.categoryId)) + '</span></div>' +
+              '</div>' +
+              '<div class="pill-row"><span class="pill red">' + formatMoney(sub.amount) + '</span></div>' +
+            '</div>' +
+          '</div>';
+      });
+
+      if (!itemsHtml) {
+        itemsHtml = '<div class="empty">No unpaid bills or subscriptions.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="card">' +
+            '<div class="section-title"><div><h3>Debt Dashboard</h3><p>Debt here means unpaid bills and subscriptions.</p></div></div>' +
+            '<div class="mini-grid">' +
+              '<div class="mini-card"><div class="label">Unpaid Bills</div><div class="value">' + formatMoney(unpaidBills.reduce(function (sum, item) { return sum + Number(item.amount); }, 0)) + '</div></div>' +
+              '<div class="mini-card"><div class="label">Unpaid Subscriptions</div><div class="value">' + formatMoney(unpaidSubs.reduce(function (sum, item) { return sum + Number(item.amount); }, 0)) + '</div></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title"><div><h3>Open Debt Items</h3><p>Mark them paid in their own section to reduce debt.</p></div></div>' +
+            '<div class="list">' + itemsHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderExtraDetailView() {
+      const summary = getSummary();
+      return (
+        '<div class="list">' +
+          '<div class="stats">' +
+            '<div class="card"><div class="stat-label">Balance</div><div class="stat-value">' + formatMoney(summary.balance) + '</div><div class="stat-sub">Posted money</div></div>' +
+            '<div class="card"><div class="stat-label">Debt</div><div class="stat-value">' + formatMoney(summary.debt) + '</div><div class="stat-sub">Still unpaid</div></div>' +
+            '<div class="card"><div class="stat-label">Extra Money</div><div class="stat-value">' + formatMoney(summary.extraMoney) + '</div><div class="stat-sub">Free amount after debt</div></div>' +
+            '<div class="card"><div class="stat-label">Status</div><div class="stat-value">' + (summary.extraMoney >= 0 ? 'Healthy' : 'Tight') + '</div><div class="stat-sub">Based on current numbers</div></div>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title"><div><h3>How extra money works</h3><p>This is automatic.</p></div></div>' +
+            '<div class="list">' +
+              '<div class="item"><div class="item-title">Formula</div><div class="meta">Extra Money = Balance - Debt</div></div>' +
+              '<div class="item"><div class="item-title">Why this matters</div><div class="meta">It shows a more honest free amount than raw balance alone.</div></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderCategoryDetailView() {
+      const category = state.categories.find(function (cat) {
+        return cat.id === state.selectedCategoryId;
+      });
+
+      if (!category) {
+        return '<div class="card"><div class="empty">Category not found.</div></div>';
+      }
+
+      const txns = state.transactions.filter(function (t) {
+        return t.categoryId === category.id;
+      }).sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      const income = txns.filter(function (t) { return t.type === "income"; }).reduce(function (sum, t) { return sum + Number(t.amount); }, 0);
+      const expense = txns.filter(function (t) { return t.type === "expense"; }).reduce(function (sum, t) { return sum + Number(t.amount); }, 0);
+      const net = income - expense;
+
+      let listHtml = "";
+      if (txns.length) {
+        txns.forEach(function (txn) {
+          listHtml +=
+            '<div class="item">' +
+              '<div class="item-head">' +
+                '<div>' +
+                  '<div class="item-title">' + escapeHtml(txn.title) + '</div>' +
+                  '<div class="meta"><span>' + escapeHtml(txn.sourceType) + '</span><span>' + formatDate(txn.createdAt) + '</span></div>' +
+                '</div>' +
+                '<div class="pill-row"><span class="pill ' + (txn.type === "income" ? 'green' : 'red') + '">' + (txn.type === "income" ? '+' : '-') + ' ' + formatMoney(txn.amount) + '</span></div>' +
+              '</div>' +
+            '</div>';
+        });
+      } else {
+        listHtml = '<div class="empty">No transactions yet in this category.</div>';
+      }
+
+      return (
+        '<div class="list">' +
+          '<div class="stats">' +
+            '<div class="card"><div class="stat-label">Category</div><div class="stat-value">' + escapeHtml(category.name) + '</div><div class="stat-sub">Custom dashboard</div></div>' +
+            '<div class="card"><div class="stat-label">Income</div><div class="stat-value">' + formatMoney(income) + '</div><div class="stat-sub">Income inside this category</div></div>' +
+            '<div class="card"><div class="stat-label">Expense</div><div class="stat-value">' + formatMoney(expense) + '</div><div class="stat-sub">Expense inside this category</div></div>' +
+            '<div class="card"><div class="stat-label">Net</div><div class="stat-value">' + formatMoney(net) + '</div><div class="stat-sub">' + txns.length + ' transactions</div></div>' +
+          '</div>' +
+
+          '<div class="card">' +
+            '<div class="section-title"><div><h3>' + escapeHtml(category.name) + ' Transactions</h3><p>This dashboard only shows this category.</p></div></div>' +
+            '<div class="list">' + listHtml + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    function renderView() {
+      if (state.currentView === "clients") return renderClientsView();
+      if (state.currentView === "applications") return renderApplicationsView();
+      if (state.currentView === "bills") return renderBillsView();
+      if (state.currentView === "subscriptions") return renderSubscriptionsView();
+      if (state.currentView === "categories") return renderCategoriesView();
+      if (state.currentView === "transactions") return renderTransactionsView();
+      if (state.currentView === "balanceDetail") return renderBalanceDetailView();
+      if (state.currentView === "debtDetail") return renderDebtDetailView();
+      if (state.currentView === "extraDetail") return renderExtraDetailView();
+      if (state.currentView === "categoryDetail") return renderCategoryDetailView();
+      return renderDashboardView();
+    }
+
+    function renderApp() {
+      applyTheme();
+      renderNav();
+
+      const meta = getPageMeta();
+      document.getElementById("pageTitle").textContent = meta.title;
+      document.getElementById("pageSubtitle").textContent = meta.subtitle;
+
+      const backBtn = document.getElementById("backBtn");
+      if (meta.back) {
+        backBtn.classList.remove("hidden");
+      } else {
+        backBtn.classList.add("hidden");
+      }
+
+      document.getElementById("appView").innerHTML = renderView();
+
+      if (state.currentView === "applications") {
+        handleApplicationStatusSelectChange();
+      }
+    }
+
+    document.getElementById("themeSwitchSide").addEventListener("click", toggleTheme);
+    document.getElementById("themeSwitchTop").addEventListener("click", toggleTheme);
+    document.getElementById("themeSwitchMobile").addEventListener("click", toggleTheme);
+
+    document.getElementById("backBtn").addEventListener("click", goHome);
+    document.getElementById("resetBtn").addEventListener("click", resetAllData);
+    document.getElementById("resetBtnMobile").addEventListener("click", resetAllData);
+
+    document.getElementById("hamburgerBtn").addEventListener("click", openMobileMenu);
+
+    renderApp();
+  </script>
+</body>
+</html>
