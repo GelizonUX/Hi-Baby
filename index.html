@@ -69,6 +69,7 @@
       background: var(--page);
       color: var(--text);
       letter-spacing: -0.01em;
+      scroll-behavior: smooth;
     }
 
     body {
@@ -90,9 +91,7 @@
       z-index: 0;
     }
 
-    button, input, select, textarea {
-      font: inherit;
-    }
+    button, input, select, textarea { font: inherit; }
 
     .glass {
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
@@ -143,7 +142,12 @@
     .item,
     .mini-card,
     .category-card,
-    .mobile-sidebar {
+    .mobile-sidebar,
+    .bank-tile,
+    .client-card,
+    .month-chip,
+    .wellness-status-card,
+    .reminder-row {
       position: relative;
     }
 
@@ -185,10 +189,7 @@
       text-transform: uppercase;
     }
 
-    .nav {
-      display: grid;
-      gap: 10px;
-    }
+    .nav { display: grid; gap: 10px; }
 
     .nav button,
     .btn,
@@ -196,8 +197,10 @@
     .hamburger-btn,
     .mobile-close,
     .schedule-btn,
-    .icon-btn {
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    .icon-btn,
+    .month-btn,
+    .chip-action {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease, opacity 0.18s ease;
     }
 
     .nav button {
@@ -213,10 +216,7 @@
       cursor: pointer;
     }
 
-    .nav button span {
-      position: relative;
-      z-index: 2;
-    }
+    .nav button span { position: relative; z-index: 2; }
 
     .nav button::before {
       content: "";
@@ -237,9 +237,7 @@
     }
 
     .nav button:hover::before,
-    .nav button.active::before {
-      opacity: 1;
-    }
+    .nav button.active::before { opacity: 1; }
 
     .sidebar-actions {
       display: grid;
@@ -269,13 +267,8 @@
       min-width: 0;
     }
 
-    .topbar-text {
-      min-width: 0;
-    }
-
-    .mobile-top-controls {
-      display: none;
-    }
+    .topbar-text { min-width: 0; }
+    .mobile-top-controls { display: none; }
 
     .topbar h2 {
       margin: 0;
@@ -307,7 +300,9 @@
     .hamburger-btn,
     .mobile-close,
     .schedule-btn,
-    .icon-btn {
+    .icon-btn,
+    .month-btn,
+    .chip-action {
       border: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
       color: var(--text);
@@ -337,30 +332,36 @@
       color: #ffdce4;
     }
 
-    body.light .btn.danger {
-      color: #7f1d1d;
-    }
+    body.light .btn.danger { color: #7f1d1d; }
 
-    .schedule-btn {
+    .schedule-btn,
+    .month-btn,
+    .chip-action {
       padding: 9px 11px;
       font-weight: 800;
       border-radius: 14px;
       font-size: 12px;
     }
 
-    .schedule-btn.paid {
+    .schedule-btn.paid,
+    .month-btn.paid,
+    .chip-action.paid {
       color: var(--green);
       border-color: rgba(41,211,145,0.22);
       background: linear-gradient(180deg, rgba(41,211,145,0.14), rgba(41,211,145,0.08));
     }
 
-    .schedule-btn.delayed {
+    .schedule-btn.delayed,
+    .month-btn.delayed,
+    .chip-action.delayed {
       color: var(--yellow);
       border-color: rgba(255,189,89,0.22);
       background: linear-gradient(180deg, rgba(255,189,89,0.14), rgba(255,189,89,0.08));
     }
 
-    .schedule-btn.pending {
+    .schedule-btn.pending,
+    .month-btn.pending,
+    .chip-action.pending {
       color: var(--blue);
       border-color: rgba(116,183,255,0.22);
       background: linear-gradient(180deg, rgba(116,183,255,0.14), rgba(116,183,255,0.08));
@@ -379,17 +380,9 @@
       flex-shrink: 0;
     }
 
-    .icon-btn.edit {
-      color: var(--blue);
-    }
-
-    .icon-btn.save {
-      color: var(--green);
-    }
-
-    .icon-btn.delete {
-      color: var(--red);
-    }
+    .icon-btn.edit { color: var(--blue); }
+    .icon-btn.save { color: var(--green); }
+    .icon-btn.delete { color: var(--red); }
 
     .btn:hover,
     .toggle-btn:hover,
@@ -398,7 +391,13 @@
     .card.clickable:hover,
     .category-card:hover,
     .schedule-btn:hover,
-    .icon-btn:hover {
+    .icon-btn:hover,
+    .month-btn:hover,
+    .chip-action:hover,
+    .bank-tile:hover,
+    .client-card:hover,
+    .wellness-status-card:hover,
+    .reminder-row:hover {
       transform: translateY(-2px);
     }
 
@@ -443,9 +442,7 @@
       transition: transform 0.18s ease;
     }
 
-    body.light .theme-switch::after {
-      transform: translateX(26px);
-    }
+    body.light .theme-switch::after { transform: translateX(26px); }
 
     .stats {
       display: grid;
@@ -460,9 +457,7 @@
       padding: 18px;
     }
 
-    .card.clickable {
-      cursor: pointer;
-    }
+    .card.clickable { cursor: pointer; }
 
     .stat-label {
       position: relative;
@@ -498,10 +493,7 @@
       gap: 12px;
     }
 
-    .stack {
-      display: grid;
-      gap: 12px;
-    }
+    .stack { display: grid; gap: 12px; }
 
     .section-title {
       display: flex;
@@ -530,10 +522,7 @@
       word-break: break-word;
     }
 
-    .list {
-      display: grid;
-      gap: 10px;
-    }
+    .list { display: grid; gap: 10px; }
 
     .item {
       overflow: hidden;
@@ -668,9 +657,7 @@
       font-weight: 800;
     }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
       min-width: 0;
       max-width: 100%;
@@ -708,9 +695,7 @@
     }
 
     input::placeholder,
-    textarea::placeholder {
-      color: var(--muted);
-    }
+    textarea::placeholder { color: var(--muted); }
 
     .empty {
       text-align: center;
@@ -733,19 +718,9 @@
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
-    .ledger-row:last-child {
-      border-bottom: none;
-    }
-
-    .amount.income {
-      color: var(--green);
-      font-weight: 850;
-    }
-
-    .amount.expense {
-      color: var(--red);
-      font-weight: 850;
-    }
+    .ledger-row:last-child { border-bottom: none; }
+    .amount.income { color: var(--green); font-weight: 850; }
+    .amount.expense { color: var(--red); font-weight: 850; }
 
     .mini-grid {
       position: relative;
@@ -861,9 +836,7 @@
       flex-shrink: 0;
     }
 
-    .mobile-open .mobile-overlay {
-      display: block;
-    }
+    .mobile-open .mobile-overlay { display: block; }
 
     .mobile-open .mobile-sidebar {
       display: block;
@@ -871,14 +844,8 @@
     }
 
     @keyframes drawerIn {
-      from {
-        opacity: 0;
-        transform: translateX(-18px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateX(-18px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .toast {
@@ -902,65 +869,7 @@
       transition: 0.22s ease;
     }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .bank-card,
-    .savings-card,
-    .compact-edit-card {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 12px;
-      align-items: start;
-    }
-
-    .bank-icon,
-    .savings-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 22px;
-      color: white;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.35), transparent 28%),
-        linear-gradient(145deg, var(--accent), var(--accent-2) 58%, var(--accent-3));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.25),
-        0 14px 30px rgba(114,230,255,0.16),
-        0 8px 22px rgba(127,99,255,0.18);
-      flex-shrink: 0;
-    }
-
-    .bank-card-content,
-    .savings-card-content {
-      min-width: 0;
-    }
-
-    .inline-balance {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .bank-balance-glow,
-    .savings-balance-glow {
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-weight: 800;
-      background: linear-gradient(180deg, rgba(41,211,145,0.14), rgba(41,211,145,0.08));
-      border: 1px solid rgba(41,211,145,0.22);
-      color: var(--green);
-      white-space: nowrap;
-      font-size: 13px;
-      align-self: end;
-    }
+    .toast.show { opacity: 1; transform: translateY(0); }
 
     .edit-panel {
       margin-top: 12px;
@@ -971,9 +880,7 @@
       display: none;
     }
 
-    .edit-panel.open {
-      display: block;
-    }
+    .edit-panel.open { display: block; animation: fadeSlideUp 0.2s ease; }
 
     .edit-grid {
       display: grid;
@@ -988,46 +895,341 @@
       margin-top: 10px;
     }
 
-    .client-header-grid {
+    .view-wrap {
+      animation: fadeSlideUp 0.28s ease;
+      transform-origin: top center;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bank-grid {
+      position: relative;
+      z-index: 2;
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 12px;
-      align-items: start;
     }
 
-    .client-summary-badges {
+    .bank-tile {
+      border-radius: 22px;
+      padding: 14px;
+      overflow: hidden;
+      min-height: 152px;
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .schedule-list {
-      display: grid;
-      gap: 8px;
-      margin-top: 12px;
+    .bank-tile-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
     }
 
-    .schedule-row {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr auto;
-      gap: 10px;
+    .bank-icon-wrap {
+      display: inline-flex;
       align-items: center;
-      padding: 12px;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
       border-radius: 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: var(--shadow-md);
-      min-width: 0;
+      font-size: 22px;
+      font-weight: 900;
+      color: white;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.35), transparent 28%),
+        linear-gradient(145deg, var(--accent), var(--accent-2) 58%, var(--accent-3));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.25),
+        0 14px 30px rgba(114,230,255,0.16),
+        0 8px 22px rgba(127,99,255,0.18);
+      flex-shrink: 0;
     }
 
-    .schedule-title {
+    .bank-inline-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 900;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.16);
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .bank-actions {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .bank-name {
+      position: relative;
+      z-index: 2;
+      margin-top: 10px;
       font-weight: 800;
       font-size: 14px;
+      line-height: 1.3;
+      color: var(--muted);
       word-break: break-word;
     }
 
-    .schedule-sub {
+    .bank-amount {
+      position: relative;
+      z-index: 2;
+      margin-top: 6px;
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      word-break: break-word;
+    }
+
+    .client-list {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      gap: 12px;
+    }
+
+    .client-card {
+      border-radius: 22px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .client-head {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .client-name-wrap {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .client-name {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0;
+      word-break: break-word;
+    }
+
+    .client-meta-line {
+      margin-top: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .client-highlight {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .client-months-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+      gap: 10px;
+    }
+
+    .month-chip {
+      border-radius: 18px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: var(--shadow-md);
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .month-chip-name {
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .month-chip-amount {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .month-chip-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .month-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      border-radius: 12px;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+    }
+
+    .month-status.paid {
+      color: var(--green);
+      background: rgba(41,211,145,0.10);
+      border-color: rgba(41,211,145,0.22);
+    }
+
+    .month-status.delayed {
+      color: var(--yellow);
+      background: rgba(255,189,89,0.10);
+      border-color: rgba(255,189,89,0.22);
+    }
+
+    .month-status.pending {
+      color: var(--blue);
+      background: rgba(116,183,255,0.10);
+      border-color: rgba(116,183,255,0.22);
+    }
+
+    .chip-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      font-size: 16px;
+      font-weight: 900;
+      padding: 0;
+    }
+
+    .job-source-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .wellness-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .wellness-status-card {
+      border-radius: 18px;
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .wellness-status-title {
+      position: relative;
+      z-index: 2;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .wellness-status-value {
+      position: relative;
+      z-index: 2;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    .wellness-status-sub {
+      position: relative;
+      z-index: 2;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .reminder-list {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      gap: 10px;
+    }
+
+    .reminder-row {
+      border-radius: 18px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .reminder-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 900;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .reminder-badge.upcoming { color: var(--blue); }
+    .reminder-badge.overdue { color: var(--yellow); }
+
+    .reminder-title {
+      font-weight: 850;
+      font-size: 15px;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .reminder-sub {
       margin-top: 4px;
       color: var(--muted);
       font-size: 12px;
@@ -1035,74 +1237,18 @@
       word-break: break-word;
     }
 
-    .schedule-amount {
-      font-size: 15px;
-      font-weight: 850;
-      text-align: left;
-      word-break: break-word;
-    }
-
-    .schedule-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .progress-wrap {
-      position: relative;
-      z-index: 2;
-      margin-top: 10px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.10);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.10);
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
-    }
-
     @media (max-width: 1100px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .categories-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .content-grid { grid-template-columns: 1fr; }
+      .categories-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .wellness-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 900px) {
-      .app {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        display: none;
-      }
-
-      .main {
-        padding: 12px;
-      }
-
-      .topbar {
-        display: block;
-        margin-bottom: 12px;
-      }
-
-      .topbar-left {
-        display: block;
-        width: 100%;
-      }
-
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 12px; }
+      .topbar { display: block; margin-bottom: 12px; }
+      .topbar-left { display: block; width: 100%; }
       .mobile-top-controls {
         display: flex;
         align-items: center;
@@ -1111,196 +1257,64 @@
         width: 100%;
         margin-bottom: 10px;
       }
-
-      .hamburger-btn {
-        display: inline-flex;
-      }
-
-      .quick-actions {
-        display: none;
-      }
-
-      #backBtn {
-        display: none !important;
-      }
-
-      .topbar h2 {
-        font-size: 24px;
-        line-height: 1.05;
-      }
-
-      .topbar p {
-        font-size: 13px;
-        line-height: 1.45;
-        margin-top: 8px;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 9px;
-      }
-
-      .card {
-        padding: 14px;
-        border-radius: 20px;
-      }
-
-      .item {
-        padding: 12px;
-        border-radius: 16px;
-      }
-
-      .section-title {
-        margin-bottom: 10px;
-      }
-
-      .section-title h3 {
-        font-size: 18px;
-      }
-
-      .section-title p {
-        font-size: 12px;
-      }
-
-      .stat-value {
-        font-size: 20px;
-      }
-
-      .stat-sub {
-        font-size: 11px;
-      }
-
-      .mini-card {
-        padding: 12px;
-      }
-
-      .mini-card .value {
-        font-size: 18px;
-      }
-
-      .category-card {
-        padding: 12px;
-      }
-
-      .item-title {
-        font-size: 16px;
-      }
-
-      .meta {
-        font-size: 12px;
-      }
-
-      .bank-card,
-      .savings-card {
-        grid-template-columns: auto 1fr auto;
-      }
-
-      .client-header-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .schedule-row {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        align-items: start;
-      }
-
-      .schedule-actions {
-        justify-content: stretch;
-      }
-
-      .schedule-actions .schedule-btn {
-        width: 100%;
-      }
-
-      .content-grid,
-      .stack,
-      .list,
-      .schedule-list {
-        gap: 9px;
-      }
-
-      .row-actions {
-        gap: 8px;
-      }
-
-      .btn,
-      .toggle-btn,
-      .schedule-btn {
-        font-size: 12px;
-      }
+      .hamburger-btn { display: inline-flex; }
+      .quick-actions { display: none; }
+      #backBtn { display: none !important; }
+      .topbar h2 { font-size: 24px; line-height: 1.05; }
+      .topbar p { font-size: 13px; line-height: 1.45; margin-top: 8px; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .card { padding: 14px; border-radius: 20px; }
+      .item { padding: 12px; border-radius: 16px; }
+      .section-title { margin-bottom: 10px; }
+      .section-title h3 { font-size: 18px; }
+      .section-title p { font-size: 12px; }
+      .stat-value { font-size: 20px; }
+      .stat-sub { font-size: 11px; }
+      .mini-card { padding: 12px; }
+      .mini-card .value { font-size: 18px; }
+      .category-card { padding: 12px; }
+      .item-title { font-size: 16px; }
+      .meta { font-size: 12px; }
+      .client-name { font-size: 19px; }
+      .client-months-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .reminder-row { grid-template-columns: auto 1fr; }
+      .content-grid, .stack, .list, .reminder-list, .client-list { gap: 9px; }
+      .row-actions { gap: 8px; }
+      .btn, .toggle-btn, .schedule-btn { font-size: 12px; }
     }
 
     @media (max-width: 760px) {
       .form-grid,
       .mini-grid,
       .categories-grid,
-      .edit-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .row-actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
+      .edit-grid,
+      .job-source-grid,
+      .wellness-grid { grid-template-columns: 1fr; }
+      .row-actions { flex-direction: column; align-items: stretch; }
       .row-actions input,
       .row-actions button,
       .row-actions .btn,
       .row-actions textarea,
-      .row-actions select {
-        width: 100%;
-        max-width: none !important;
-      }
-
-      .bank-card,
-      .savings-card {
-        grid-template-columns: 1fr;
-      }
-
-      .ledger-row {
-        grid-template-columns: 1fr;
-        gap: 6px;
-      }
-
-      .edit-actions {
-        justify-content: stretch;
-      }
-
-      .edit-actions .icon-btn {
-        width: 44px;
-        height: 44px;
-      }
-
+      .row-actions select { width: 100%; max-width: none !important; }
+      .ledger-row { grid-template-columns: 1fr; gap: 6px; }
+      .edit-actions { justify-content: stretch; }
+      .edit-actions .icon-btn { width: 44px; height: 44px; }
       input[type="date"],
-      input[type="month"] {
-        width: 100%;
-        min-width: 0;
-      }
+      input[type="month"] { width: 100%; min-width: 0; }
+      .bank-grid,
+      .client-months-grid { grid-template-columns: 1fr; }
+      .month-chip-actions { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 520px) {
-      .stats {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .topbar h2 {
-        font-size: 22px;
-      }
-
-      .topbar p {
-        font-size: 12px;
-      }
-
-      input,
-      select,
-      textarea {
-        font-size: 16px;
-      }
-
-      .mobile-sidebar {
-        width: min(88vw, 320px);
-      }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .topbar h2 { font-size: 22px; }
+      .topbar p { font-size: 12px; }
+      input, select, textarea { font-size: 16px; }
+      .mobile-sidebar { width: min(88vw, 320px); }
+      .bank-amount { font-size: 22px; }
+      .client-name { font-size: 18px; }
+      .month-chip { min-height: 100px; }
     }
   </style>
 </head>
@@ -1333,7 +1347,7 @@
       <div class="brand glass">
         <div class="brand-badge">Private tracker</div>
         <h1>Finance Tracker</h1>
-        <p>Your private finance software with bank balances, savings, clients, job applications, bills, subscriptions, categories, and automated balance tracking.</p>
+        <p>Your private finance software with cleaner bank cards, compact client tracking, smarter job application tracking, wellness signals, and reminders.</p>
       </div>
 
       <div class="nav" id="desktopNav"></div>
@@ -1387,7 +1401,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const STORAGE_KEY = "financeTrackerStableV14";
+    const STORAGE_KEY = "financeTrackerStableV15";
 
     function makeId() {
       return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -1428,8 +1442,17 @@
           categories: Array.isArray(parsed.categories) && parsed.categories.length ? parsed.categories : clone(DEFAULT_STATE.categories),
           bankAccounts: Array.isArray(parsed.bankAccounts) ? parsed.bankAccounts : [],
           savings: Array.isArray(parsed.savings) ? parsed.savings : [],
-          clients: Array.isArray(parsed.clients) ? parsed.clients : [],
-          jobApplications: Array.isArray(parsed.jobApplications || parsed.applications) ? (parsed.jobApplications || parsed.applications) : [],
+          clients: Array.isArray(parsed.clients) ? parsed.clients.map(client => ({
+            ...client,
+            schedules: Array.isArray(client.schedules) ? client.schedules : []
+          })) : [],
+          jobApplications: Array.isArray(parsed.jobApplications || parsed.applications)
+            ? (parsed.jobApplications || parsed.applications).map(app => ({
+                ...app,
+                link: app.link || "",
+                platform: app.platform || ""
+              }))
+            : [],
           bills: Array.isArray(parsed.bills) ? parsed.bills : [],
           subscriptions: Array.isArray(parsed.subscriptions) ? parsed.subscriptions : [],
           transactions: Array.isArray(parsed.transactions) ? parsed.transactions : []
@@ -1485,7 +1508,7 @@
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
+        .replace(/\"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
 
@@ -1535,7 +1558,7 @@
       if (Number.isNaN(date.getTime())) return "Unknown month";
       return date.toLocaleDateString("en-PH", {
         year: "numeric",
-        month: "long"
+        month: "short"
       });
     }
 
@@ -1600,6 +1623,106 @@
     function iconSave() { return "✓"; }
     function iconTrash() { return "🗑"; }
 
+    function todayDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function diffInDays(dateString) {
+      if (!dateString) return null;
+      const target = new Date(dateString + "T12:00:00");
+      const today = new Date(todayDateString() + "T12:00:00");
+      if (Number.isNaN(target.getTime())) return null;
+      return Math.round((target - today) / 86400000);
+    }
+
+    function getReminders() {
+      const items = [];
+
+      state.bills.forEach(bill => {
+        if (bill.paid || !bill.dueDate) return;
+        const days = diffInDays(bill.dueDate);
+        if (days === null) return;
+        if (days <= 7) {
+          items.push({
+            id: bill.id,
+            type: "bill",
+            label: bill.name,
+            amount: bill.amount,
+            date: bill.dueDate,
+            status: days < 0 ? "overdue" : "upcoming",
+            days
+          });
+        }
+      });
+
+      state.clients.forEach(client => {
+        (client.schedules || []).forEach(schedule => {
+          if (schedule.status === "paid" || !schedule.dueDate) return;
+          const days = diffInDays(schedule.dueDate);
+          if (days === null) return;
+          if (days <= 7) {
+            items.push({
+              id: schedule.id,
+              type: "client",
+              label: `${client.name} payment`,
+              amount: schedule.expectedAmount,
+              date: schedule.dueDate,
+              status: schedule.status === "delayed" || days < 0 ? "overdue" : "upcoming",
+              days,
+              currency: client.currency
+            });
+          }
+        });
+      });
+
+      state.subscriptions.forEach(sub => {
+        const dateMatch = String(sub.renewal || "").match(/\d{4}-\d{2}-\d{2}/);
+        if (sub.paid || !dateMatch) return;
+        const dueDate = dateMatch[0];
+        const days = diffInDays(dueDate);
+        if (days === null) return;
+        if (days <= 7) {
+          items.push({
+            id: sub.id,
+            type: "subscription",
+            label: sub.name,
+            amount: sub.amount,
+            date: dueDate,
+            status: days < 0 ? "overdue" : "upcoming",
+            days
+          });
+        }
+      });
+
+      return items.sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 8);
+    }
+
+    function getWellnessData() {
+      const summary = getSummary();
+      const spendingRatioBase = summary.transactionIncome > 0 ? summary.transactionExpenses / summary.transactionIncome : (summary.transactionExpenses > 0 ? 1 : 0);
+      const spendingScore = Math.max(0, Math.min(100, Math.round((1 - spendingRatioBase) * 100)));
+      const savingsCoverageBase = summary.balance > 0 ? (summary.savingsTotal / summary.balance) * 100 : 0;
+      const savingsScore = Math.max(0, Math.min(100, Math.round(savingsCoverageBase)));
+      const debtPressureBase = summary.balance > 0 ? (summary.debt / summary.balance) * 100 : (summary.debt > 0 ? 100 : 0);
+      const stabilityScore = Math.max(0, Math.min(100, Math.round(100 - debtPressureBase)));
+
+      let overall = "Healthy";
+      if (stabilityScore < 35 || summary.extraMoney < 0) overall = "Critical";
+      else if (stabilityScore < 60 || summary.debt > summary.balance * 0.5) overall = "Watch";
+
+      return {
+        spendingScore,
+        savingsScore,
+        stabilityScore,
+        overall,
+        summary
+      };
+    }
+
     function getSummary() {
       const transactionIncome = state.transactions
         .filter(t => t.type === "income")
@@ -1643,6 +1766,7 @@
       saveState();
       renderApp();
       closeMobileMenu();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function goHome() {
@@ -2012,6 +2136,8 @@
       const dateApplied = document.getElementById("jobApplicationDateApplied").value;
       const statusSelect = document.getElementById("jobApplicationStatusSelect").value;
       const customStatus = document.getElementById("jobApplicationCustomStatus").value.trim();
+      const link = document.getElementById("jobApplicationLink").value.trim();
+      const platform = document.getElementById("jobApplicationPlatform").value.trim();
 
       let finalStatus = statusSelect;
       if (statusSelect === "Custom") finalStatus = customStatus;
@@ -2025,7 +2151,9 @@
         position,
         salary,
         dateApplied,
-        status: finalStatus
+        status: finalStatus,
+        link,
+        platform
       });
 
       saveState();
@@ -2054,6 +2182,8 @@
       const salary = document.getElementById(`jobSalary_${applicationId}`).value.trim();
       const dateApplied = document.getElementById(`jobDate_${applicationId}`).value;
       const status = document.getElementById(`jobStatus_${applicationId}`).value.trim();
+      const link = document.getElementById(`jobLink_${applicationId}`).value.trim();
+      const platform = document.getElementById(`jobPlatform_${applicationId}`).value.trim();
 
       if (!clientName || !position) return alert("Please enter a client name and position.");
       if (!status) return alert("Please enter a valid status.");
@@ -2063,6 +2193,8 @@
       application.salary = salary;
       application.dateApplied = dateApplied;
       application.status = status;
+      application.link = link;
+      application.platform = platform;
 
       saveState();
       renderApp();
@@ -2246,10 +2378,10 @@
     }
 
     function getPageMeta() {
-      if (state.currentView === "bankBalances") return { title: "Bank Balance", subtitle: "Track all your bank accounts and let them update your main balance automatically.", back: true };
+      if (state.currentView === "bankBalances") return { title: "Bank Balance", subtitle: "Cleaner cards with just the icon, amount, and direct edit controls.", back: true };
       if (state.currentView === "savings") return { title: "Savings", subtitle: "Track your allocated savings by purpose, bank, monthly saved amount, and target month without double counting your total money.", back: true };
-      if (state.currentView === "clients") return { title: "Clients", subtitle: "List each client once, auto-generate the rest of their 2026 payment schedule, then mark each month as paid, delayed, or pending.", back: true };
-      if (state.currentView === "jobApplications") return { title: "Job Applications", subtitle: "Track every job application and its latest status.", back: true };
+      if (state.currentView === "clients") return { title: "Clients", subtitle: "Compact calendar-style tracking so multiple clients do not become a wall of text.", back: true };
+      if (state.currentView === "jobApplications") return { title: "Job Applications", subtitle: "Track the role, salary, status, link, and source platform in one cleaner system.", back: true };
       if (state.currentView === "bills") return { title: "Bills", subtitle: "Track unpaid bills and subtract them when paid.", back: true };
       if (state.currentView === "subscriptions") return { title: "Subscriptions", subtitle: "Track recurring costs and mark them paid when needed.", back: true };
       if (state.currentView === "categories") return { title: "Categories", subtitle: "Build your own custom structure.", back: true };
@@ -2258,7 +2390,7 @@
       if (state.currentView === "debtDetail") return { title: "Debt Dashboard", subtitle: "All unpaid bills and subscriptions.", back: true };
       if (state.currentView === "extraDetail") return { title: "Extra Money", subtitle: "Your balance minus unpaid debt.", back: true };
       if (state.currentView === "categoryDetail") return { title: getCategoryName(state.selectedCategoryId), subtitle: "This category's own dashboard.", back: true };
-      return { title: "Dashboard", subtitle: "Your complete money overview.", back: false };
+      return { title: "Dashboard", subtitle: "Your complete money overview with reminders and wellness signals.", back: false };
     }
 
     function renderNav() {
@@ -2277,6 +2409,8 @@
 
     function renderDashboardView() {
       const summary = getSummary();
+      const wellness = getWellnessData();
+      const reminders = getReminders();
       const recentTransactions = clone(state.transactions)
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 5);
@@ -2310,8 +2444,23 @@
         </div>
       `).join("") : `<div class="empty">No transactions yet. Start with a client payment, bill, subscription, or manual transaction.</div>`;
 
+      const remindersHtml = reminders.length ? reminders.map(item => `
+        <div class="reminder-row glass-soft">
+          <div class="reminder-badge ${item.status}">${item.status === "overdue" ? "!" : "⏰"}</div>
+          <div>
+            <div class="reminder-title">${escapeHtml(item.label)}</div>
+            <div class="reminder-sub">
+              ${item.type === "client" ? formatCurrency(item.amount, item.currency || "PHP") : formatMoney(item.amount)}
+              • ${formatDate(item.date)}
+              • ${item.days < 0 ? `${Math.abs(item.days)} day(s) late` : item.days === 0 ? "due today" : `${item.days} day(s) left`}
+            </div>
+          </div>
+          <div class="pill ${item.status === "overdue" ? "yellow" : "blue"}">${item.status === "overdue" ? "Delayed" : "Upcoming"}</div>
+        </div>
+      `).join("") : `<div class="empty">Nothing urgent right now. Your upcoming payments and bills will show here automatically.</div>`;
+
       return `
-        <div>
+        <div class="view-wrap">
           <div class="stats">
             <div class="card glass clickable" onclick="setView('balanceDetail')">
               <div class="stat-label">Main Balance</div>
@@ -2346,18 +2495,57 @@
           </div>
 
           <div class="content-grid">
-            <div class="card glass">
-              <div class="section-title">
-                <div>
-                  <h3>Recent Transactions</h3>
-                  <p>Your latest posted activity.</p>
+            <div class="stack">
+              <div class="card glass">
+                <div class="section-title">
+                  <div>
+                    <h3>Smart Reminders</h3>
+                    <p>Upcoming and delayed items from clients, bills, and subscriptions.</p>
+                  </div>
                 </div>
-                <button class="btn" type="button" onclick="setView('transactions')">Open full history</button>
+                <div class="reminder-list">${remindersHtml}</div>
               </div>
-              ${recentHtml}
+
+              <div class="card glass">
+                <div class="section-title">
+                  <div>
+                    <h3>Recent Transactions</h3>
+                    <p>Your latest posted activity.</p>
+                  </div>
+                  <button class="btn" type="button" onclick="setView('transactions')">Open full history</button>
+                </div>
+                ${recentHtml}
+              </div>
             </div>
 
             <div class="stack">
+              <div class="card glass">
+                <div class="section-title">
+                  <div>
+                    <h3>Wellness</h3>
+                    <p>Automatic health view based on your current money flow.</p>
+                  </div>
+                  <div class="pill ${wellness.overall === "Healthy" ? "green" : wellness.overall === "Watch" ? "yellow" : "red"}">${wellness.overall}</div>
+                </div>
+                <div class="wellness-grid">
+                  <div class="wellness-status-card glass-soft">
+                    <div class="wellness-status-title">Savings Discipline</div>
+                    <div class="wellness-status-value">${wellness.savingsScore}%</div>
+                    <div class="wellness-status-sub">How much of your current balance is already protected in savings buckets.</div>
+                  </div>
+                  <div class="wellness-status-card glass-soft">
+                    <div class="wellness-status-title">Spending Control</div>
+                    <div class="wellness-status-value">${wellness.spendingScore}%</div>
+                    <div class="wellness-status-sub">Higher is better. This reacts to your posted income vs posted expenses.</div>
+                  </div>
+                  <div class="wellness-status-card glass-soft">
+                    <div class="wellness-status-title">Stability</div>
+                    <div class="wellness-status-value">${wellness.stabilityScore}%</div>
+                    <div class="wellness-status-sub">This drops when unpaid debt starts eating too much of your available balance.</div>
+                  </div>
+                </div>
+              </div>
+
               <div class="card glass">
                 <div class="section-title">
                   <div>
@@ -2406,19 +2594,17 @@
       const summary = getSummary();
 
       const listHtml = state.bankAccounts.length ? state.bankAccounts.map(account => `
-        <div class="item glass">
-          <div class="bank-card">
-            <div class="bank-icon">${escapeHtml(getBankIcon(account.bankName))}</div>
-
-            <div class="bank-card-content">
-              <div class="item-title">${escapeHtml(account.bankName)}</div>
-              <div class="inline-balance">Balance: ${formatMoney(account.amount)}</div>
+        <div class="bank-tile glass-soft">
+          <div>
+            <div class="bank-tile-top">
+              <div class="bank-icon-wrap">${escapeHtml(getBankIcon(account.bankName))}</div>
+              <div class="bank-actions">
+                <button class="icon-btn edit" type="button" onclick="toggleEditPanel('bankPanel_${account.id}')" title="Edit">${iconPencil()}</button>
+                <button class="icon-btn delete" type="button" onclick="deleteBankAccount('${account.id}')" title="Delete">${iconTrash()}</button>
+              </div>
             </div>
-
-            <div class="pill-row">
-              <button class="icon-btn edit" type="button" onclick="toggleEditPanel('bankPanel_${account.id}')" title="Edit">${iconPencil()}</button>
-              <button class="icon-btn delete" type="button" onclick="deleteBankAccount('${account.id}')" title="Delete">${iconTrash()}</button>
-            </div>
+            <div class="bank-name">${escapeHtml(account.bankName)} <span class="bank-inline-icon">${escapeHtml(getBankIcon(account.bankName))}</span></div>
+            <div class="bank-amount">${formatMoney(account.amount)}</div>
           </div>
 
           <div class="edit-panel" id="bankPanel_${account.id}">
@@ -2440,7 +2626,7 @@
       `).join("") : `<div class="empty">No bank accounts yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="stats">
             <div class="card glass">
               <div class="stat-label">Bank Total</div>
@@ -2481,10 +2667,10 @@
             <div class="section-title">
               <div>
                 <h3>Bank Accounts</h3>
-                <p>Tap the pencil icon to edit. Tap the trash icon to remove.</p>
+                <p>Compact cards so the view stays clean as your banks grow.</p>
               </div>
             </div>
-            <div class="list">${listHtml}</div>
+            <div class="bank-grid">${listHtml}</div>
           </div>
         </div>
       `;
@@ -2498,31 +2684,28 @@
 
         return `
           <div class="item glass">
-            <div class="savings-card">
-              <div class="savings-icon">${escapeHtml(getSavingsIcon(item.name))}</div>
-
-              <div class="savings-card-content">
+            <div class="item-head">
+              <div>
                 <div class="item-title">${escapeHtml(item.name)}</div>
                 <div class="meta">
                   <span>Bank: ${escapeHtml(item.bankName)}</span>
                   <span>Target Month: ${escapeHtml(getSavingsMonthLabel(item.targetMonth))}</span>
                   <span>Saved This Month: ${formatMoney(item.savedThisMonth || 0)}</span>
                 </div>
-
-                <div class="progress-wrap">
-                  <div class="meta" style="margin:0 0 8px 0;">
-                    <span>Target: ${item.targetAmount > 0 ? formatMoney(item.targetAmount) : "Not set"}</span>
-                    <span>Progress: ${item.targetAmount > 0 ? progress.toFixed(0) + "%" : "No target"}</span>
-                  </div>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width:${progress}%;"></div>
-                  </div>
-                </div>
               </div>
-
               <div class="pill-row">
                 <button class="icon-btn edit" type="button" onclick="toggleEditPanel('savePanel_${item.id}')" title="Edit">${iconPencil()}</button>
                 <button class="icon-btn delete" type="button" onclick="deleteSavings('${item.id}')" title="Delete">${iconTrash()}</button>
+              </div>
+            </div>
+
+            <div class="progress-wrap">
+              <div class="meta" style="margin:0 0 8px 0;">
+                <span>Target: ${item.targetAmount > 0 ? formatMoney(item.targetAmount) : "Not set"}</span>
+                <span>Progress: ${item.targetAmount > 0 ? progress.toFixed(0) + "%" : "No target"}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:${progress}%;"></div>
               </div>
             </div>
 
@@ -2562,13 +2745,13 @@
               </div>
             </div>
 
-            <div class="savings-balance-glow" style="margin-top:10px;">${formatMoney(item.currentAmount || 0)}</div>
+            <div class="pill green" style="margin-top:12px; width:max-content;">${formatMoney(item.currentAmount || 0)}</div>
           </div>
         `;
       }).join("") : `<div class="empty">No savings yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="stats">
             <div class="card glass">
               <div class="stat-label">Savings Total</div>
@@ -2646,30 +2829,23 @@
     function renderClientsView() {
       const clientListHtml = state.clients.length ? state.clients.map(client => {
         const counts = getClientScheduleCounts(client);
+
         const scheduleHtml = (client.schedules || []).map(schedule => {
-          let statusClass = "blue";
-          let label = "Pending";
-          if (schedule.status === "paid") {
-            statusClass = "green";
-            label = "Paid";
-          } else if (schedule.status === "delayed") {
-            statusClass = "yellow";
-            label = "Delayed";
-          }
+          const statusClass = schedule.status === "paid" ? "paid" : schedule.status === "delayed" ? "delayed" : "pending";
+          const statusLabel = schedule.status === "paid" ? "Paid" : schedule.status === "delayed" ? "Delayed" : "Pending";
 
           return `
-            <div class="schedule-row">
+            <div class="month-chip">
               <div>
-                <div class="schedule-title">${escapeHtml(getMonthLabelFromDate(schedule.dueDate))}</div>
-                <div class="schedule-sub">Expected date: ${formatDate(schedule.dueDate)}</div>
+                <div class="month-chip-name">${escapeHtml(getMonthLabelFromDate(schedule.dueDate))}</div>
+                <div class="month-chip-amount">${formatCurrency(schedule.expectedAmount, client.currency)}</div>
+                <div class="month-chip-amount">${formatDate(schedule.dueDate)}</div>
               </div>
-              <div class="schedule-amount">${formatCurrency(schedule.expectedAmount, client.currency)}</div>
               <div>
-                <div class="pill ${statusClass}" style="margin-bottom:8px;">${label}</div>
-                <div class="schedule-actions">
-                  <button class="schedule-btn paid" type="button" onclick="setClientScheduleStatus('${client.id}', '${schedule.id}', 'paid')">Paid</button>
-                  <button class="schedule-btn delayed" type="button" onclick="setClientScheduleStatus('${client.id}', '${schedule.id}', 'delayed')">Delayed</button>
-                  <button class="schedule-btn pending" type="button" onclick="setClientScheduleStatus('${client.id}', '${schedule.id}', 'pending')">Pending</button>
+                <div class="month-status ${statusClass}">${statusLabel}</div>
+                <div class="month-chip-actions" style="margin-top:8px;">
+                  <button class="chip-action paid" type="button" onclick="setClientScheduleStatus('${client.id}', '${schedule.id}', 'paid')" title="Mark paid">✓</button>
+                  <button class="chip-action delayed" type="button" onclick="setClientScheduleStatus('${client.id}', '${schedule.id}', 'delayed')" title="Mark delayed">✕</button>
                 </div>
               </div>
             </div>
@@ -2677,41 +2853,36 @@
         }).join("");
 
         return `
-          <div class="item glass">
-            <div class="client-header-grid">
-              <div>
-                <div class="item-title" style="font-size:18px;">${escapeHtml(client.name)}</div>
-                <div class="meta">
-                  <span>${client.rateType === "hourly" ? "Hourly" : "Fixed Monthly"}</span>
-                  <span>Rate: ${formatCurrency(client.rateAmount, client.currency)}</span>
-                  ${client.rateType === "hourly" ? `<span>Expected Hours: ${escapeHtml(client.expectedHours)}</span>` : ""}
-                  <span>Expected Monthly: ${formatCurrency(client.expectedMonthlyAmount, client.currency)}</span>
-                  <span>Next Date Anchor: ${formatDate(client.nextPaymentDate)}</span>
-                </div>
-                <div class="client-summary-badges">
-                  <span class="pill blue">Pending: ${counts.pending}</span>
-                  <span class="pill green">Paid: ${counts.paid}</span>
-                  <span class="pill yellow">Delayed: ${counts.delayed}</span>
+          <div class="client-card glass">
+            <div class="client-head">
+              <div class="client-name-wrap">
+                <h3 class="client-name">${escapeHtml(client.name)}</h3>
+                <div class="client-meta-line">
+                  <span class="client-highlight">${client.rateType === "hourly" ? "Hourly" : "Fixed Monthly"}</span>
+                  <span class="client-highlight">Rate ${formatCurrency(client.rateAmount, client.currency)}</span>
+                  ${client.rateType === "hourly" ? `<span class="client-highlight">${escapeHtml(client.expectedHours)} hrs / month</span>` : ``}
+                  <span class="client-highlight">Expected ${formatCurrency(client.expectedMonthlyAmount, client.currency)}</span>
                 </div>
               </div>
               <div class="pill-row">
+                <span class="pill blue">${counts.pending}</span>
+                <span class="pill green">${counts.paid}</span>
+                <span class="pill yellow">${counts.delayed}</span>
                 <button class="icon-btn delete" type="button" onclick="deleteClient('${client.id}')" title="Delete">${iconTrash()}</button>
               </div>
             </div>
-            <div class="schedule-list">
-              ${scheduleHtml}
-            </div>
+            <div class="client-months-grid">${scheduleHtml}</div>
           </div>
         `;
       }).join("") : `<div class="empty">No clients yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="card glass">
             <div class="section-title">
               <div>
                 <h3>Add Client</h3>
-                <p>Add the client once. The app auto-builds the expected payment schedule for the rest of 2026. Then you only mark each month as paid, delayed, or pending.</p>
+                <p>Add the client once. The app auto-builds the expected payment schedule for the rest of 2026 with a compact calendar layout.</p>
               </div>
             </div>
             <form class="form-grid" onsubmit="addClient(event)">
@@ -2754,11 +2925,11 @@
           <div class="card glass">
             <div class="section-title">
               <div>
-                <h3>Client Payment Schedule</h3>
-                <p>Status buttons stay visible here to make tracking faster.</p>
+                <h3>Client Calendar</h3>
+                <p>Use ✓ for paid and ✕ for delayed. Everything stays compact to reduce scrolling.</p>
               </div>
             </div>
-            <div class="list">${clientListHtml}</div>
+            <div class="client-list">${clientListHtml}</div>
           </div>
         </div>
       `;
@@ -2767,6 +2938,8 @@
     function renderJobApplicationsView() {
       const listHtml = state.jobApplications.length ? state.jobApplications.map(application => {
         const pillClass = getApplicationStatusClass(application.status);
+        const safeLink = application.link ? escapeHtml(application.link) : "";
+        const platformText = application.platform ? escapeHtml(application.platform) : "Not set";
 
         return `
           <div class="item glass">
@@ -2777,7 +2950,9 @@
                   <span>Position: ${escapeHtml(application.position)}</span>
                   <span>Salary: ${escapeHtml(application.salary || "Not set")}</span>
                   <span>Date Applied: ${formatDate(application.dateApplied)}</span>
+                  <span>Source: ${platformText}</span>
                 </div>
+                ${application.link ? `<div class="meta"><span>Link: <a href="${safeLink}" target="_blank" rel="noopener noreferrer" style="color:inherit;">${safeLink}</a></span></div>` : ``}
               </div>
               <div class="pill-row">
                 <span class="pill ${pillClass}">${escapeHtml(application.status)}</span>
@@ -2804,6 +2979,14 @@
                   <label>Date Applied</label>
                   <input id="jobDate_${application.id}" type="date" value="${escapeHtml(application.dateApplied || "")}" />
                 </div>
+                <div class="field">
+                  <label>Source Platform</label>
+                  <input id="jobPlatform_${application.id}" value="${escapeHtml(application.platform || "")}" placeholder="LinkedIn / Facebook / OnlineJobs.ph" />
+                </div>
+                <div class="field">
+                  <label>Link</label>
+                  <input id="jobLink_${application.id}" value="${safeLink}" placeholder="Paste the job link" />
+                </div>
                 <div class="field" style="grid-column:1/-1;">
                   <label>Status</label>
                   <input id="jobStatus_${application.id}" value="${escapeHtml(application.status)}" />
@@ -2818,12 +3001,12 @@
       }).join("") : `<div class="empty">No job applications yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="card glass">
             <div class="section-title">
               <div>
                 <h3>Add Job Application</h3>
-                <p>Track the clients you applied to, the role, salary, applied date, and current status.</p>
+                <p>Track the company, role, salary, status, job link, and where you found it.</p>
               </div>
             </div>
             <form class="form-grid" onsubmit="addJobApplication(event)">
@@ -2833,6 +3016,8 @@
               <div class="field"><label>Date Applied</label><input id="jobApplicationDateApplied" type="date" /></div>
               <div class="field"><label>Status</label><select id="jobApplicationStatusSelect" onchange="handleJobApplicationStatusSelectChange()">${applicationStatusOptionsHtml()}</select></div>
               <div class="field"><label>Custom Status</label><input id="jobApplicationCustomStatus" class="hidden" placeholder="Type your custom status" /></div>
+              <div class="field"><label>Source Platform</label><input id="jobApplicationPlatform" placeholder="LinkedIn / Facebook / OnlineJobs.ph / Upwork" /></div>
+              <div class="field"><label>Job Link</label><input id="jobApplicationLink" placeholder="Paste the job post link" /></div>
               <div class="field" style="grid-column:1/-1;"><button class="btn primary" type="submit">Add job application</button></div>
             </form>
           </div>
@@ -2874,7 +3059,7 @@
       `).join("") : `<div class="empty">No bills yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="card glass">
             <div class="section-title">
               <div>
@@ -2928,7 +3113,7 @@
       `).join("") : `<div class="empty">No subscriptions yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="card glass">
             <div class="section-title">
               <div>
@@ -2939,7 +3124,7 @@
             <form class="form-grid" onsubmit="addSubscription(event)">
               <div class="field"><label>Name</label><input id="subscriptionName" placeholder="ChatGPT" /></div>
               <div class="field"><label>Amount</label><input id="subscriptionAmount" type="number" min="0" step="0.01" placeholder="1200" /></div>
-              <div class="field"><label>Renewal</label><input id="subscriptionRenewal" placeholder="Monthly / Mar 12" /></div>
+              <div class="field"><label>Renewal</label><input id="subscriptionRenewal" placeholder="Monthly or 2026-03-12" /></div>
               <div class="field"><label>Category</label><select id="subscriptionCategory">${categoryOptionsHtml()}</select></div>
               <div class="field" style="grid-column:1/-1;"><button class="btn primary" type="submit">Add subscription</button></div>
             </form>
@@ -2989,7 +3174,7 @@
       }).join("") : `<div class="empty">No custom categories yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="card glass">
             <div class="section-title">
               <div>
@@ -3043,7 +3228,7 @@
       `).join("") : `<div class="empty">No transactions yet.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="card glass">
             <div class="section-title">
               <div>
@@ -3079,7 +3264,7 @@
       const expenseCount = state.transactions.filter(t => t.type === "expense").length;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="stats">
             <div class="card glass"><div class="stat-label">Main Balance</div><div class="stat-value">${formatMoney(summary.balance)}</div><div class="stat-sub">Bank total plus posted transaction balance</div></div>
             <div class="card glass"><div class="stat-label">Bank Total</div><div class="stat-value">${formatMoney(summary.bankTotal)}</div><div class="stat-sub">${state.bankAccounts.length} bank account(s)</div></div>
@@ -3138,7 +3323,7 @@
       if (!itemsHtml) itemsHtml = `<div class="empty">No unpaid bills or subscriptions.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="card glass">
             <div class="section-title"><div><h3>Debt Dashboard</h3><p>Debt here means unpaid bills and subscriptions.</p></div></div>
             <div class="mini-grid">
@@ -3158,7 +3343,7 @@
     function renderExtraDetailView() {
       const summary = getSummary();
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="stats">
             <div class="card glass"><div class="stat-label">Main Balance</div><div class="stat-value">${formatMoney(summary.balance)}</div><div class="stat-sub">Bank total plus posted transaction balance</div></div>
             <div class="card glass"><div class="stat-label">Debt</div><div class="stat-value">${formatMoney(summary.debt)}</div><div class="stat-sub">Still unpaid</div></div>
@@ -3179,7 +3364,7 @@
 
     function renderCategoryDetailView() {
       const category = state.categories.find(cat => cat.id === state.selectedCategoryId);
-      if (!category) return `<div class="card glass"><div class="empty">Category not found.</div></div>`;
+      if (!category) return `<div class="view-wrap card glass"><div class="empty">Category not found.</div></div>`;
 
       const txns = state.transactions
         .filter(t => t.categoryId === category.id)
@@ -3202,7 +3387,7 @@
       `).join("") : `<div class="empty">No transactions yet in this category.</div>`;
 
       return `
-        <div class="list">
+        <div class="view-wrap list">
           <div class="stats">
             <div class="card glass"><div class="stat-label">Category</div><div class="stat-value">${escapeHtml(category.name)}</div><div class="stat-sub">Custom dashboard</div></div>
             <div class="card glass"><div class="stat-label">Income</div><div class="stat-value">${formatMoney(income)}</div><div class="stat-sub">Income inside this category</div></div>
