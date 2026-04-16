@@ -705,6 +705,182 @@
         inset 0 1px 0 rgba(255,255,255,0.24);
     }
 
+    /* INTRO */
+    .intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.18) 20%, transparent 38%),
+        radial-gradient(circle at 82% 14%, rgba(255,194,224,0.88) 0%, rgba(255,194,224,0.18) 18%, transparent 36%),
+        radial-gradient(circle at 50% 88%, rgba(255,143,194,0.48) 0%, rgba(255,143,194,0.12) 20%, transparent 42%),
+        linear-gradient(135deg, #fffafc 0%, #ffeef6 22%, #ffdceb 48%, #fff2f8 70%, #ffd2e6 100%);
+      background-size: 180% 180%;
+      animation: introFlow 10s ease-in-out infinite;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .intro-overlay::before,
+    .intro-overlay::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      pointer-events: none;
+      filter: blur(60px);
+      opacity: 0.8;
+    }
+
+    .intro-overlay::before {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.9) 0%, transparent 24%),
+        radial-gradient(circle at 78% 26%, rgba(255,151,204,0.35) 0%, transparent 22%),
+        radial-gradient(circle at 50% 74%, rgba(255,112,181,0.22) 0%, transparent 28%);
+      animation: auraMove 14s ease-in-out infinite;
+    }
+
+    .intro-overlay::after {
+      background:
+        radial-gradient(circle at 72% 70%, rgba(255,255,255,0.45) 0%, transparent 18%),
+        radial-gradient(circle at 28% 78%, rgba(255,123,191,0.22) 0%, transparent 20%);
+      animation: auraMoveReverse 18s ease-in-out infinite;
+    }
+
+    @keyframes introFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .intro-heart-btn {
+      position: relative;
+      z-index: 2;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 150px;
+      height: 150px;
+      padding: 0;
+    }
+
+    .intro-heart-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,171,214,0.32) 35%, rgba(255,143,194,0.08) 60%, transparent 72%);
+      filter: blur(10px);
+      animation: introGlowPulse 2.4s ease-in-out infinite;
+    }
+
+    .intro-heart-rings,
+    .intro-heart-rings::before,
+    .intro-heart-rings::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.5);
+      animation: introRingPulse 3.2s ease-out infinite;
+    }
+
+    .intro-heart-rings::before {
+      animation-delay: 0.8s;
+    }
+
+    .intro-heart-rings::after {
+      animation-delay: 1.6s;
+    }
+
+    .intro-heart {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 86px;
+      line-height: 1;
+      animation: introHeartFloat 2.8s ease-in-out infinite;
+      filter: drop-shadow(0 14px 28px rgba(255, 71, 159, 0.26));
+      transform-origin: center;
+    }
+
+    @keyframes introHeartFloat {
+      0% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-10px) scale(1.05); }
+      100% { transform: translateY(0px) scale(1); }
+    }
+
+    @keyframes introGlowPulse {
+      0% { transform: scale(0.94); opacity: 0.72; }
+      50% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(0.94); opacity: 0.72; }
+    }
+
+    @keyframes introRingPulse {
+      0% { transform: scale(0.7); opacity: 0; }
+      22% { opacity: 0.7; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .intro-particle {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      z-index: 100001;
+      transform: translate(-50%, -50%);
+      will-change: transform, opacity;
+      filter: drop-shadow(0 4px 12px rgba(255,255,255,0.15));
+    }
+
+    .intro-heart-btn.clicked .intro-heart {
+      animation: introHeartPopOut 0.95s cubic-bezier(.2,.85,.2,1) forwards;
+    }
+
+    .intro-heart-btn.clicked .intro-heart-glow {
+      animation: introGlowBlast 0.95s ease forwards;
+    }
+
+    .intro-heart-btn.clicked .intro-heart-rings,
+    .intro-heart-btn.clicked .intro-heart-rings::before,
+    .intro-heart-btn.clicked .intro-heart-rings::after {
+      animation: none;
+      opacity: 0;
+    }
+
+    @keyframes introHeartPopOut {
+      0% { transform: scale(1); opacity: 1; }
+      30% { transform: scale(1.18); opacity: 1; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
+
+    @keyframes introGlowBlast {
+      0% { transform: scale(1); opacity: 0.95; }
+      100% { transform: scale(2.3); opacity: 0; }
+    }
+
+    .intro-overlay.hide-intro {
+      animation: introOverlayFade 0.95s ease forwards;
+    }
+
+    @keyframes introOverlayFade {
+      0% {
+        opacity: 1;
+        visibility: visible;
+      }
+      100% {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
     @media (max-width: 680px) {
       body {
         overflow: hidden;
@@ -788,15 +964,39 @@
         height: 68px;
         font-size: 13px;
       }
+
+      .intro-heart-btn {
+        width: 132px;
+        height: 132px;
+      }
+
+      .intro-heart-rings,
+      .intro-heart-rings::before,
+      .intro-heart-rings::after {
+        width: 104px;
+        height: 104px;
+      }
+
+      .intro-heart {
+        font-size: 74px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="intro-overlay" id="introOverlay" aria-label="Open intro">
+    <button class="intro-heart-btn" id="introHeartBtn" aria-label="Open site">
+      <span class="intro-heart-glow"></span>
+      <span class="intro-heart-rings"></span>
+      <span class="intro-heart">💗</span>
+    </button>
+  </div>
+
   <main class="container">
     <h1 class="title">Hi baby 💋</h1>
 
     <p class="subtitle">
-      i made this for you because i wanted you to have something soft, sweet, and full of love,
+      I made this for you because i wanted you to have something soft, sweet, and full of love,
       something you can open anytime and remember just how much you mean to me every single day.
     </p>
 
@@ -822,20 +1022,15 @@
   <div class="letter-overlay" id="letterOverlay">
     <div class="letter-card">
       <button class="close-btn" id="closeLetterBtn" aria-label="Close">✕</button>
-      <div class="love-note-title">baby,</div>
-      <div class="love-note-body">i just wanted to leave this here for you.
+      <div class="love-note-title">Goodmorning!</div>
+      <div class="love-note-body">Baka tulog pako pag nabasa mo to haha 
+        
+        Goodluck sa work and palagi mong galingan, eat your breakfast narin and lunch, pleaaaaseee magrest ka from time to time bb. 
+        I'll be busy today and won't be availble baka hapon or gabi, but I'll message you pag hindi nako busy. 
 
-thank you for being so sweet, so lovely, and so special to me.
-
-you make my days feel lighter, calmer, and a lot more beautiful just by being in them.
-
-i notice you.
-i appreciate you.
-i’m proud of you.
-
-and i really love the way you make everything feel a little softer.
-
-you mean so much to me, baby. 💗🌹</div>
+        If may questions ka just message me lang
+        
+        MWAAA!. 💗🌹</div>
     </div>
   </div>
 
@@ -886,6 +1081,9 @@ you mean so much to me, baby. 💗🌹</div>
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
+    const introOverlay = document.getElementById("introOverlay");
+    const introHeartBtn = document.getElementById("introHeartBtn");
 
     const kissButton = document.getElementById("kissButton");
     const openLetterBtn = document.getElementById("openLetterBtn");
@@ -1108,6 +1306,68 @@ you mean so much to me, baby. 💗🌹</div>
         requestAnimationFrame(animateParticle);
       }
     }
+
+    function createIntroBurst(x, y) {
+      const introBurstEmojis = ["💗", "💕", "💖", "🤍"];
+      const count = 26;
+
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement("div");
+        particle.className = "intro-particle";
+        particle.textContent = introBurstEmojis[Math.floor(Math.random() * introBurstEmojis.length)];
+        particle.style.left = x + "px";
+        particle.style.top = y + "px";
+        particle.style.fontSize = (Math.random() * 12 + 16) + "px";
+        particle.style.opacity = "1";
+        document.body.appendChild(particle);
+
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 8 + 4;
+        const rotation = (Math.random() - 0.5) * 50;
+
+        let px = x;
+        let py = y;
+        let vx = Math.cos(angle) * speed;
+        let vy = Math.sin(angle) * speed - 0.8;
+        let opacity = 1;
+        let scale = 1;
+
+        function animateParticle() {
+          px += vx;
+          py += vy;
+          vy += 0.10;
+          opacity -= 0.018;
+          scale += 0.008;
+
+          particle.style.left = px + "px";
+          particle.style.top = py + "px";
+          particle.style.opacity = opacity;
+          particle.style.transform = `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`;
+
+          if (opacity <= 0) {
+            particle.remove();
+          } else {
+            requestAnimationFrame(animateParticle);
+          }
+        }
+
+        requestAnimationFrame(animateParticle);
+      }
+    }
+
+    introHeartBtn.addEventListener("click", () => {
+      const rect = introHeartBtn.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      introHeartBtn.classList.add("clicked");
+      createIntroBurst(x, y);
+      introOverlay.classList.add("hide-intro");
+
+      setTimeout(() => {
+        introOverlay.style.display = "none";
+      }, 950);
+    });
 
     kissButton.addEventListener("click", () => {
       const rect = kissButton.getBoundingClientRect();
