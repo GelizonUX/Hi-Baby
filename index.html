@@ -1,410 +1,747 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hi baby 💋</title>
-<style>
-body {
-  margin: 0;
-  background: #fff0f5;
-  height: 100vh;
-  overflow: hidden;
-  font-family: Georgia, serif;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For you 💌</title>
 
-#box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  width: 90%;
-}
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-h1 {
-  font-size: 72px;
-  color: #ff4da6;
-  margin: 0;
-  line-height: 1.15;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-p {
-  color: #ff85c1;
-  font-style: italic;
-  font-size: 18px;
-  margin-top: 10px;
-}
+    :root {
+      --pink-1: #fff7fb;
+      --pink-2: #ffe1ef;
+      --pink-3: #ffc7df;
+      --pink-4: #ff9cc8;
+      --pink-5: #ff4fa0;
+      --pink-6: #ff2e8a;
+      --text-main: #8f4468;
+      --text-soft: #9f6a83;
+      --white: #ffffff;
+    }
 
-button {
-  margin-top: 30px;
-  padding: 18px 40px;
-  font-size: 22px;
-  background: #ff4da6;
-  color: white;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  font-family: Georgia, serif;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  transition: transform 0.15s, background 0.15s;
-}
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
 
-button:hover {
-  background: #e6008c;
-  transform: scale(1.06);
-}
+    body {
+      overflow: hidden;
+      font-family: "Inter", sans-serif;
+      position: relative;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 28%),
+        radial-gradient(circle at 85% 18%, rgba(255,202,227,0.6) 0%, rgba(255,202,227,0) 25%),
+        radial-gradient(circle at 50% 85%, rgba(255,165,210,0.35) 0%, rgba(255,165,210,0) 28%),
+        linear-gradient(135deg, var(--pink-1), var(--pink-2), var(--pink-3), #fff4f8, var(--pink-2));
+      background-size: 180% 180%;
+      animation: backgroundFlow 14s ease-in-out infinite;
+    }
 
-button:active {
-  transform: scale(0.93);
-}
+    @keyframes backgroundFlow {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
 
-.emoji {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-}
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.45), transparent 24%),
+        radial-gradient(circle at 80% 25%, rgba(255,122,185,0.18), transparent 22%),
+        radial-gradient(circle at 50% 80%, rgba(255,92,169,0.12), transparent 26%);
+      filter: blur(18px);
+    }
 
-/* confession screen */
-#conf-screen {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(255,240,245,0.97);
-  z-index: 999999;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 30px;
-}
+    .container {
+      position: relative;
+      z-index: 5;
+      width: min(92vw, 920px);
+      height: min(88vh, 760px);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 28px;
+      text-align: center;
+    }
 
-#conf-line1 {
-  font-size: clamp(22px, 5vw, 42px);
-  color: #3a1a2e;
-  font-family: Georgia, serif;
-  opacity: 0;
-  transition: opacity 1.4s ease;
-  line-height: 1.4;
-}
+    .glass-panel {
+      position: absolute;
+      inset: 20px 0 20px 0;
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.18));
+      border: 1px solid rgba(255,255,255,0.42);
+      box-shadow:
+        0 25px 80px rgba(255, 94, 166, 0.10),
+        inset 0 1px 0 rgba(255,255,255,0.55);
+      backdrop-filter: blur(10px);
+      z-index: -1;
+    }
 
-#conf-line2 {
-  font-size: clamp(28px, 7vw, 60px);
-  color: #ff4da6;
-  margin-top: 24px;
-  font-family: Georgia, serif;
-  text-shadow: 0 0 40px rgba(255,77,166,0.5);
-  opacity: 0;
-  transition: opacity 1.4s ease;
-  line-height: 1.3;
-}
+    .title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(44px, 7vw, 76px);
+      line-height: 0.95;
+      color: var(--pink-6);
+      text-shadow: 0 10px 30px rgba(255, 79, 160, 0.12);
+      margin-bottom: 18px;
+    }
 
-@media (max-width: 600px) {
-  h1 { font-size: 42px; }
-  button { font-size: 17px; padding: 14px 28px; }
-}
-</style>
+    .subtitle {
+      max-width: 560px;
+      font-size: clamp(15px, 2.1vw, 18px);
+      line-height: 1.8;
+      color: var(--text-main);
+      margin-bottom: 38px;
+      font-weight: 400;
+    }
+
+    .button-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 52px;
+    }
+
+    .kiss-button {
+      position: relative;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 20px 52px;
+      border-radius: 999px;
+      font-size: clamp(20px, 2.4vw, 28px);
+      font-weight: 500;
+      color: white;
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(135deg, #ff5caf 0%, #ff2a8b 52%, #ff0f7b 100%);
+      box-shadow:
+        0 18px 40px rgba(255, 44, 132, 0.28),
+        inset 0 1px 0 rgba(255,255,255,0.25),
+        inset 0 -8px 18px rgba(185, 0, 90, 0.18);
+      transition: transform 0.24s ease, box-shadow 0.24s ease, filter 0.24s ease;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .kiss-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(120deg, transparent 15%, rgba(255,255,255,0.55) 50%, transparent 85%);
+      transform: translateX(-130%);
+      transition: transform 0.8s ease;
+      z-index: -1;
+    }
+
+    .kiss-button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow:
+        0 24px 50px rgba(255, 44, 132, 0.34),
+        inset 0 1px 0 rgba(255,255,255,0.28),
+        inset 0 -8px 18px rgba(185, 0, 90, 0.2);
+      filter: saturate(1.06);
+    }
+
+    .kiss-button:hover::before {
+      transform: translateX(130%);
+    }
+
+    .kiss-button:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .envelope-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .envelope {
+      position: relative;
+      width: min(280px, 72vw);
+      height: 190px;
+      cursor: pointer;
+      transition: transform 0.28s ease, filter 0.28s ease;
+      filter: drop-shadow(0 18px 35px rgba(255, 66, 150, 0.22));
+    }
+
+    .envelope:hover {
+      transform: translateY(-8px) scale(1.025);
+    }
+
+    .envelope-shell {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #ff4ea2 0%, #ff2f8d 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.22),
+        inset 0 -12px 20px rgba(185, 8, 95, 0.12);
+    }
+
+    .envelope-shine {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .envelope-shine::after {
+      content: "";
+      position: absolute;
+      top: -10%;
+      left: -140%;
+      width: 70%;
+      height: 130%;
+      transform: rotate(18deg);
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.12) 20%,
+        rgba(255,255,255,0.55) 48%,
+        rgba(255,255,255,0.12) 76%,
+        rgba(255,255,255,0) 100%
+      );
+      transition: left 0.85s ease;
+      filter: blur(1px);
+    }
+
+    .envelope:hover .envelope-shine::after {
+      left: 155%;
+    }
+
+    .envelope-back {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0)),
+        linear-gradient(180deg, #ff56aa 0%, #ff2f8d 100%);
+    }
+
+    .envelope-left-fold,
+    .envelope-right-fold,
+    .envelope-bottom-fold,
+    .envelope-top-flap {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .envelope-left-fold {
+      left: 0;
+      bottom: 0;
+      width: 50%;
+      height: 72%;
+      background: linear-gradient(135deg, #ff77bc, #ff489d);
+      clip-path: polygon(0 100%, 0 0, 100% 100%);
+      opacity: 0.92;
+    }
+
+    .envelope-right-fold {
+      right: 0;
+      bottom: 0;
+      width: 50%;
+      height: 72%;
+      background: linear-gradient(225deg, #ff77bc, #ff489d);
+      clip-path: polygon(100% 100%, 0 100%, 100% 0);
+      opacity: 0.92;
+    }
+
+    .envelope-bottom-fold {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      width: 100%;
+      height: 56%;
+      background: linear-gradient(180deg, #ff3d95, #ff1f82);
+      clip-path: polygon(0 100%, 50% 18%, 100% 100%);
+    }
+
+    .envelope-top-flap {
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 55%;
+      background: linear-gradient(180deg, #ff7cbc 0%, #ff58a9 100%);
+      clip-path: polygon(0 0, 50% 100%, 100% 0);
+      transform-origin: top center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22);
+    }
+
+    .envelope-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 42px 24px 0;
+      text-align: center;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(18px, 2.2vw, 24px);
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.98);
+      text-shadow: 0 4px 18px rgba(145, 9, 77, 0.22);
+      z-index: 2;
+    }
+
+    .floating-emoji {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+      will-change: transform, opacity;
+      opacity: 0.35;
+      animation-name: floatUp;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translate3d(0, 110vh, 0) scale(0.85) rotate(0deg);
+        opacity: 0;
+      }
+      8% {
+        opacity: 0.4;
+      }
+      50% {
+        opacity: 0.38;
+      }
+      100% {
+        transform: translate3d(var(--drift, 0px), -18vh, 0) scale(1.15) rotate(12deg);
+        opacity: 0;
+      }
+    }
+
+    .cursor-heart {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      z-index: 20;
+      transform: translate(-50%, -50%);
+      will-change: transform, opacity;
+    }
+
+    .click-burst-emoji {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      z-index: 30;
+      transform: translate(-50%, -50%);
+      will-change: transform, opacity;
+    }
+
+    .click-message {
+      position: fixed;
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, -50%);
+      font-family: "Playfair Display", serif;
+      font-size: clamp(30px, 4vw, 52px);
+      color: var(--pink-6);
+      text-shadow:
+        0 10px 28px rgba(255, 52, 142, 0.24),
+        0 0 16px rgba(255,255,255,0.55);
+      pointer-events: none;
+      z-index: 35;
+      white-space: nowrap;
+      opacity: 0;
+    }
+
+    .letter-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      background: rgba(255, 249, 252, 0.45);
+      backdrop-filter: blur(16px);
+      z-index: 9999;
+    }
+
+    .letter-card {
+      position: relative;
+      width: min(92vw, 700px);
+      max-height: min(84vh, 760px);
+      overflow: auto;
+      border-radius: 28px;
+      padding: 42px 34px 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,247,251,0.95));
+      box-shadow:
+        0 30px 90px rgba(255, 87, 165, 0.16),
+        inset 0 1px 0 rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .letter-card::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .letter-card::-webkit-scrollbar-thumb {
+      background: rgba(255, 110, 178, 0.35);
+      border-radius: 999px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 22px;
+      color: var(--pink-6);
+      background: rgba(255, 236, 245, 0.95);
+      box-shadow: 0 8px 20px rgba(255, 80, 158, 0.12);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .close-btn:hover {
+      transform: scale(1.06);
+      background: rgba(255, 227, 240, 1);
+    }
+
+    .letter-heading {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(34px, 5vw, 56px);
+      color: var(--pink-6);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .letter-body {
+      font-size: clamp(16px, 2.1vw, 18px);
+      line-height: 1.95;
+      color: #6f4c5d;
+      text-align: left;
+      white-space: pre-line;
+    }
+
+    @media (max-width: 680px) {
+      .container {
+        width: 94vw;
+        padding: 34px 18px;
+      }
+
+      .glass-panel {
+        inset: 10px 0;
+        border-radius: 26px;
+      }
+
+      .subtitle {
+        margin-bottom: 30px;
+      }
+
+      .button-wrap {
+        margin-bottom: 40px;
+      }
+
+      .kiss-button {
+        padding: 18px 34px;
+      }
+
+      .envelope {
+        height: 170px;
+      }
+
+      .letter-card {
+        padding: 34px 22px 24px;
+      }
+
+      .letter-body {
+        line-height: 1.8;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="ambient-glow"></div>
 
-<div id="box">
-  <h1>Hi baby 💋</h1>
-  <p>i made this just for you ✨</p>
-  <button id="btn">Click here to kiss me 💋</button>
-</div>
+  <main class="container">
+    <div class="glass-panel"></div>
 
-<!-- confession screen (hidden until click 9) -->
-<div id="conf-screen">
-  <div id="conf-line1"></div>
-  <div id="conf-line2"></div>
-</div>
+    <h1 class="title">Hi baby 💋</h1>
 
-<script>
+    <p class="subtitle">
+      i made this for you because i wanted you to have something soft, sweet, and full of love,
+      something you can open anytime and remember just how much you mean to me every single day.
+    </p>
 
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
-var clickCount = 0;
-var done = false;
+    <div class="button-wrap">
+      <button class="kiss-button" id="kissButton">click to kiss me 💋</button>
+    </div>
 
-var kissEmojis  = ["💋","💋","💋","💕","💗","💖","❤️","😘","🌹","💋"];
-var bgEmojis    = ["💋","❤️","💕","💗","💖","😘","💝","💓","💋","❤️"];
-var sweetWords  = [
-  "mwah! 💋",
-  "you're so cute 🥰",
-  "i miss you 💕",
-  "you make me smile 😊",
-  "kisses for you 💋",
-  "you're my favorite 💖",
-  "thinking of you 💭",
-  "you're everything 🥺",
-  "stay forever? 💋",
-  "you smell nice 😘"
-];
+    <div class="envelope-wrap">
+      <div class="envelope" id="openLetterBtn" aria-label="Open my message">
+        <div class="envelope-shell">
+          <div class="envelope-back"></div>
+          <div class="envelope-left-fold"></div>
+          <div class="envelope-right-fold"></div>
+          <div class="envelope-bottom-fold"></div>
+          <div class="envelope-top-flap"></div>
+          <div class="envelope-text">read my message here</div>
+          <div class="envelope-shine"></div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-// ═══════════════════════════════════════════
-//  BACKGROUND FLOATING EMOJIS
-// ═══════════════════════════════════════════
-function makeFloater() {
-  var el = document.createElement("div");
-  el.className = "emoji";
-  el.innerText = bgEmojis[Math.floor(Math.random() * bgEmojis.length)];
-  el.style.left    = Math.random() * window.innerWidth + "px";
-  el.style.top     = window.innerHeight + 40 + "px";
-  el.style.fontSize = (Math.random() * 20 + 15) + "px";
-  el.style.opacity = "0.55";
-  document.body.appendChild(el);
+  <div class="letter-overlay" id="letterOverlay">
+    <div class="letter-card">
+      <button class="close-btn" id="closeLetterBtn" aria-label="Close">✕</button>
+      <div class="letter-heading">for my baby ❤️</div>
+      <div class="letter-body">baby,
 
-  var speed = Math.random() * 2 + 1.5;
-  var drift = (Math.random() - 0.5) * 1.5;
-  var posY  = window.innerHeight + 40;
-  var posX  = parseFloat(el.style.left);
+i just want you to know how much i appreciate you.
 
-  function move() {
-    posY -= speed;
-    posX += drift;
-    el.style.top  = posY + "px";
-    el.style.left = posX + "px";
-    if (posY < -60) {
-      el.remove();
-    } else {
-      requestAnimationFrame(move);
+you make everything feel lighter, calmer, and easier in a way that means so much to me. even on ordinary days, you make life feel softer and more beautiful just by being in it.
+
+i notice your effort. i notice your heart. i notice the way you keep going, the way you care, the way you make things better without even trying to make it a big deal.
+
+you are one of the most special parts of my life. you bring comfort, peace, warmth, and love into my world. and honestly, you make everything feel more worth it.
+
+thank you for being you.
+thank you for being so lovely.
+thank you for being my safe place.
+thank you for making my days sweeter.
+
+i am so proud of you, and i hope you never forget how amazing you are.
+
+you are my baby, and i love you more than i could ever fully put into words. 💗🌹</div>
+    </div>
+  </div>
+
+  <script>
+    const kissButton = document.getElementById("kissButton");
+    const openLetterBtn = document.getElementById("openLetterBtn");
+    const letterOverlay = document.getElementById("letterOverlay");
+    const closeLetterBtn = document.getElementById("closeLetterBtn");
+
+    const floatEmojis = ["💋", "💕", "💗", "💖", "🌹", "🌸"];
+    const burstEmojis = ["💋", "❤️", "💕", "💖", "🌹"];
+    const clickMessages = [
+      "mwah 💋",
+      "i love you ❤️",
+      "i miss you baby 🥺",
+      "take care baby 💕",
+      "you did great 💖",
+      "my baby 🌹"
+    ];
+
+    function createFloatingEmoji() {
+      const el = document.createElement("div");
+      el.className = "floating-emoji";
+      el.textContent = floatEmojis[Math.floor(Math.random() * floatEmojis.length)];
+
+      const startLeft = Math.random() * window.innerWidth;
+      const size = Math.random() * 18 + 16;
+      const duration = Math.random() * 10 + 9;
+      const drift = (Math.random() - 0.5) * 140;
+
+      el.style.left = startLeft + "px";
+      el.style.bottom = "-40px";
+      el.style.fontSize = size + "px";
+      el.style.animationDuration = duration + "s";
+      el.style.setProperty("--drift", drift + "px");
+      el.style.opacity = Math.random() * 0.18 + 0.24;
+
+      document.body.appendChild(el);
+
+      setTimeout(() => {
+        el.remove();
+      }, duration * 1000);
     }
-  }
-  requestAnimationFrame(move);
-}
 
-// Seed 20 floaters staggered on load
-for (var i = 0; i < 20; i++) {
-  (function(i){ setTimeout(makeFloater, i * 250); })(i);
-}
-// Keep spawning forever
-setInterval(makeFloater, 420);
+    for (let i = 0; i < 42; i++) {
+      setTimeout(createFloatingEmoji, i * 170);
+    }
+    setInterval(createFloatingEmoji, 280);
 
-// ═══════════════════════════════════════════
-//  CURSOR TRAIL
-// ═══════════════════════════════════════════
-document.addEventListener("mousemove", function(e) {
-  if (Math.random() > 0.4) return;
-  var el = document.createElement("div");
-  el.className  = "emoji";
-  el.innerText  = Math.random() > 0.5 ? "💋" : "💕";
-  el.style.left = e.clientX + "px";
-  el.style.top  = e.clientY + "px";
-  el.style.fontSize = (Math.random() * 8 + 10) + "px";
-  el.style.opacity  = "0.85";
-  el.style.zIndex   = "9998";
-  document.body.appendChild(el);
+    let lastTrailTime = 0;
+    document.addEventListener("mousemove", (e) => {
+      const now = Date.now();
+      if (now - lastTrailTime < 42) return;
+      lastTrailTime = now;
 
-  var posY  = e.clientY;
-  var alpha = 0.85;
+      const trail = document.createElement("div");
+      trail.className = "cursor-heart";
+      trail.textContent = Math.random() > 0.35 ? "💕" : "🌹";
+      trail.style.left = e.clientX + "px";
+      trail.style.top = e.clientY + "px";
+      trail.style.fontSize = (Math.random() * 6 + 12) + "px";
+      trail.style.opacity = "0.92";
+      document.body.appendChild(trail);
 
-  function fade() {
-    posY  -= 1.3;
-    alpha -= 0.04;
-    el.style.top     = posY + "px";
-    el.style.opacity = alpha;
-    if (alpha <= 0) { el.remove(); }
-    else { requestAnimationFrame(fade); }
-  }
-  requestAnimationFrame(fade);
-});
+      let x = e.clientX;
+      let y = e.clientY;
+      let opacity = 0.92;
+      let scale = 1;
 
-// ═══════════════════════════════════════════
-//  FIRE ONE KISS EMOJI OUTWARD
-// ═══════════════════════════════════════════
-function fireKiss(cx, cy) {
-  var el = document.createElement("div");
-  el.className  = "emoji";
-  el.innerText  = kissEmojis[Math.floor(Math.random() * kissEmojis.length)];
-  el.style.left = cx + "px";
-  el.style.top  = cy + "px";
-  el.style.fontSize = (Math.random() * 18 + 22) + "px";
-  el.style.opacity  = "1";
-  el.style.zIndex   = "99999";
-  document.body.appendChild(el);
+      function animateTrail() {
+        y -= 1.3;
+        x += (Math.random() - 0.5) * 0.5;
+        opacity -= 0.045;
+        scale += 0.008;
 
-  var angle = Math.random() * Math.PI * 2;
-  var speed = Math.random() * 9 + 4;
-  var vx    = Math.cos(angle) * speed;
-  var vy    = Math.sin(angle) * speed;
-  var posX  = cx;
-  var posY  = cy;
-  var alpha = 1;
+        trail.style.top = y + "px";
+        trail.style.left = x + "px";
+        trail.style.opacity = opacity;
+        trail.style.transform = `translate(-50%, -50%) scale(${scale})`;
 
-  function move() {
-    posX  += vx;
-    posY  += vy;
-    vy    += 0.18;
-    alpha -= 0.02;
-    el.style.left    = posX + "px";
-    el.style.top     = posY + "px";
-    el.style.opacity = alpha;
-    if (alpha <= 0) { el.remove(); }
-    else { requestAnimationFrame(move); }
-  }
-  requestAnimationFrame(move);
-}
+        if (opacity <= 0) {
+          trail.remove();
+        } else {
+          requestAnimationFrame(animateTrail);
+        }
+      }
 
-// ═══════════════════════════════════════════
-//  SWEET FLOATING MESSAGE
-// ═══════════════════════════════════════════
-function showWord(cx, cy) {
-  var el = document.createElement("div");
-  el.className  = "emoji";
-  el.innerText  = sweetWords[Math.floor(Math.random() * sweetWords.length)];
-  el.style.left = (cx - 80) + "px";
-  el.style.top  = (cy - 20) + "px";
-  el.style.fontSize   = "18px";
-  el.style.color      = "#ff4da6";
-  el.style.fontStyle  = "italic";
-  el.style.fontFamily = "Georgia, serif";
-  el.style.opacity    = "1";
-  el.style.zIndex     = "99999";
-  el.style.whiteSpace = "nowrap";
-  el.style.textShadow = "0 1px 8px rgba(255,77,166,0.4)";
-  document.body.appendChild(el);
-
-  var posY  = cy - 20;
-  var alpha = 1;
-
-  function move() {
-    posY  -= 1.5;
-    alpha -= 0.012;
-    el.style.top     = posY + "px";
-    el.style.opacity = alpha;
-    if (alpha <= 0) { el.remove(); }
-    else { requestAnimationFrame(move); }
-  }
-  requestAnimationFrame(move);
-}
-
-// ═══════════════════════════════════════════
-//  SPECIAL KISS MOMENT
-// ═══════════════════════════════════════════
-function showSpecialKiss() {
-  var wrap = document.createElement("div");
-  wrap.className        = "emoji";
-  wrap.style.left       = Math.floor(Math.random() * (window.innerWidth  - 180) + 50) + "px";
-  wrap.style.top        = Math.floor(Math.random() * (window.innerHeight - 180) + 50) + "px";
-  wrap.style.zIndex     = "99998";
-  wrap.style.textAlign  = "center";
-  wrap.style.opacity    = "0";
-  wrap.style.transition = "opacity 0.4s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)";
-  wrap.style.transform  = "scale(0.3)";
-
-  var big = document.createElement("div");
-  big.innerText       = "💋";
-  big.style.fontSize  = "58px";
-  big.style.filter    = "drop-shadow(0 0 18px #ff4da6)";
-
-  var lbl = document.createElement("div");
-  lbl.innerText           = "this one's just for you";
-  lbl.style.fontSize      = "13px";
-  lbl.style.color         = "#ff4da6";
-  lbl.style.fontStyle     = "italic";
-  lbl.style.fontFamily    = "Georgia, serif";
-  lbl.style.marginTop     = "5px";
-  lbl.style.letterSpacing = "1px";
-
-  wrap.appendChild(big);
-  wrap.appendChild(lbl);
-  document.body.appendChild(wrap);
-
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      wrap.style.opacity   = "1";
-      wrap.style.transform = "scale(1)";
+      requestAnimationFrame(animateTrail);
     });
-  });
 
-  setTimeout(function() {
-    wrap.style.opacity   = "0";
-    wrap.style.transform = "scale(0.7) translateY(-40px)";
-  }, 2500);
+    function showCenterMessage(text) {
+      const rect = kissButton.getBoundingClientRect();
+      const message = document.createElement("div");
+      message.className = "click-message";
+      message.textContent = text;
+      message.style.left = (rect.left + rect.width / 2) + "px";
+      message.style.top = (rect.top - 22) + "px";
+      document.body.appendChild(message);
 
-  setTimeout(function() { wrap.remove(); }, 3100);
-}
+      let y = rect.top - 22;
+      let opacity = 0;
+      let scale = 0.86;
+      let frame = 0;
 
-// ═══════════════════════════════════════════
-//  BUTTON CLICK
-// ═══════════════════════════════════════════
-document.getElementById("btn").addEventListener("click", function(e) {
-  if (done) return;
-  clickCount++;
+      function animateMessage() {
+        frame += 1;
 
-  var cx = e.clientX;
-  var cy = e.clientY;
+        if (frame < 8) {
+          opacity += 0.12;
+          scale += 0.035;
+        } else {
+          opacity -= 0.022;
+          y -= 1.1;
+        }
 
-  // 30 kisses explode outward
-  for (var i = 0; i < 30; i++) {
-    fireKiss(cx, cy);
-  }
+        message.style.top = y + "px";
+        message.style.opacity = Math.max(opacity, 0);
+        message.style.transform = `translate(-50%, -50%) scale(${Math.min(scale, 1.05)})`;
 
-  // Sweet message floats up
-  showWord(cx, cy);
+        if (opacity <= 0) {
+          message.remove();
+        } else {
+          requestAnimationFrame(animateMessage);
+        }
+      }
 
-  // 30% chance of special kiss
-  if (Math.random() < 0.3) {
-    setTimeout(showSpecialKiss, 200);
-  }
+      requestAnimationFrame(animateMessage);
+    }
 
-  // ── PROGRESSION ──
-  if (clickCount === 3) {
-    document.querySelector("h1").innerText = "these are all for you 💋";
-  }
-  if (clickCount === 6) {
-    document.querySelector("h1").innerText = "you mean so much to me 🥺";
-    document.querySelector("p").innerText  = "keep going... 💕";
-  }
-  if (clickCount === 9 && !done) {
-    done = true;
-    setTimeout(showConfession, 500);
-  }
-});
+    function createBurst(x, y) {
+      const count = 54;
 
-// ═══════════════════════════════════════════
-//  CONFESSION SCREEN
-// ═══════════════════════════════════════════
-function showConfession() {
-  var screen = document.getElementById("conf-screen");
-  var line1  = document.getElementById("conf-line1");
-  var line2  = document.getElementById("conf-line2");
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement("div");
+        particle.className = "click-burst-emoji";
+        particle.textContent = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
+        particle.style.left = x + "px";
+        particle.style.top = y + "px";
+        particle.style.fontSize = (Math.random() * 16 + 22) + "px";
+        particle.style.opacity = "1";
+        document.body.appendChild(particle);
 
-  // ── NEW TEXT AS REQUESTED ──
-  line1.innerText = "okay... i just have to say this 🥺";
-  line2.innerText = "I'm so proud of you baby, I love you ❤️❤️❤️";
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 7 + 4;
+        const rotation = (Math.random() - 0.5) * 40;
 
-  screen.style.display        = "flex";
-  screen.style.opacity        = "0";
-  screen.style.transition     = "opacity 1.5s ease";
+        let px = x;
+        let py = y;
+        let vx = Math.cos(angle) * speed;
+        let vy = Math.sin(angle) * speed - 1.6;
+        let opacity = 1;
+        let scale = 1;
 
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      screen.style.opacity = "1";
+        function animateParticle() {
+          px += vx;
+          py += vy;
+          vy += 0.12;
+          opacity -= 0.021;
+          scale += 0.004;
+
+          particle.style.left = px + "px";
+          particle.style.top = py + "px";
+          particle.style.opacity = opacity;
+          particle.style.transform = `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`;
+
+          if (opacity <= 0) {
+            particle.remove();
+          } else {
+            requestAnimationFrame(animateParticle);
+          }
+        }
+
+        requestAnimationFrame(animateParticle);
+      }
+    }
+
+    kissButton.addEventListener("click", () => {
+      const rect = kissButton.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      createBurst(x, y);
+      showCenterMessage(clickMessages[Math.floor(Math.random() * clickMessages.length)]);
     });
-  });
 
-  // Line 1 fades in
-  setTimeout(function() {
-    line1.style.opacity = "1";
-  }, 900);
+    function openLetter() {
+      letterOverlay.style.display = "flex";
+    }
 
-  // Line 2 fades in after
-  setTimeout(function() {
-    line2.style.opacity = "1";
-  }, 2400);
+    function closeLetter() {
+      letterOverlay.style.display = "none";
+    }
 
-  // Rain of hearts and kisses on confession
-  for (var i = 0; i < 60; i++) {
-    (function(i) {
-      setTimeout(function() {
-        var el = document.createElement("div");
-        el.className  = "emoji";
-        el.innerText  = ["💋","❤️","💕","💗","💖","💝"][Math.floor(Math.random() * 6)];
-        el.style.left = Math.random() * window.innerWidth + "px";
-        el.style.top  = "-40px";
-        el.style.fontSize = (Math.random() * 20 + 18) + "px";
-        el.style.opacity  = "0
+    openLetterBtn.addEventListener("click", openLetter);
+    closeLetterBtn.addEventListener("click", closeLetter);
+
+    letterOverlay.addEventListener("click", (e) => {
+      if (e.target === letterOverlay) {
+        closeLetter();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeLetter();
+      }
+    });
+  </script>
+</body>
+</html>
