@@ -1297,7 +1297,7 @@
     const closeLetterBtn = document.getElementById("closeLetterBtn");
 
     const chatFab = document.getElementById("chatFab");
-    const  = document.getElementById("chatPanel");
+    const chatPanel = document.getElementById("chatPanel");
     const chatCloseBtn = document.getElementById("chatCloseBtn");
     const chatFeed = document.getElementById("chatFeed");
     const chatSenderSelect = document.getElementById("chatSenderSelect");
@@ -1624,9 +1624,9 @@
       }
     });
 
-chatFab.addEventListener("click", () => {
-  chatPanel.classList.toggle("open");
-});
+    chatFab.addEventListener("click", () => {
+      chatPanel.classList.toggle("open");
+    });
 
     chatCloseBtn.addEventListener("click", () => {
       chatPanel.classList.remove("open");
@@ -1672,15 +1672,13 @@ chatFab.addEventListener("click", () => {
       }
     });
 
-    const messagesQuery = query(ref(db, "messages"), limitToLast(200));
+    const messagesQuery = query(ref(db, "messages"), limitToLast(30));
 
-onChildAdded(messagesQuery, (snapshot) => {
-  const data = snapshot.val();
-  const chatBubble = buildChatBubble(data);
-
-  chatFeed.appendChild(chatBubble);
-  chatFeed.scrollTop = chatFeed.scrollHeight;
-});
+    onChildAdded(messagesQuery, (snapshot) => {
+      const data = snapshot.val();
+      const chatBubble = buildChatBubble(data);
+      chatFeed.prepend(chatBubble);
+    });
 
     playSongBtn.addEventListener("click", async () => {
       try {
