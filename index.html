@@ -718,37 +718,39 @@
 
     .music-fab {
       height: 58px;
-      min-width: 250px;
-      padding: 0 18px;
+      min-width: 360px;
+      padding: 0 16px;
       border: none;
       border-radius: 999px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
       background: linear-gradient(135deg, #ff6ab5 0%, #ff137d 100%);
       box-shadow:
         0 16px 34px rgba(255, 41, 133, 0.24),
         inset 0 1px 0 rgba(255,255,255,0.24);
-      cursor: pointer;
       user-select: none;
       color: white;
       font-family: "Inter", sans-serif;
+    }
+
+    .music-main-btn {
+      border: none;
+      background: transparent;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-family: "Inter", sans-serif;
       font-size: 14px;
       font-weight: 600;
-      transition: transform 0.24s ease, box-shadow 0.24s ease, filter 0.24s ease;
+      padding: 0;
+      flex-shrink: 0;
     }
 
-    .music-fab:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow:
-        0 22px 40px rgba(255, 41, 133, 0.28),
-        inset 0 1px 0 rgba(255,255,255,0.24);
-      filter: saturate(1.03);
-    }
-
-    .music-fab:active {
-      transform: translateY(0) scale(0.99);
+    .music-main-btn:hover {
+      opacity: 0.92;
     }
 
     .music-fab-icon {
@@ -761,12 +763,57 @@
       line-height: 1;
     }
 
+    .music-seek-bar {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 120px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.35);
+      outline: none;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .music-seek-bar::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.35);
+    }
+
+    .music-seek-bar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: white;
+      margin-top: -4px;
+      box-shadow: 0 2px 8px rgba(255, 41, 133, 0.25);
+    }
+
+    .music-seek-bar::-moz-range-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.35);
+    }
+
+    .music-seek-bar::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border: none;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 2px 8px rgba(255, 41, 133, 0.25);
+    }
+
     .music-fab-time {
       font-size: 11px;
       font-weight: 500;
       opacity: 0.92;
       white-space: nowrap;
       line-height: 1;
+      flex-shrink: 0;
     }
 
     .music-restart-btn {
@@ -1039,15 +1086,23 @@
       }
 
       .music-fab {
-        min-width: 210px;
+        min-width: 280px;
         height: 54px;
-        padding: 0 14px;
-        font-size: 12.5px;
+        padding: 0 12px;
         gap: 8px;
+      }
+
+      .music-main-btn {
+        font-size: 12px;
+        gap: 6px;
       }
 
       .music-fab-icon {
         font-size: 16px;
+      }
+
+      .music-seek-bar {
+        width: 80px;
       }
 
       .music-fab-time {
@@ -1153,11 +1208,25 @@
   </div>
 
   <div class="music-fab-wrap">
-    <button class="music-fab" id="playSongBtn" aria-label="Play song">
-      <span class="music-fab-label" id="musicFabLabel">play this song</span>
-      <span class="music-fab-icon" id="musicFabIcon">🎧</span>
+    <div class="music-fab">
+      <button class="music-main-btn" id="playSongBtn" aria-label="Play song">
+        <span class="music-fab-label" id="musicFabLabel">play</span>
+        <span class="music-fab-icon" id="musicFabIcon">🎧</span>
+      </button>
+
+      <input
+        type="range"
+        id="musicSeekBar"
+        class="music-seek-bar"
+        min="0"
+        max="100"
+        value="0"
+        step="1"
+        aria-label="Song progress"
+      />
+
       <span class="music-fab-time" id="musicTime">0:00 / 0:00</span>
-    </button>
+    </div>
 
     <button class="music-restart-btn" id="restartSongBtn" aria-label="Restart song">↺</button>
   </div>
@@ -1233,7 +1302,7 @@
     const playSongBtn = document.getElementById("playSongBtn");
     const restartSongBtn = document.getElementById("restartSongBtn");
     const bgMusic = document.getElementById("bgMusic");
-
+    const musicSeekBar = document.getElementById("musicSeekBar");
     const musicTime = document.getElementById("musicTime");
     const musicFabLabel = document.getElementById("musicFabLabel");
     const musicFabIcon = document.getElementById("musicFabIcon");
@@ -1606,43 +1675,61 @@
       chatFeed.prepend(chatBubble);
     });
 
-    playSongBtn.addEventListener("click", () => {
-      if (!isSongPlaying) {
-        bgMusic.play();
-        musicFabLabel.textContent = "pause";
-        musicFabIcon.textContent = "⏸️";
-        isSongPlaying = true;
-      } else {
-        bgMusic.pause();
-        musicFabLabel.textContent = "play this song";
-        musicFabIcon.textContent = "🎧";
-        isSongPlaying = false;
+    playSongBtn.addEventListener("click", async () => {
+      try {
+        if (!isSongPlaying) {
+          await bgMusic.play();
+          musicFabLabel.textContent = "pause";
+          musicFabIcon.textContent = "⏸️";
+          isSongPlaying = true;
+        } else {
+          bgMusic.pause();
+          musicFabLabel.textContent = "play";
+          musicFabIcon.textContent = "🎧";
+          isSongPlaying = false;
+        }
+      } catch (error) {
+        console.error("Audio play failed:", error);
       }
     });
 
     restartSongBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       bgMusic.currentTime = 0;
+      musicSeekBar.value = 0;
       musicTime.textContent = `0:00 / ${formatTime(bgMusic.duration)}`;
 
       if (!isSongPlaying) {
-        musicFabLabel.textContent = "play this song";
+        musicFabLabel.textContent = "play";
         musicFabIcon.textContent = "🎧";
       }
     });
 
     bgMusic.addEventListener("loadedmetadata", () => {
       musicTime.textContent = `0:00 / ${formatTime(bgMusic.duration)}`;
+      musicSeekBar.value = 0;
     });
 
     bgMusic.addEventListener("timeupdate", () => {
       musicTime.textContent = `${formatTime(bgMusic.currentTime)} / ${formatTime(bgMusic.duration)}`;
+
+      if (!isNaN(bgMusic.duration) && bgMusic.duration > 0) {
+        musicSeekBar.value = (bgMusic.currentTime / bgMusic.duration) * 100;
+      }
+    });
+
+    musicSeekBar.addEventListener("input", () => {
+      if (!isNaN(bgMusic.duration) && bgMusic.duration > 0) {
+        const seekTo = (musicSeekBar.value / 100) * bgMusic.duration;
+        bgMusic.currentTime = seekTo;
+      }
     });
 
     bgMusic.addEventListener("ended", () => {
       isSongPlaying = false;
-      musicFabLabel.textContent = "play this song";
+      musicFabLabel.textContent = "play";
       musicFabIcon.textContent = "🎧";
+      musicSeekBar.value = 0;
       musicTime.textContent = `0:00 / ${formatTime(bgMusic.duration)}`;
     });
   </script>
