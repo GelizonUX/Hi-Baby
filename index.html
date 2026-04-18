@@ -825,7 +825,7 @@
     }
 
     .music-current-time,
-      .music-total-time {
+    .music-total-time {
       font-size: 12px;
       color: #9b6680;
       white-space: nowrap;
@@ -1044,78 +1044,177 @@
       100% { background-position: 0% 50%; }
     }
 
-    .intro-heart-btn {
+    .intro-choice-wrap {
       position: relative;
       z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      padding: 24px;
+      width: min(92vw, 820px);
+    }
+
+    .intro-copy {
+      text-align: center;
+      max-width: 720px;
+    }
+
+    .intro-copy-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(28px, 4vw, 52px);
+      line-height: 1.08;
+      color: var(--pink-7);
+      margin-bottom: 10px;
+      text-shadow:
+        0 12px 28px rgba(255, 45, 143, 0.18),
+        0 0 18px rgba(255,255,255,0.52);
+      animation: introTitleFloat 3.8s ease-in-out infinite;
+    }
+
+    .intro-copy-subtitle {
+      font-size: clamp(14px, 1.8vw, 18px);
+      line-height: 1.75;
+      color: var(--text-main);
+    }
+
+    @keyframes introTitleFloat {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .intro-flower-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      width: min(100%, 760px);
+      align-items: center;
+    }
+
+    .intro-flower-btn {
+      position: relative;
       border: none;
       background: transparent;
       cursor: pointer;
       display: flex;
-      align-items: center;
       justify-content: center;
-      width: 150px;
-      height: 150px;
+      align-items: center;
+      min-height: 220px;
       padding: 0;
+      transition: transform 0.3s ease, filter 0.3s ease;
     }
 
-    .intro-heart-glow {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,171,214,0.32) 35%, rgba(255,143,194,0.08) 60%, transparent 72%);
-      filter: blur(10px);
-      animation: introGlowPulse 2.4s ease-in-out infinite;
-    }
-
-    .intro-heart-rings,
-    .intro-heart-rings::before,
-    .intro-heart-rings::after {
+    .intro-flower-btn::before {
       content: "";
       position: absolute;
-      width: 120px;
-      height: 120px;
+      width: 164px;
+      height: 164px;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.5);
-      animation: introRingPulse 3.2s ease-out infinite;
+      background: radial-gradient(circle, rgba(255,255,255,0.78) 0%, rgba(255,188,221,0.28) 42%, rgba(255,188,221,0.06) 68%, transparent 74%);
+      filter: blur(6px);
+      opacity: 0.9;
+      transform: scale(0.95);
+      transition: transform 0.35s ease, opacity 0.35s ease;
     }
 
-    .intro-heart-rings::before {
-      animation-delay: 0.8s;
+    .intro-flower-btn::after {
+      content: "";
+      position: absolute;
+      inset: 18% 18%;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.32);
+      opacity: 0.55;
+      transform: scale(0.96);
+      transition: transform 0.35s ease, opacity 0.35s ease;
     }
 
-    .intro-heart-rings::after {
-      animation-delay: 1.6s;
+    .intro-flower-btn:hover {
+      transform: translateY(-8px) scale(1.03);
+      filter: saturate(1.05);
     }
 
-    .intro-heart {
+    .intro-flower-btn:hover::before {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+
+    .intro-flower-btn:hover::after {
+      transform: scale(1.06);
+      opacity: 0.82;
+    }
+
+    .intro-flower-btn.selected {
+      animation: introFlowerSelected 0.95s cubic-bezier(.2,.85,.2,1) forwards;
+    }
+
+    .intro-flower-btn.selected::before {
+      animation: introFlowerGlowBlast 0.95s ease forwards;
+    }
+
+    .intro-flower-btn.selected::after {
+      animation: introFlowerRingBlast 0.95s ease forwards;
+    }
+
+    @keyframes introFlowerSelected {
+      0% { transform: scale(1); opacity: 1; }
+      28% { transform: scale(1.12); opacity: 1; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+
+    @keyframes introFlowerGlowBlast {
+      0% { transform: scale(1); opacity: 0.95; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    @keyframes introFlowerRingBlast {
+      0% { transform: scale(1); opacity: 0.65; }
+      100% { transform: scale(1.65); opacity: 0; }
+    }
+
+    .intro-flower-asset {
       position: relative;
       z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 86px;
-      line-height: 1;
-      animation: introHeartFloat 2.8s ease-in-out infinite;
-      filter: drop-shadow(0 14px 28px rgba(255, 71, 159, 0.26));
-      transform-origin: center;
+      width: min(190px, 22vw);
+      max-width: 190px;
+      min-width: 112px;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+      filter:
+        drop-shadow(0 20px 36px rgba(255, 94, 171, 0.18))
+        drop-shadow(0 0 18px rgba(255,255,255,0.26));
+      transform-origin: center center;
+      animation: introFlowerFloat 4.5s ease-in-out infinite;
     }
 
-    @keyframes introHeartFloat {
-      0% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-10px) scale(1.05); }
-      100% { transform: translateY(0px) scale(1); }
+    .intro-flower-btn:nth-child(1) .intro-flower-asset {
+      animation-delay: 0s;
     }
 
-    @keyframes introGlowPulse {
-      0% { transform: scale(0.94); opacity: 0.72; }
-      50% { transform: scale(1.08); opacity: 1; }
-      100% { transform: scale(0.94); opacity: 0.72; }
+    .intro-flower-btn:nth-child(2) .intro-flower-asset {
+      animation-delay: 0.7s;
     }
 
-    @keyframes introRingPulse {
-      0% { transform: scale(0.7); opacity: 0; }
-      22% { opacity: 0.7; }
-      100% { transform: scale(1.4); opacity: 0; }
+    .intro-flower-btn:nth-child(3) .intro-flower-asset {
+      animation-delay: 1.4s;
+    }
+
+    @keyframes introFlowerFloat {
+      0% { transform: translateY(0px) rotate(-2deg) scale(1); }
+      25% { transform: translateY(-10px) rotate(1.5deg) scale(1.03); }
+      50% { transform: translateY(-4px) rotate(-1deg) scale(1); }
+      75% { transform: translateY(-12px) rotate(2deg) scale(1.035); }
+      100% { transform: translateY(0px) rotate(-2deg) scale(1); }
+    }
+
+    .intro-note {
+      font-size: 13px;
+      color: #b86b8f;
+      letter-spacing: 0.04em;
+      text-align: center;
+      opacity: 0.92;
     }
 
     .intro-particle {
@@ -1126,32 +1225,6 @@
       transform: translate(-50%, -50%);
       will-change: transform, opacity;
       filter: drop-shadow(0 4px 12px rgba(255,255,255,0.15));
-    }
-
-    .intro-heart-btn.clicked .intro-heart {
-      animation: introHeartPopOut 0.95s cubic-bezier(.2,.85,.2,1) forwards;
-    }
-
-    .intro-heart-btn.clicked .intro-heart-glow {
-      animation: introGlowBlast 0.95s ease forwards;
-    }
-
-    .intro-heart-btn.clicked .intro-heart-rings,
-    .intro-heart-btn.clicked .intro-heart-rings::before,
-    .intro-heart-btn.clicked .intro-heart-rings::after {
-      animation: none;
-      opacity: 0;
-    }
-
-    @keyframes introHeartPopOut {
-      0% { transform: scale(1); opacity: 1; }
-      30% { transform: scale(1.18); opacity: 1; }
-      100% { transform: scale(2.8); opacity: 0; }
-    }
-
-    @keyframes introGlowBlast {
-      0% { transform: scale(1); opacity: 0.95; }
-      100% { transform: scale(2.3); opacity: 0; }
     }
 
     .intro-overlay.hide-intro {
@@ -1316,31 +1389,72 @@
         font-size: 13px;
       }
 
-      .intro-heart-btn {
-        width: 132px;
-        height: 132px;
+      .intro-choice-wrap {
+        gap: 18px;
+        padding: 16px;
       }
 
-      .intro-heart-rings,
-      .intro-heart-rings::before,
-      .intro-heart-rings::after {
-        width: 104px;
-        height: 104px;
+      .intro-copy-title {
+        font-size: clamp(24px, 8vw, 38px);
       }
 
-      .intro-heart {
-        font-size: 74px;
+      .intro-copy-subtitle {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .intro-flower-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        width: 100%;
+      }
+
+      .intro-flower-btn {
+        min-height: 150px;
+      }
+
+      .intro-flower-btn::before {
+        width: 108px;
+        height: 108px;
+      }
+
+      .intro-flower-asset {
+        width: min(28vw, 118px);
+        min-width: 74px;
+      }
+
+      .intro-note {
+        font-size: 12px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="intro-overlay" id="introOverlay" aria-label="Open intro">
-    <button class="intro-heart-btn" id="introHeartBtn" aria-label="Open site">
-      <span class="intro-heart-glow"></span>
-      <span class="intro-heart-rings"></span>
-      <span class="intro-heart">💐</span>
-    </button>
+  <div class="intro-overlay" id="introOverlay" aria-label="Choose a flower">
+    <div class="intro-choice-wrap">
+      <div class="intro-copy">
+        <div class="intro-copy-title">Pick your favorite flower baby! 💗</div>
+        <div class="intro-copy-subtitle">
+          choose the one you like the most and it will open your little surprise
+        </div>
+      </div>
+
+      <div class="intro-flower-grid">
+        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 1">
+          <img src="flower 1.png" alt="Flower 1" class="intro-flower-asset" draggable="false" />
+        </button>
+
+        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 2">
+          <img src="flower 2.png" alt="Flower 2" class="intro-flower-asset" draggable="false" />
+        </button>
+
+        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 3">
+          <img src="flower 3.png" alt="Flower 3" class="intro-flower-asset" draggable="false" />
+        </button>
+      </div>
+
+      <div class="intro-note">tap any flower 🌸</div>
+    </div>
   </div>
 
   <main class="container">
@@ -1406,6 +1520,7 @@ Wuv u 💗🌹</div>
           <option value="2">Be with you</option>
           <option value="3">Last night on earth</option>
           <option value="4">Hele</option>
+          <option value="5">Wish list</option>
         </select>
       </div>
 
@@ -1501,7 +1616,7 @@ Wuv u 💗🌹</div>
     const db = getDatabase(app);
 
     const introOverlay = document.getElementById("introOverlay");
-    const introHeartBtn = document.getElementById("introHeartBtn");
+    const introFlowerChoices = document.querySelectorAll(".intro-flower-choice");
 
     const kissButton = document.getElementById("kissButton");
     const openLetterBtn = document.getElementById("openLetterBtn");
@@ -1541,11 +1656,11 @@ Wuv u 💗🌹</div>
       { title: "Tenerifea sea", file: "songthree.mp3" },
       { title: "Be with you", file: "songtwo.mp3" },
       { title: "Last night on earth", file: "Songfour.mp3" },
-      { title: "Hele", file: "songfive.mp3" }
+      { title: "Hele", file: "songfive.mp3" },
+      { title: "Wish list", file: "songsix.mp3" }
     ];
 
     let currentSongIndex = 0;
-    let isSongPlaying = false;
     let isDraggingSeek = false;
 
     const floatEmojis = [
@@ -1570,7 +1685,7 @@ Wuv u 💗🌹</div>
     }
 
     function formatTime(seconds) {
-      if (isNaN(seconds) || seconds < 0) return "0:00";
+      if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${mins}:${secs.toString().padStart(2, "0")}`;
@@ -1584,8 +1699,17 @@ Wuv u 💗🌹</div>
       musicPanel.classList.remove("open");
     }
 
+    function updateMusicTitles() {
+      const currentSong = playlist[currentSongIndex];
+      musicPanelTitle.textContent = currentSong.title;
+      musicMiniTitle.textContent = currentSong.title;
+      musicSelect.value = String(currentSongIndex);
+    }
+
     function updateMusicButtons() {
-      if (isSongPlaying) {
+      const isPlaying = !bgMusic.paused && !bgMusic.ended;
+
+      if (isPlaying) {
         musicPlayIcon.textContent = "⏸";
         musicPlayText.textContent = "Pause";
         musicMiniPlayBtn.textContent = "⏸";
@@ -1596,16 +1720,9 @@ Wuv u 💗🌹</div>
       }
     }
 
-    function updateMusicTitles() {
-      const currentSong = playlist[currentSongIndex];
-      musicPanelTitle.textContent = currentSong.title;
-      musicMiniTitle.textContent = currentSong.title;
-      musicSelect.value = String(currentSongIndex);
-    }
-
     function updateProgressUI() {
-      const current = bgMusic.currentTime || 0;
-      const duration = bgMusic.duration || 0;
+      const current = Number.isFinite(bgMusic.currentTime) ? bgMusic.currentTime : 0;
+      const duration = Number.isFinite(bgMusic.duration) ? bgMusic.duration : 0;
 
       if (!isDraggingSeek) {
         const percentage = duration > 0 ? (current / duration) * 100 : 0;
@@ -1617,13 +1734,8 @@ Wuv u 💗🌹</div>
       musicMiniTime.textContent = formatTime(current);
     }
 
-    function loadSong(index, keepTime = false) {
-      const safeIndex = (index + playlist.length) % playlist.length;
-      currentSongIndex = safeIndex;
-
-      const shouldResume = isSongPlaying;
-      const rememberedTime = keepTime ? bgMusic.currentTime : 0;
-
+    function loadSong(index) {
+      currentSongIndex = (index + playlist.length) % playlist.length;
       bgMusic.src = playlist[currentSongIndex].file;
       bgMusic.load();
 
@@ -1632,72 +1744,49 @@ Wuv u 💗🌹</div>
       musicCurrentTime.textContent = "0:00";
       musicTotalTime.textContent = "0:00";
       musicMiniTime.textContent = "0:00";
-
-      bgMusic.addEventListener("loadedmetadata", function handleLoaded() {
-        if (keepTime && rememberedTime > 0 && rememberedTime < bgMusic.duration) {
-          bgMusic.currentTime = rememberedTime;
-        }
-        updateProgressUI();
-
-        if (shouldResume) {
-          bgMusic.play().then(() => {
-            isSongPlaying = true;
-            updateMusicButtons();
-          }).catch((error) => {
-            console.error("Audio play failed:", error);
-            isSongPlaying = false;
-            updateMusicButtons();
-          });
-        }
-
-        bgMusic.removeEventListener("loadedmetadata", handleLoaded);
-      });
+      updateMusicButtons();
     }
 
-    async function togglePlayPause() {
+    async function playCurrentSong() {
       try {
-        if (!bgMusic.src) {
-          loadSong(currentSongIndex);
-        }
-
-        if (!isSongPlaying) {
-          await bgMusic.play();
-          isSongPlaying = true;
-        } else {
-          bgMusic.pause();
-          isSongPlaying = false;
-        }
-
-        updateMusicButtons();
+        await bgMusic.play();
       } catch (error) {
         console.error("Audio play failed:", error);
       }
+    }
+
+    async function togglePlayPause() {
+      if (!bgMusic.src) {
+        loadSong(currentSongIndex);
+      }
+
+      if (bgMusic.paused || bgMusic.ended) {
+        await playCurrentSong();
+      } else {
+        bgMusic.pause();
+      }
+
+      updateMusicButtons();
     }
 
     async function playSongAtIndex(index) {
       currentSongIndex = (index + playlist.length) % playlist.length;
       bgMusic.src = playlist[currentSongIndex].file;
       bgMusic.load();
+
       updateMusicTitles();
-
-      try {
-        await bgMusic.play();
-        isSongPlaying = true;
-      } catch (error) {
-        console.error("Audio play failed:", error);
-        isSongPlaying = false;
-      }
-
-      updateMusicButtons();
       updateProgressUI();
+
+      await playCurrentSong();
+      updateMusicButtons();
     }
 
-    function playNextSong() {
-      playSongAtIndex(currentSongIndex + 1);
+    async function playNextSong() {
+      await playSongAtIndex(currentSongIndex + 1);
     }
 
-    function playPrevSong() {
-      playSongAtIndex(currentSongIndex - 1);
+    async function playPrevSong() {
+      await playSongAtIndex(currentSongIndex - 1);
     }
 
     function createFloatingEmoji() {
@@ -1889,8 +1978,8 @@ Wuv u 💗🌹</div>
     }
 
     function createIntroBurst(x, y) {
-      const introBurstEmojis = ["💗", "💕", "💖", "🤍"];
-      const count = 26;
+      const introBurstEmojis = ["🌸", "🌷", "💗", "💕", "🤍"];
+      const count = 30;
 
       for (let i = 0; i < count; i++) {
         const particle = document.createElement("div");
@@ -1898,7 +1987,7 @@ Wuv u 💗🌹</div>
         particle.textContent = introBurstEmojis[Math.floor(Math.random() * introBurstEmojis.length)];
         particle.style.left = x + "px";
         particle.style.top = y + "px";
-        particle.style.fontSize = (Math.random() * 12 + 16) + "px";
+        particle.style.fontSize = (Math.random() * 12 + 18) + "px";
         particle.style.opacity = "1";
         document.body.appendChild(particle);
 
@@ -1936,18 +2025,28 @@ Wuv u 💗🌹</div>
       }
     }
 
-    introHeartBtn.addEventListener("click", () => {
-      const rect = introHeartBtn.getBoundingClientRect();
+    function handleIntroFlowerPick(button) {
+      const rect = button.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
 
-      introHeartBtn.classList.add("clicked");
+      introFlowerChoices.forEach((item) => {
+        item.disabled = true;
+      });
+
+      button.classList.add("selected");
       createIntroBurst(x, y);
       introOverlay.classList.add("hide-intro");
 
       setTimeout(() => {
         introOverlay.style.display = "none";
       }, 950);
+    }
+
+    introFlowerChoices.forEach((button) => {
+      button.addEventListener("click", () => {
+        handleIntroFlowerPick(button);
+      });
     });
 
     kissButton.addEventListener("click", () => {
@@ -2076,7 +2175,7 @@ Wuv u 💗🌹</div>
     });
 
     musicSeekBar.addEventListener("input", () => {
-      if (!isNaN(bgMusic.duration) && bgMusic.duration > 0) {
+      if (Number.isFinite(bgMusic.duration) && bgMusic.duration > 0) {
         const seekTo = (Number(musicSeekBar.value) / 100) * bgMusic.duration;
         bgMusic.currentTime = seekTo;
         updateProgressUI();
@@ -2087,26 +2186,19 @@ Wuv u 💗🌹</div>
       isDraggingSeek = false;
     });
 
-    bgMusic.addEventListener("loadedmetadata", () => {
-      updateProgressUI();
+    bgMusic.addEventListener("loadedmetadata", updateProgressUI);
+    bgMusic.addEventListener("durationchange", updateProgressUI);
+    bgMusic.addEventListener("loadeddata", updateProgressUI);
+    bgMusic.addEventListener("canplay", updateProgressUI);
+    bgMusic.addEventListener("timeupdate", updateProgressUI);
+    bgMusic.addEventListener("play", updateMusicButtons);
+    bgMusic.addEventListener("pause", updateMusicButtons);
+    bgMusic.addEventListener("ended", async () => {
+      await playNextSong();
     });
 
-    bgMusic.addEventListener("timeupdate", () => {
-      updateProgressUI();
-    });
-
-    bgMusic.addEventListener("play", () => {
-      isSongPlaying = true;
-      updateMusicButtons();
-    });
-
-    bgMusic.addEventListener("pause", () => {
-      isSongPlaying = false;
-      updateMusicButtons();
-    });
-
-    bgMusic.addEventListener("ended", () => {
-      playNextSong();
+    bgMusic.addEventListener("error", () => {
+      console.error("Audio failed to load:", bgMusic.currentSrc);
     });
 
     document.addEventListener("click", (e) => {
@@ -2117,8 +2209,8 @@ Wuv u 💗🌹</div>
     });
 
     loadSong(0);
-    updateMusicButtons();
     updateMusicTitles();
+    updateMusicButtons();
     updateProgressUI();
   </script>
 </body>
