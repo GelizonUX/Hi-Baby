@@ -1740,26 +1740,41 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* mobile envelope tap fix */
-    .envelope-wrap {
-      position: relative;
-      z-index: 15;
-      pointer-events: auto;
-    }
-
+    /* stronger mobile envelope fix */
+    .envelope-wrap,
     .envelope,
     .envelope-shell {
-      pointer-events: auto;
+      pointer-events: auto !important;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
 
     .envelope {
-      z-index: 16;
+      position: relative;
+      z-index: 30 !important;
+      cursor: pointer;
     }
 
     .intro-overlay.hide-intro {
-      pointer-events: none;
+      pointer-events: none !important;
+    }
+
+    .intro-overlay.intro-gone {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    @media (max-width: 680px) {
+      .envelope-wrap {
+        position: relative;
+        z-index: 30;
+      }
+
+      .envelope {
+        min-width: 250px;
+      }
     }
 
   </style>
@@ -1817,7 +1832,7 @@
     </div>
 
     <div class="envelope-wrap">
-      <div class="envelope" id="openLetterBtn" aria-label="Open my message" role="button" tabindex="0">
+      <div class="envelope" id="openLetterBtn" aria-label="Open my message">
         <div class="envelope-shell">
           <div class="envelope-back"></div>
           <div class="envelope-left-fold"></div>
@@ -2403,34 +2418,15 @@
 
     function openLetter() {
       letterOverlay.style.display = "flex";
-      document.body.style.overflow = "hidden";
       requestAnimationFrame(() => letterOverlay.classList.add("open"));
     }
 
     function closeLetter() {
       letterOverlay.classList.remove("open");
       setTimeout(() => { letterOverlay.style.display = "none"; }, 320);
-      document.body.style.overflow = "";
     }
 
-    function handleEnvelopeOpen(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      openLetter();
-    }
-
-    openLetterBtn.addEventListener("click", handleEnvelopeOpen);
-    openLetterBtn.addEventListener("touchstart", handleEnvelopeOpen, { passive: false });
-    openLetterBtn.addEventListener("touchend", handleEnvelopeOpen, { passive: false });
-    openLetterBtn.addEventListener("pointerup", handleEnvelopeOpen);
-    openLetterBtn.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        handleEnvelopeOpen(e);
-      }
-    });
-
+    openLetterBtn.addEventListener("click", openLetter);
     closeLetterBtn.addEventListener("click", closeLetter);
 
     letterOverlay.addEventListener("click", (e) => {
@@ -2580,5 +2576,87 @@
     updateMusicButtons();
     updateProgressUI();
   </script>
+
+<script>
+(function () {
+  const introOverlay = document.getElementById("introOverlay");
+  const openLetterBtn = document.getElementById("openLetterBtn");
+  const letterOverlay = document.getElementById("letterOverlay");
+  const closeLetterBtn = document.getElementById("closeLetterBtn");
+
+  if (!openLetterBtn || !letterOverlay) return;
+
+  function hardDisableIntroOverlay() {
+    if (!introOverlay) return;
+    introOverlay.classList.add("intro-gone");
+    introOverlay.style.pointerEvents = "none";
+    introOverlay.style.display = "none";
+    introOverlay.style.visibility = "hidden";
+    introOverlay.style.opacity = "0";
+  }
+
+  if (introOverlay) {
+    introOverlay.addEventListener("animationend", function (e) {
+      if (introOverlay.classList.contains("hide-intro")) {
+        hardDisableIntroOverlay();
+      }
+    });
+
+    setTimeout(() => {
+      if (introOverlay.classList.contains("hide-intro")) {
+        hardDisableIntroOverlay();
+      }
+    }, 1400);
+  }
+
+  function openLetterPatched(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation && e.stopImmediatePropagation();
+    }
+    hardDisableIntroOverlay();
+    letterOverlay.classList.add("open");
+    letterOverlay.style.display = "flex";
+    letterOverlay.style.pointerEvents = "auto";
+  }
+
+  function closeLetterPatched(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    letterOverlay.classList.remove("open");
+    letterOverlay.style.display = "";
+    letterOverlay.style.pointerEvents = "";
+  }
+
+  openLetterBtn.setAttribute("role", "button");
+  openLetterBtn.setAttribute("tabindex", "0");
+
+  openLetterBtn.onclick = openLetterPatched;
+  openLetterBtn.addEventListener("pointerup", openLetterPatched, { passive: false });
+  openLetterBtn.addEventListener("touchend", openLetterPatched, { passive: false });
+  openLetterBtn.addEventListener("click", openLetterPatched, { passive: false });
+
+  openLetterBtn.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") {
+      openLetterPatched(e);
+    }
+  });
+
+  if (closeLetterBtn) {
+    closeLetterBtn.onclick = closeLetterPatched;
+    closeLetterBtn.addEventListener("click", closeLetterPatched, { passive: false });
+  }
+
+  letterOverlay.addEventListener("click", function (e) {
+    if (e.target === letterOverlay) {
+      closeLetterPatched(e);
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
