@@ -111,8 +111,14 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .back-link {
@@ -130,9 +136,216 @@
       backdrop-filter: blur(10px);
     }
 
+    .plus-toggle-btn {
+      width: 46px;
+      height: 46px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #ffffff;
+      font-size: 26px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff6ab5 0%, #ff137d 100%);
+      box-shadow:
+        0 14px 30px rgba(255, 41, 133, 0.20),
+        inset 0 1px 0 rgba(255,255,255,0.26);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .plus-toggle-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .plus-toggle-btn.active {
+      transform: rotate(45deg);
+    }
+
     .top-note {
       font-size: 13px;
       color: #b86b8f;
+    }
+
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .gallery-title {
+      font-family: var(--snell-font);
+      font-size: clamp(34px, 4vw, 56px);
+      line-height: 0.92;
+      color: var(--pink-7);
+    }
+
+    .gallery-subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      margin-top: 4px;
+    }
+
+    .scrapbook {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 24px;
+      padding-top: 18px;
+      min-height: 320px;
+      margin-bottom: 42px;
+    }
+
+    .memory-card {
+      position: relative;
+      width: 220px;
+      flex: 0 0 220px;
+      transform: rotate(var(--rotate, -2deg));
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      animation: floaty 6s ease-in-out infinite;
+    }
+
+    .memory-card:nth-child(2n) { --rotate: 2deg; }
+    .memory-card:nth-child(3n) { --rotate: -4deg; }
+    .memory-card:nth-child(4n) { --rotate: 1.2deg; }
+
+    .memory-card:hover {
+      transform: scale(1.05) rotate(0deg);
+      z-index: 3;
+    }
+
+    @keyframes floaty {
+      0% { transform: translateY(0px) rotate(var(--rotate)); }
+      50% { transform: translateY(-6px) rotate(var(--rotate)); }
+      100% { transform: translateY(0px) rotate(var(--rotate)); }
+    }
+
+    .memory-inner {
+      position: relative;
+      width: 100%;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(255,255,255,0.95);
+      border-radius: 22px;
+      padding: 12px;
+      box-shadow: 0 18px 46px rgba(255, 103, 173, 0.12);
+    }
+
+    .memory-inner::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      background: #ff7aa2;
+      border-radius: 50%;
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 4;
+    }
+
+    .memory-photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,248,252,0.95), rgba(255,237,245,0.92));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .memory-photo img,
+    .memory-photo video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      transition: transform 0.45s ease;
+      background: rgba(255,255,255,0.45);
+    }
+
+    .memory-card:hover .memory-photo img,
+    .memory-card:hover .memory-photo video {
+      transform: scale(1.02);
+    }
+
+    .memory-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 14px;
+      background: linear-gradient(180deg, rgba(86, 44, 63, 0.06) 22%, rgba(86, 44, 63, 0.82) 100%);
+      color: white;
+    }
+
+    .memory-date {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.84;
+      margin-bottom: 6px;
+    }
+
+    .memory-title {
+      font-family: var(--snell-font);
+      font-size: 34px;
+      line-height: 0.92;
+      margin-bottom: 8px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      word-break: break-word;
+    }
+
+    .memory-note {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.94);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .empty-gallery {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(10px);
+      border: 1px dashed rgba(240, 191, 214, 0.6);
+      box-shadow: 0 10px 30px rgba(255, 87, 165, 0.08);
+      text-align: center;
+      max-width: 260px;
+      width: calc(100% - 32px);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .empty-gallery h3 {
+      font-family: var(--snell-font);
+      font-size: 26px;
+      line-height: 1;
+      color: var(--pink-7);
+      margin-bottom: 6px;
+    }
+
+    .empty-gallery p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-soft);
     }
 
     .hero {
@@ -147,10 +360,10 @@
 
     .hero-title {
       font-family: var(--snell-font);
-      font-size: clamp(42px, 6vw, 78px);
-      line-height: 0.92;
+      font-size: clamp(40px, 5.6vw, 72px);
+      line-height: 0.94;
       color: var(--pink-7);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .hero-copy {
@@ -158,16 +371,11 @@
       line-height: 1.7;
       font-size: 15px;
       color: var(--text-main);
-      margin-bottom: 14px;
-    }
-
-    .form-toggle-btn {
-      margin-top: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 0;
     }
 
     .upload-card {
-      margin-top: 14px;
+      margin-top: 18px;
       border-radius: 28px;
       padding: 20px;
       background: linear-gradient(180deg, rgba(255,247,251,0.94), rgba(255,255,255,0.88));
@@ -360,184 +568,6 @@
       font-size: 14px;
       color: #b86b8f;
       min-height: 20px;
-    }
-
-    .gallery-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin: 24px 0 16px;
-      flex-wrap: wrap;
-    }
-
-    .gallery-title {
-      font-family: var(--snell-font);
-      font-size: clamp(34px, 4vw, 56px);
-      line-height: 0.92;
-      color: var(--pink-7);
-    }
-
-    .gallery-subtitle {
-      font-size: 14px;
-      color: var(--text-soft);
-      margin-top: 4px;
-    }
-
-    .scrapbook {
-      position: relative;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 24px;
-      padding-top: 14px;
-      min-height: 260px;
-    }
-
-    .memory-card {
-      position: relative;
-      width: 220px;
-      flex: 0 0 220px;
-      transform: rotate(var(--rotate, -2deg));
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      animation: floaty 6s ease-in-out infinite;
-    }
-
-    .memory-card:nth-child(2n) { --rotate: 2deg; }
-    .memory-card:nth-child(3n) { --rotate: -4deg; }
-    .memory-card:nth-child(4n) { --rotate: 1.2deg; }
-
-    .memory-card:hover {
-      transform: scale(1.05) rotate(0deg);
-      z-index: 3;
-    }
-
-    @keyframes floaty {
-      0% { transform: translateY(0px) rotate(var(--rotate)); }
-      50% { transform: translateY(-6px) rotate(var(--rotate)); }
-      100% { transform: translateY(0px) rotate(var(--rotate)); }
-    }
-
-    .memory-inner {
-      position: relative;
-      width: 100%;
-      background: rgba(255,255,255,0.9);
-      border: 1px solid rgba(255,255,255,0.95);
-      border-radius: 22px;
-      padding: 12px;
-      box-shadow: 0 18px 46px rgba(255, 103, 173, 0.12);
-    }
-
-    .memory-inner::before {
-      content: "";
-      width: 12px;
-      height: 12px;
-      background: #ff7aa2;
-      border-radius: 50%;
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 4;
-    }
-
-    .memory-photo {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 4 / 5;
-      border-radius: 16px;
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(255,248,252,0.95), rgba(255,237,245,0.92));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .memory-photo img,
-    .memory-photo video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      transition: transform 0.45s ease;
-      background: rgba(255,255,255,0.45);
-    }
-
-    .memory-card:hover .memory-photo img,
-    .memory-card:hover .memory-photo video {
-      transform: scale(1.02);
-    }
-
-    .memory-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 14px;
-      background: linear-gradient(180deg, rgba(86, 44, 63, 0.06) 22%, rgba(86, 44, 63, 0.82) 100%);
-      color: white;
-    }
-
-    .memory-date {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      opacity: 0.84;
-      margin-bottom: 6px;
-    }
-
-    .memory-title {
-      font-family: var(--snell-font);
-      font-size: 34px;
-      line-height: 0.92;
-      margin-bottom: 8px;
-      text-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      word-break: break-word;
-    }
-
-    .memory-note {
-      font-size: 14px;
-      line-height: 1.6;
-      color: rgba(255,255,255,0.94);
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .empty-gallery {
-      position: absolute;
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 16px 20px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.55);
-      backdrop-filter: blur(10px);
-      border: 1px dashed rgba(240, 191, 214, 0.6);
-      box-shadow: 0 10px 30px rgba(255, 87, 165, 0.08);
-      text-align: center;
-      max-width: 260px;
-      width: calc(100% - 32px);
-      z-index: 1;
-    }
-
-    .empty-gallery h3 {
-      font-family: var(--snell-font);
-      font-size: 26px;
-      line-height: 1;
-      color: var(--pink-7);
-      margin-bottom: 6px;
-    }
-
-    .empty-gallery p {
-      font-size: 12px;
-      line-height: 1.6;
-      color: var(--text-soft);
     }
 
     .modal {
@@ -1122,49 +1152,115 @@
       }
 
       .topbar {
-        flex-direction: column;
         align-items: flex-start;
         gap: 10px;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
+      }
+
+      .topbar-left {
+        width: 100%;
+        justify-content: space-between;
       }
 
       .top-note {
+        width: 100%;
+        text-align: center;
         font-size: 12px;
         line-height: 1.5;
       }
 
+      .gallery-header {
+        margin: 16px 0 10px;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .gallery-title {
+        width: 100%;
+        font-size: clamp(34px, 12vw, 48px);
+        line-height: 0.92;
+      }
+
+      .gallery-subtitle {
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .scrapbook {
+        justify-content: center;
+        gap: 14px;
+        min-height: auto;
+        margin-bottom: 24px;
+      }
+
+      .memory-card {
+        width: 100%;
+        max-width: 290px;
+        flex: 0 0 100%;
+      }
+
+      .memory-title {
+        font-size: 30px;
+      }
+
+      .memory-note {
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .empty-gallery {
+        top: 50%;
+        padding: 14px 16px;
+        border-radius: 18px;
+        max-width: 220px;
+        width: calc(100% - 28px);
+      }
+
+      .empty-gallery h3 {
+        font-size: 22px;
+      }
+
+      .empty-gallery p {
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
       .hero {
-        padding: 16px;
+        padding: 18px 16px;
         border-radius: 24px;
         margin-bottom: 14px;
       }
 
-      .hero-title,
-      .upload-title,
-      .gallery-title {
-        font-size: clamp(34px, 12vw, 50px);
-        line-height: 0.92;
+      .hero-title {
+        font-size: 34px;
+        line-height: 0.96;
+        text-align: center;
+        max-width: 100%;
       }
 
-      .hero-copy,
-      .upload-subtitle {
+      .hero-copy {
         font-size: 13px;
         line-height: 1.65;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .upload-card {
-        margin-top: 14px;
+        margin-top: 16px;
         padding: 16px;
         border-radius: 22px;
       }
 
-      .form-toggle-btn {
-        width: 100%;
+      .upload-title {
+        font-size: 28px;
+        text-align: center;
       }
 
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+      .upload-subtitle {
+        font-size: 13px;
+        line-height: 1.6;
+        text-align: center;
       }
 
       .text-input,
@@ -1187,52 +1283,6 @@
       .upload-preview img,
       .upload-preview video {
         border-radius: 14px;
-      }
-
-      .gallery-header {
-        margin: 18px 0 12px;
-      }
-
-      .gallery-subtitle {
-        font-size: 13px;
-        line-height: 1.6;
-      }
-
-      .scrapbook {
-        justify-content: center;
-        gap: 14px;
-      }
-
-      .memory-card {
-        width: 100%;
-        max-width: 290px;
-        flex: 0 0 100%;
-      }
-
-      .memory-title {
-        font-size: 30px;
-      }
-
-      .memory-note {
-        font-size: 13px;
-        line-height: 1.55;
-      }
-
-      .empty-gallery {
-        top: 44%;
-        padding: 14px 16px;
-        border-radius: 18px;
-        max-width: 220px;
-        width: calc(100% - 28px);
-      }
-
-      .empty-gallery h3 {
-        font-size: 22px;
-      }
-
-      .empty-gallery p {
-        font-size: 11px;
-        line-height: 1.5;
       }
 
       .modal {
@@ -1394,7 +1444,10 @@
 
   <div class="page">
     <div class="topbar">
-      <a class="back-link" href="index.html">← back home</a>
+      <div class="topbar-left">
+        <a class="back-link" href="index.html">← back home</a>
+        <button class="plus-toggle-btn" id="toggleUploadBtn" type="button" aria-label="Open add memory form">+</button>
+      </div>
       <div class="top-note">our little keepsakes 💗</div>
     </div>
 
@@ -1405,11 +1458,11 @@
       </div>
     </div>
 
-    <section class="scrapbook" id="scrapbookGrid"></section>
-
-    <section class="empty-gallery" id="emptyGallery">
-      <h3>no memories here yet 🌸</h3>
-      <p>add the first one when you're ready</p>
+    <section class="scrapbook" id="scrapbookGrid">
+      <section class="empty-gallery" id="emptyGallery">
+        <h3>no memories here yet 🌸</h3>
+        <p>add the first one when you're ready</p>
+      </section>
     </section>
 
     <section class="hero">
@@ -1417,8 +1470,6 @@
       <p class="hero-copy">
         little photos, notes, and soft moments kept here with us.
       </p>
-
-      <button class="primary-btn form-toggle-btn" id="toggleUploadBtn" type="button">add photos here baby 💗</button>
 
       <div class="upload-card" id="uploadCard">
         <h2 class="upload-title">add a memory ✨</h2>
@@ -1654,7 +1705,6 @@
 
     const memoryModal = document.getElementById("memoryModal");
     const closeModalBtn = document.getElementById("closeModalBtn");
-    const modalImageWrap = document.getElementById("modalImageWrap");
     const modalImage = document.getElementById("modalImage");
     const modalVideo = document.getElementById("modalVideo");
     const modalTitleView = document.getElementById("modalTitleView");
@@ -1736,24 +1786,23 @@
       if (mediaType === "video") {
         return `<video src="${src}" controls playsinline preload="metadata"></video>`;
       }
-
       return `<img src="${src}" alt="${altText}" />`;
     }
 
     function getCardMediaMarkup(memory) {
       const mediaType = getMemoryMediaType(memory);
-
       if (mediaType === "video") {
         return `<video src="${memory.imageUrl}" playsinline muted preload="metadata"></video>`;
       }
-
       return `<img src="${memory.imageUrl}" alt="${memory.title || "Memory"}" />`;
     }
 
     function toggleUploadCard(forceOpen = null) {
       const shouldOpen = forceOpen === null ? !uploadCard.classList.contains("open") : forceOpen;
       uploadCard.classList.toggle("open", shouldOpen);
-      toggleUploadBtn.textContent = shouldOpen ? "hide form 💗" : "add photos here baby 💗";
+      toggleUploadBtn.classList.toggle("active", shouldOpen);
+      toggleUploadBtn.setAttribute("aria-label", shouldOpen ? "Close add memory form" : "Open add memory form");
+      updateEmptyState();
     }
 
     function formatDisplayDate(dateValue) {
@@ -1772,7 +1821,8 @@
     }
 
     function updateEmptyState() {
-      emptyGallery.style.display = hasAnyMemory ? "none" : "block";
+      const shouldShowEmpty = !hasAnyMemory && !uploadCard.classList.contains("open");
+      emptyGallery.style.display = shouldShowEmpty ? "block" : "none";
     }
 
     function clearPreview() {
@@ -2412,6 +2462,7 @@
     });
 
     loadSong(0);
+    updateEmptyState();
   </script>
 </body>
 </html>
