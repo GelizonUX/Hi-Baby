@@ -384,10 +384,6 @@
       margin-top: 4px;
     }
 
-    .gallery-header > div {
-      width: 100%;
-    }
-
     .scrapbook {
       position: relative;
       display: flex;
@@ -397,7 +393,6 @@
       gap: 24px;
       padding-top: 14px;
       min-height: 260px;
-      margin-bottom: 42px;
     }
 
     .memory-card {
@@ -516,7 +511,7 @@
 
     .empty-gallery {
       position: absolute;
-      top: 50%;
+      top: 45%;
       left: 50%;
       transform: translate(-50%, -50%);
       padding: 16px 20px;
@@ -528,8 +523,7 @@
       text-align: center;
       max-width: 260px;
       width: calc(100% - 32px);
-      z-index: 2;
-      pointer-events: none;
+      z-index: 1;
     }
 
     .empty-gallery h3 {
@@ -1140,47 +1134,22 @@
       }
 
       .hero {
-        padding: 18px 16px;
+        padding: 16px;
         border-radius: 24px;
         margin-bottom: 14px;
       }
 
+      .hero-title,
+      .upload-title,
       .gallery-title {
         font-size: clamp(34px, 12vw, 50px);
         line-height: 0.92;
-      }
-
-      .hero-title {
-        font-size: clamp(28px, 8.2vw, 40px);
-        line-height: 0.98;
-      }
-
-      .upload-title {
-        font-size: clamp(28px, 8.2vw, 40px);
-        line-height: 0.98;
       }
 
       .hero-copy,
       .upload-subtitle {
         font-size: 13px;
         line-height: 1.65;
-      }
-
-      .gallery-header {
-        margin: 18px 0 16px;
-      }
-
-      .gallery-header > div {
-        width: 100%;
-        text-align: center;
-      }
-
-      .gallery-subtitle {
-        margin-top: 8px;
-      }
-
-      .hero-copy {
-        max-width: none;
       }
 
       .upload-card {
@@ -1191,13 +1160,6 @@
 
       .form-toggle-btn {
         width: 100%;
-      }
-
-      .hero-title,
-      .hero-copy,
-      .upload-title,
-      .upload-subtitle {
-        text-align: center;
       }
 
       .form-grid {
@@ -1239,7 +1201,6 @@
       .scrapbook {
         justify-content: center;
         gap: 14px;
-        margin-bottom: 28px;
       }
 
       .memory-card {
@@ -1258,7 +1219,7 @@
       }
 
       .empty-gallery {
-        top: 50%;
+        top: 44%;
         padding: 14px 16px;
         border-radius: 18px;
         max-width: 220px;
@@ -1444,11 +1405,11 @@
       </div>
     </div>
 
-    <section class="scrapbook" id="scrapbookGrid">
-      <section class="empty-gallery" id="emptyGallery">
-        <h3>no memories here yet 🌸</h3>
-        <p>add the first one when you're ready</p>
-      </section>
+    <section class="scrapbook" id="scrapbookGrid"></section>
+
+    <section class="empty-gallery" id="emptyGallery">
+      <h3>no memories here yet 🌸</h3>
+      <p>add the first one when you're ready</p>
     </section>
 
     <section class="hero">
@@ -1793,7 +1754,6 @@
       const shouldOpen = forceOpen === null ? !uploadCard.classList.contains("open") : forceOpen;
       uploadCard.classList.toggle("open", shouldOpen);
       toggleUploadBtn.textContent = shouldOpen ? "hide form 💗" : "add photos here baby 💗";
-      updateEmptyState();
     }
 
     function formatDisplayDate(dateValue) {
@@ -1812,8 +1772,7 @@
     }
 
     function updateEmptyState() {
-      const shouldShowEmpty = !hasAnyMemory && !uploadCard.classList.contains("open");
-      emptyGallery.style.display = shouldShowEmpty ? "block" : "none";
+      emptyGallery.style.display = hasAnyMemory ? "none" : "block";
     }
 
     function clearPreview() {
@@ -1855,7 +1814,6 @@
     function renderModal(memory) {
       const mediaType = getMemoryMediaType(memory);
 
-      modalImage.pause?.();
       modalVideo.pause();
       modalVideo.removeAttribute("src");
       modalVideo.load();
@@ -2405,7 +2363,6 @@
 
     musicToggleBtn.addEventListener("click", openMusicPanel);
     musicCollapseBtn.addEventListener("click", closeMusicPanel);
-
     musicMiniInfo.addEventListener("click", openMusicPanel);
     musicMiniInfo.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -2416,9 +2373,8 @@
 
     playSongBtn.addEventListener("click", togglePlayPause);
     musicMiniPlayBtn.addEventListener("click", togglePlayPause);
-
-    prevSongBtn.addEventListener("click", playPrevSong);
     nextSongBtn.addEventListener("click", playNextSong);
+    prevSongBtn.addEventListener("click", playPrevSong);
 
     restartSongBtn.addEventListener("click", () => {
       bgMusic.currentTime = 0;
@@ -2426,34 +2382,28 @@
     });
 
     musicSelect.addEventListener("change", async (e) => {
-      const selectedIndex = Number(e.target.value);
-      await playSongAtIndex(selectedIndex);
-    });
-
-    musicSeekBar.addEventListener("mousedown", () => {
-      isDraggingSeek = true;
-    });
-
-    musicSeekBar.addEventListener("touchstart", () => {
-      isDraggingSeek = true;
+      const index = Number(e.target.value);
+      await playSongAtIndex(index);
     });
 
     musicSeekBar.addEventListener("input", () => {
-      if (Number.isFinite(bgMusic.duration) && bgMusic.duration > 0) {
-        const seekTo = (Number(musicSeekBar.value) / 100) * bgMusic.duration;
-        bgMusic.currentTime = seekTo;
-        updateProgressUI();
-      }
+      isDraggingSeek = true;
+      const duration = Number.isFinite(bgMusic.duration) ? bgMusic.duration : 0;
+      const percentage = Number(musicSeekBar.value);
+      const nextTime = duration > 0 ? (percentage / 100) * duration : 0;
+      musicCurrentTime.textContent = formatTime(nextTime);
+      musicMiniTime.textContent = formatTime(nextTime);
     });
 
     musicSeekBar.addEventListener("change", () => {
+      const duration = Number.isFinite(bgMusic.duration) ? bgMusic.duration : 0;
+      const percentage = Number(musicSeekBar.value);
+      bgMusic.currentTime = duration > 0 ? (percentage / 100) * duration : 0;
       isDraggingSeek = false;
+      updateProgressUI();
     });
 
     bgMusic.addEventListener("loadedmetadata", updateProgressUI);
-    bgMusic.addEventListener("durationchange", updateProgressUI);
-    bgMusic.addEventListener("loadeddata", updateProgressUI);
-    bgMusic.addEventListener("canplay", updateProgressUI);
     bgMusic.addEventListener("timeupdate", updateProgressUI);
     bgMusic.addEventListener("play", updateMusicButtons);
     bgMusic.addEventListener("pause", updateMusicButtons);
@@ -2461,23 +2411,7 @@
       await playNextSong();
     });
 
-    bgMusic.addEventListener("error", () => {
-      console.error("Audio failed to load:", bgMusic.currentSrc);
-    });
-
-    document.addEventListener("click", (e) => {
-      const clickedInsideMusic = e.target.closest(".music-shell");
-      if (!clickedInsideMusic && musicPanel.classList.contains("open")) {
-        closeMusicPanel();
-      }
-    });
-
-    updateEmptyState();
-    toggleUploadCard(false);
     loadSong(0);
-    updateMusicTitles();
-    updateMusicButtons();
-    updateProgressUI();
   </script>
 </body>
 </html>
