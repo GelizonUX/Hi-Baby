@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Our Core Memories 💗</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     * {
@@ -1001,225 +1001,161 @@
 
     .close-btn:active { transform: scale(0.94); transition-duration: 0.1s; }
 
-    /* ── CHAT FAB & PANEL ────────────────────────────────────── */
+    /* ── CHAT ──────────────────────────────────────────────── */
+    .chat-fab { position:fixed; right:18px; bottom:18px; width:58px; height:58px; border-radius:999px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#ff6ab5 0%,#ff137d 100%); box-shadow:0 16px 34px rgba(255,41,133,0.24),inset 0 1px 0 rgba(255,255,255,0.24); cursor:pointer; z-index:72; font-size:24px; user-select:none; transition:transform 0.35s var(--ease-spring),box-shadow 0.35s var(--ease-smooth); will-change:transform; }
+    .chat-fab:hover { transform:scale(1.12) rotate(-8deg); box-shadow:0 22px 44px rgba(255,41,133,0.32); }
+    .chat-fab:active { transform:scale(0.95); }
 
-    .chat-fab {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      width: 58px;
-      height: 58px;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #ff6ab5 0%, #ff137d 100%);
-      box-shadow: 0 16px 34px rgba(255,41,133,0.24), inset 0 1px 0 rgba(255,255,255,0.24);
-      cursor: pointer;
-      z-index: 60;
-      font-size: 24px;
-      user-select: none;
-      transition: transform 0.35s var(--ease-spring), box-shadow 0.35s var(--ease-smooth);
-      will-change: transform;
+    .chat-panel { position:fixed; right:18px; bottom:88px; width:340px; height:510px; border-radius:22px; background:linear-gradient(180deg,rgba(255,255,255,0.97),rgba(255,245,250,0.96)); border:1px solid rgba(255,255,255,0.74); box-shadow:0 28px 75px rgba(255,87,165,0.14),inset 0 1px 0 rgba(255,255,255,0.75); overflow:hidden; display:none; flex-direction:column; z-index:71; transform-origin:bottom right; }
+    .chat-panel.open { display:flex; animation:panelPopIn 0.45s var(--ease-spring); }
+    @keyframes panelPopIn { from{opacity:0;transform:scale(0.82) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+    .chat-header { display:flex; align-items:center; justify-content:space-between; padding:14px 14px 12px; background:linear-gradient(135deg,rgba(255,106,181,0.16),rgba(255,19,125,0.08)); border-bottom:1px solid rgba(255,183,214,0.35); flex-shrink:0; }
+    .chat-header-title { font-family:"Playfair Display",serif; color:var(--pink-7); font-size:22px; }
+    .chat-close { width:34px; height:34px; border:none; border-radius:999px; cursor:pointer; font-size:16px; color:var(--pink-7); background:rgba(255,236,245,0.98); box-shadow:0 8px 20px rgba(255,80,158,0.10); transition:transform 0.35s var(--ease-spring),background 0.2s ease; }
+    .chat-close:hover { transform:scale(1.1) rotate(90deg); background:rgba(255,220,238,1); }
+
+    .chat-feed { flex:1; min-height:0; overflow:auto; padding:12px 12px 8px; display:flex; flex-direction:column; gap:6px; background:linear-gradient(180deg,rgba(255,251,253,0.8),rgba(255,245,250,0.5)); scroll-behavior:smooth; }
+    .chat-feed::-webkit-scrollbar { width:6px; }
+    .chat-feed::-webkit-scrollbar-thumb { background:rgba(255,110,178,0.30); border-radius:999px; }
+
+    .chat-bubble-wrap { display:flex; flex-direction:column; max-width:78%; position:relative; }
+    .chat-bubble-wrap.riri  { align-self:flex-start; }
+    .chat-bubble-wrap.vince { align-self:flex-end; }
+
+    .chat-bubble { padding:10px 12px; border-radius:16px; font-size:13px; line-height:1.5; word-break:break-word; box-shadow:0 10px 24px rgba(255,87,165,0.08); border:1px solid rgba(255,255,255,0.72); cursor:pointer; animation:bubbleIn 0.4s var(--ease-spring); transition:transform 0.2s var(--ease-spring); position:relative; }
+    .chat-bubble:active { transform:scale(0.97); }
+    @keyframes bubbleIn { from{opacity:0;transform:scale(0.84) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
+    .chat-bubble-wrap.riri  .chat-bubble { background:linear-gradient(180deg,#ffd8e9,#ffc7df); color:#7a3f59; }
+    .chat-bubble-wrap.vince .chat-bubble { background:linear-gradient(180deg,#eef8ff,#dff1ff); color:var(--vince-blue-text); border-color:rgba(187,224,255,0.8); }
+
+    /* Photo bubble */
+    .chat-bubble.photo-bubble { padding:6px; background:transparent !important; border:none !important; box-shadow:none !important; }
+    .chat-bubble.photo-bubble img { width:200px; max-width:100%; height:auto; border-radius:14px; display:block; cursor:pointer; transition:transform 0.3s var(--ease-spring); box-shadow:0 8px 24px rgba(255,87,165,0.18); }
+    .chat-bubble.photo-bubble img:hover { transform:scale(1.03); }
+
+    .chat-meta { font-size:10.5px; line-height:1.35; opacity:0.72; margin-top:6px; padding:0 6px; color:#9b6881; max-width:100%; white-space:normal; }
+    .chat-bubble-wrap.riri  .chat-meta { text-align:left; }
+    .chat-bubble-wrap.vince .chat-meta { text-align:right; }
+
+    .mood-bubble-pink { background:linear-gradient(135deg,rgba(255,220,240,0.95),rgba(255,200,228,0.9)) !important; border-color:rgba(255,150,210,0.4) !important; }
+    .mood-bubble-blue { background:linear-gradient(135deg,rgba(210,235,255,0.95),rgba(185,220,255,0.9)) !important; border-color:rgba(100,180,255,0.4) !important; }
+
+    /* ── REACTION STRIP ────────────────────────────────────── */
+    .reaction-strip { display:none; gap:4px; margin-top:4px; flex-wrap:wrap; }
+    .chat-bubble-wrap.riri  .reaction-strip { justify-content:flex-start; }
+    .chat-bubble-wrap.vince .reaction-strip { justify-content:flex-end; }
+    .reaction-pill { display:inline-flex; align-items:center; gap:3px; background:rgba(255,255,255,0.88); border:1px solid rgba(255,183,214,0.5); border-radius:999px; padding:3px 8px; font-size:13px; cursor:pointer; transition:transform 0.25s var(--ease-spring),background 0.2s ease; box-shadow:0 4px 12px rgba(255,87,165,0.08); animation:reactionPop 0.35s var(--ease-spring); }
+    .reaction-pill:hover { transform:scale(1.1) translateY(-1px); }
+    .reaction-pill .r-count { font-size:11px; color:#b06882; font-weight:600; }
+    @keyframes reactionPop { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+
+    .reaction-picker { position:absolute; background:rgba(255,255,255,0.97); border:1px solid rgba(255,183,214,0.4); border-radius:999px; padding:6px 10px; display:none; gap:6px; box-shadow:0 16px 40px rgba(255,87,165,0.18); z-index:50; white-space:nowrap; backdrop-filter:blur(12px); animation:pickerPop 0.3s var(--ease-spring); bottom:calc(100% + 8px); }
+    .chat-bubble-wrap.riri  .reaction-picker { left:0; }
+    .chat-bubble-wrap.vince .reaction-picker { right:0; }
+    .reaction-picker.open { display:flex; }
+    @keyframes pickerPop { from{opacity:0;transform:scale(0.7) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
+    .reaction-opt { font-size:20px; cursor:pointer; transition:transform 0.25s var(--ease-spring); line-height:1; border:none; background:none; padding:2px; }
+    .reaction-opt:hover { transform:scale(1.35) translateY(-3px); }
+
+    /* ── CHAT COMPOSER ─────────────────────────────────────── */
+    .chat-composer { position:relative; z-index:3; flex-shrink:0; padding:10px 12px 12px; border-top:1px solid rgba(255,183,214,0.35); background:rgba(255,251,253,0.88); pointer-events:auto; }
+    .chat-sender-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .chat-sender-label { font-size:12px; color:#9d6881; flex-shrink:0; }
+    .chat-sender-select { width:auto; min-width:132px; flex:0 0 auto; border:none; outline:none; background:rgba(255,236,245,0.75); color:var(--text-soft); border-radius:999px; padding:7px 12px; font-size:13px; font-family:"Inter",sans-serif; cursor:pointer; }
+
+    .chat-status-row { display:flex; align-items:center; justify-content:flex-start; min-height:16px; margin-bottom:8px; }
+    .chat-typing-indicator { font-size:11px; color:#b56c8d; opacity:0; transform:translateY(4px); transition:opacity 0.22s ease,transform 0.22s ease; pointer-events:none; }
+    .chat-typing-indicator.show { opacity:0.95; transform:translateY(0); }
+
+    .chat-reply-preview { display:none; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:8px; padding:10px 12px; border-radius:14px; background:rgba(255,236,245,0.72); border:1px solid rgba(255,183,214,0.4); }
+    .chat-reply-preview.show { display:flex; animation:fadeSlideUp 0.25s var(--ease-out-expo); }
+    .chat-reply-preview-main { min-width:0; flex:1; }
+    .chat-reply-preview-label { font-size:10px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:#b56c8d; margin-bottom:2px; }
+    .chat-reply-preview-sender { font-size:12px; font-weight:600; color:var(--pink-7); margin-bottom:2px; }
+    .chat-reply-preview-text { font-size:12px; color:var(--text-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:210px; }
+    .chat-reply-close { width:24px; height:24px; flex-shrink:0; border:none; border-radius:999px; cursor:pointer; color:var(--pink-7); background:rgba(255,255,255,0.72); font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; transition:transform 0.25s var(--ease-spring),background 0.2s ease; }
+    .chat-reply-close:hover { transform:scale(1.08) rotate(90deg); background:rgba(255,255,255,0.92); }
+
+    .chat-reply-quote { display:flex; flex-direction:column; gap:2px; margin-bottom:8px; padding:7px 9px; border-radius:10px; background:rgba(255,255,255,0.42); border-left:3px solid rgba(255,255,255,0.66); }
+    .chat-bubble-wrap.riri .chat-reply-quote { border-left-color:rgba(255,113,181,0.55); }
+    .chat-bubble-wrap.vince .chat-reply-quote { border-left-color:rgba(91,184,245,0.58); }
+    .chat-reply-sender { font-size:11px; font-weight:600; opacity:0.9; }
+    .chat-reply-text { font-size:12px; line-height:1.35; opacity:0.82; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+    .chat-meta-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .chat-bubble-wrap.riri .chat-meta-row { justify-content:flex-start; }
+    .chat-bubble-wrap.vince .chat-meta-row { justify-content:flex-end; }
+    .chat-reply-btn { border:none; background:transparent; padding:0; font-size:10.5px; font-weight:600; color:#b56c8d; cursor:pointer; opacity:0.88; }
+    .chat-reply-btn:hover { opacity:1; text-decoration:underline; }
+
+    /* photo + text input row */
+    .chat-input-row { position:relative; z-index:3; display:flex; gap:8px; align-items:flex-end; pointer-events:auto; }
+
+    /* photo button */
+    .chat-photo-btn { position:relative; z-index:4; pointer-events:auto;
+      width:42px; height:42px; flex-shrink:0; border:none; border-radius:999px;
+      font-size:18px; cursor:pointer;
+      background:rgba(255,236,245,0.85);
+      color:var(--pink-7);
+      box-shadow:0 6px 16px rgba(255,80,158,0.10);
+      display:flex; align-items:center; justify-content:center;
+      transition:transform 0.3s var(--ease-spring),background 0.2s ease;
+      will-change:transform;
     }
+    .chat-photo-btn:hover { transform:translateY(-2px) scale(1.08); background:rgba(255,220,240,0.98); }
+    .chat-photo-btn:active { transform:scale(0.94); }
 
-    .chat-fab:hover {
-      transform: scale(1.12) rotate(-8deg);
-      box-shadow: 0 22px 44px rgba(255,41,133,0.32), inset 0 1px 0 rgba(255,255,255,0.28);
+    .chat-message-input { position:relative; z-index:4; pointer-events:auto; flex:1; height:60px; border:none; outline:none; resize:none; border-radius:14px; padding:10px 14px; font-family:"Inter",sans-serif; font-size:14px; background:rgba(255,236,245,0.7); color:#704b5d; transition:background 0.25s ease,box-shadow 0.25s ease; -webkit-user-select:text; user-select:text; -webkit-appearance:none; appearance:none; touch-action:manipulation; }
+    .chat-message-input:focus { background:rgba(255,236,245,0.9); box-shadow:0 0 0 2px rgba(255,110,178,0.25); }
+    .chat-message-input::placeholder { color:#a76888; }
+
+    .chat-send-btn { position:relative; z-index:4; pointer-events:auto; width:42px; height:42px; flex-shrink:0; border:none; border-radius:999px; font-size:18px; color:white; cursor:pointer; background:linear-gradient(135deg,#ff6ab5 0%,#ff137d 100%); box-shadow:0 10px 22px rgba(255,41,133,0.20); transition:transform 0.3s var(--ease-spring),filter 0.3s ease; display:flex; align-items:center; justify-content:center; }
+    .chat-send-btn:hover { transform:translateY(-2px) scale(1.08); filter:brightness(1.06); }
+    .chat-send-btn:active { transform:scale(0.94); }
+
+    /* photo lightbox */
+    .photo-lightbox { position:fixed; inset:0; background:rgba(0,0,0,0.82); backdrop-filter:blur(12px); z-index:99998; display:none; align-items:center; justify-content:center; padding:20px; }
+    .photo-lightbox.open { display:flex; animation:fadeIn 0.3s ease; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .photo-lightbox img { max-width:min(90vw,700px); max-height:85vh; border-radius:18px; object-fit:contain; box-shadow:0 24px 60px rgba(0,0,0,0.4); animation:scaleIn 0.35s var(--ease-spring); }
+    @keyframes scaleIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+    .lightbox-close { position:fixed; top:18px; right:18px; width:44px; height:44px; border:none; border-radius:999px; background:rgba(255,255,255,0.15); color:white; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s ease,transform 0.3s var(--ease-spring); }
+    .lightbox-close:hover { background:rgba(255,255,255,0.28); transform:scale(1.1) rotate(90deg); }
+
+    /* photo source chooser */
+    .photo-source-sheet {
+      position:fixed; inset:0; display:none; align-items:flex-end; justify-content:center;
+      padding:18px; background:rgba(23,12,18,0.28); backdrop-filter:blur(10px); z-index:99997;
     }
-
-    .chat-fab:active { transform: scale(0.94); transition-duration: 0.1s; }
-
-    .chat-panel {
-      position: fixed;
-      right: 18px;
-      bottom: 88px;
-      width: 340px;
-      height: 470px;
-      border-radius: 22px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(255,245,250,0.96));
-      border: 1px solid rgba(255,255,255,0.74);
-      box-shadow: 0 28px 75px rgba(255,87,165,0.14), inset 0 1px 0 rgba(255,255,255,0.75);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      z-index: 59;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: translateY(18px) scale(0.96);
-      transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.34s var(--ease-out-expo);
+    .photo-source-sheet.open { display:flex; animation:fadeIn 0.22s ease; }
+    .photo-source-card {
+      width:min(100%,360px); border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,0.97),rgba(255,245,250,0.96));
+      border:1px solid rgba(255,255,255,0.74);
+      box-shadow:0 24px 60px rgba(255,87,165,0.16), inset 0 1px 0 rgba(255,255,255,0.72);
+      padding:14px; display:flex; flex-direction:column; gap:10px;
+      animation:scaleIn 0.28s var(--ease-spring);
     }
-
-    .chat-panel.open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-      animation: popupFloatIn 0.34s var(--ease-out-expo);
+    .photo-source-title {
+      font-family:"Playfair Display",serif; font-size:22px; line-height:1.1;
+      color:var(--pink-7); text-align:center; padding:8px 10px 2px;
     }
-
-    .chat-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 14px 12px;
-      background: linear-gradient(135deg, rgba(255,106,181,0.16), rgba(255,19,125,0.08));
-      border-bottom: 1px solid rgba(255,183,214,0.35);
-      flex-shrink: 0;
+    .photo-source-option,
+    .photo-source-cancel {
+      width:100%; border:none; outline:none; cursor:pointer; font-family:"Inter",sans-serif;
+      border-radius:18px; padding:15px 16px; font-size:15px; font-weight:600;
+      transition:transform 0.3s var(--ease-spring),filter 0.25s ease,background 0.25s ease;
     }
-
-    .chat-header-title {
-      font-family: var(--snell-font);
-      color: var(--pink-7);
-      font-size: 28px;
-      line-height: 0.95;
+    .photo-source-option {
+      background:rgba(255,236,245,0.82); color:var(--text-soft);
+      box-shadow:0 10px 22px rgba(255,87,165,0.08);
     }
-
-    .chat-close {
-      width: 34px;
-      height: 34px;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 16px;
-      color: var(--pink-7);
-      background: rgba(255,236,245,0.98);
-      box-shadow: 0 8px 20px rgba(255,80,158,0.10);
-      transition: transform 0.35s var(--ease-spring), background 0.2s ease;
+    .photo-source-option:hover { transform:translateY(-2px) scale(1.01); background:rgba(255,226,240,0.96); }
+    .photo-source-cancel {
+      background:linear-gradient(135deg,#ff6ab5 0%,#ff137d 100%); color:#fff;
+      box-shadow:0 12px 24px rgba(255,41,133,0.18);
     }
-
-    .chat-close:hover {
-      transform: scale(1.1) rotate(90deg);
-      background: rgba(255,220,238,1);
-    }
-
-    .chat-feed {
-      flex: 1;
-      min-height: 0;
-      overflow: auto;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: linear-gradient(180deg, rgba(255,251,253,0.8), rgba(255,245,250,0.5));
-      scroll-behavior: smooth;
-    }
-
-    .chat-feed::-webkit-scrollbar { width: 6px; }
-    .chat-feed::-webkit-scrollbar-thumb { background: rgba(255,110,178,0.30); border-radius: 999px; }
-
-    .chat-bubble-wrap {
-      display: flex;
-      flex-direction: column;
-      max-width: 78%;
-      position: relative;
-    }
-
-    .chat-bubble-wrap.riri  { align-self: flex-start; }
-    .chat-bubble-wrap.vince { align-self: flex-end; }
-
-    .chat-bubble {
-      padding: 10px 12px;
-      border-radius: 16px;
-      font-size: 13px;
-      line-height: 1.5;
-      word-break: break-word;
-      box-shadow: 0 10px 24px rgba(255,87,165,0.08);
-      border: 1px solid rgba(255,255,255,0.72);
-      animation: bubbleIn 0.4s var(--ease-spring);
-    }
-
-    @keyframes bubbleIn {
-      from { opacity: 0; transform: scale(0.84) translateY(10px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .chat-bubble-wrap.riri  .chat-bubble { background: linear-gradient(180deg, #ffd8e9, #ffc7df); color: #7a3f59; }
-    .chat-bubble-wrap.vince .chat-bubble { background: linear-gradient(180deg, #eef8ff, #dff1ff); color: var(--vince-blue-text); border-color: rgba(187,224,255,0.8); }
-
-    .chat-meta {
-      font-size: 10.5px;
-      line-height: 1.35;
-      opacity: 0.72;
-      margin-top: 6px;
-      padding: 0 6px;
-      color: #9b6881;
-      max-width: 100%;
-      white-space: normal;
-    }
-
-    .chat-bubble-wrap.riri  .chat-meta { text-align: left; }
-    .chat-bubble-wrap.vince .chat-meta { text-align: right; }
-
-    .mood-bubble-pink {
-      background: linear-gradient(135deg, rgba(255,220,240,0.95), rgba(255,200,228,0.9)) !important;
-      border-color: rgba(255,150,210,0.4) !important;
-    }
-
-    .mood-bubble-blue {
-      background: linear-gradient(135deg, rgba(210,235,255,0.95), rgba(185,220,255,0.9)) !important;
-      border-color: rgba(100,180,255,0.4) !important;
-    }
-
-    .chat-composer {
-      flex-shrink: 0;
-      padding: 12px;
-      border-top: 1px solid rgba(255,183,214,0.35);
-      background: rgba(255,251,253,0.88);
-    }
-
-    .chat-sender-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .chat-sender-label { font-size: 12px; color: #9d6881; flex-shrink: 0; }
-
-    .chat-sender-select {
-      padding: 8px 12px;
-      font-size: 13px;
-      cursor: pointer;
-      border-radius: 999px;
-      transition: background 0.2s ease;
-    }
-
-    .chat-sender-select:hover { background: rgba(255,220,240,0.9); }
-
-    .chat-message-input {
-      height: 74px;
-      resize: none;
-      margin-bottom: 10px;
-      border-radius: 14px;
-      background: rgba(255,236,245,0.7);
-      font-size: 14px;
-    }
-
-    .chat-message-input:focus {
-      background: rgba(255,236,245,0.92);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 0 0 2px rgba(255,110,178,0.22);
-    }
-
-    .chat-message-input::placeholder { color: #a76888; }
-
-    .chat-send-btn {
-      width: 100%;
-      border: none;
-      border-radius: 999px;
-      padding: 12px 16px;
-      font-size: 14px;
-      font-weight: 500;
-      color: white;
-      cursor: pointer;
-      background: linear-gradient(135deg, #ff6ab5 0%, #ff137d 100%);
-      box-shadow: 0 12px 26px rgba(255,41,133,0.18), inset 0 1px 0 rgba(255,255,255,0.24);
-      transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease, filter 0.3s ease;
-      will-change: transform;
-    }
-
-    .chat-send-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 18px 36px rgba(255,41,133,0.26), inset 0 1px 0 rgba(255,255,255,0.28);
-      filter: brightness(1.06);
-    }
-
-    .chat-send-btn:active { transform: scale(0.97); transition-duration: 0.1s; }
+    .photo-source-cancel:hover { transform:translateY(-2px) scale(1.01); filter:brightness(1.05); }
 
     /* ── MUSIC ───────────────────────────────────────────────── */
 
@@ -1966,51 +1902,17 @@
         font-size: 17px;
       }
 
-      /* ── CHAT MOBILE ── */
-      .chat-fab {
-        right: 14px;
-        bottom: 14px;
-        width: 54px;
-        height: 54px;
-        font-size: 22px;
-      }
-
-      .chat-panel {
-        right: 10px;
-        left: 10px;
-        bottom: 78px;
-        width: auto;
-        height: min(62vh, 520px);
-        border-radius: 20px;
-      }
-
-      .chat-header-title { font-size: 24px; }
-      .chat-bubble-wrap { max-width: 86%; }
-      .chat-bubble { font-size: 12.5px; }
-      .chat-message-input { height: 68px; font-size: 13px; }
-
-      /* ── MOOD MOBILE ── */
-      .mood-cluster {
-        left: max(14px, env(safe-area-inset-left, 0px));
-        bottom: max(14px, env(safe-area-inset-bottom, 0px));
-      }
-
-      .user-switcher {
-        left: 0;
-        bottom: 66px;
-        max-width: calc(100vw - 28px);
-      }
-
-      .mood-fab { width: 54px; height: 54px; font-size: 20px; }
-      .mood-panel {
-        left: 10px;
-        right: 10px;
-        bottom: 82px;
-        width: auto;
-        border-radius: 20px;
-      }
-
-      .switcher-btn { padding: 4px 10px; font-size: 10px; }
+      /* chat mobile */
+      .chat-fab { right:14px; bottom:14px; width:54px; height:54px; font-size:22px; }
+      .chat-panel { right:10px; left:10px; bottom:78px; width:auto; height:min(65vh,520px); border-radius:20px; }
+      .chat-header-title { font-size:20px; }
+      .chat-bubble-wrap { max-width:86%; }
+      .chat-bubble { font-size:12.5px; }
+      .chat-bubble.photo-bubble img { width:min(170px,60vw); }
+      .chat-reply-preview-text { max-width:150px; }
+      .chat-reply-text { max-width:130px; }
+      .chat-message-input { height:52px; font-size:13px; }
+      .chat-send-btn,.chat-photo-btn { width:40px; height:40px; font-size:16px; }
 
       /* ── MUSIC MOBILE ── */
       .music-shell {
@@ -2257,16 +2159,13 @@
     </div>
   </div>
 
-  <div class="chat-fab" id="chatFab" aria-label="Open chat">💬</div>
-
+  <div class="chat-fab" id="chatFab">💬</div>
   <div class="chat-panel" id="chatPanel">
     <div class="chat-header">
       <div class="chat-header-title">Riri &amp; Vince</div>
-      <button class="chat-close" id="chatCloseBtn" aria-label="Close chat">✕</button>
+      <button class="chat-close" id="chatCloseBtn">✕</button>
     </div>
-
     <div id="chatFeed" class="chat-feed"></div>
-
     <div class="chat-composer">
       <div class="chat-sender-row">
         <div class="chat-sender-label">sending as</div>
@@ -2275,8 +2174,40 @@
           <option value="vince">Vince</option>
         </select>
       </div>
-      <textarea id="chatMessageInput" class="chat-message-input" placeholder="type a message..."></textarea>
-      <button id="chatSendBtn" class="chat-send-btn">send 💕</button>
+      <div class="chat-status-row">
+        <div class="chat-typing-indicator" id="chatTypingIndicator"></div>
+      </div>
+      <div class="chat-reply-preview" id="chatReplyPreview">
+        <div class="chat-reply-preview-main">
+          <div class="chat-reply-preview-label">Replying to</div>
+          <div class="chat-reply-preview-sender" id="chatReplySender"></div>
+          <div class="chat-reply-preview-text" id="chatReplyText"></div>
+        </div>
+        <button class="chat-reply-close" id="chatReplyClose" aria-label="Clear reply">✕</button>
+      </div>
+      <div class="chat-input-row">
+        <!-- photo button -->
+        <button class="chat-photo-btn" id="chatPhotoBtn" title="Send a photo">📷</button>
+        <input type="file" id="chatPhotoInput" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none;" />
+        <input type="file" id="chatCameraInput" accept="image/*" capture="environment" style="display:none;" />
+        <textarea id="chatMessageInput" class="chat-message-input" placeholder="type a message..."></textarea>
+        <button id="chatSendBtn" class="chat-send-btn">💌</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- photo lightbox -->
+  <div class="photo-lightbox" id="photoLightbox">
+    <img id="lightboxImg" src="" alt="Photo" />
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+  </div>
+
+  <div class="photo-source-sheet" id="photoSourceSheet" aria-hidden="true">
+    <div class="photo-source-card">
+      <div class="photo-source-title">Send a photo</div>
+      <button class="photo-source-option" id="chooseFromGalleryBtn" type="button">Choose from gallery</button>
+      <button class="photo-source-option" id="takePhotoBtn" type="button">Take a photo</button>
+      <button class="photo-source-cancel" id="closePhotoSourceBtn" type="button">Cancel</button>
     </div>
   </div>
 
@@ -2286,7 +2217,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getDatabase, ref, push, onChildAdded, query,
-      orderByChild, update, remove, limitToLast
+      orderByChild, update, remove, limitToLast, onValue, set
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
     import {
       getStorage, ref as storageRef, uploadBytes,
@@ -2342,14 +2273,28 @@
     const saveEditBtn    = document.getElementById("saveEditBtn");
     const cancelEditBtn  = document.getElementById("cancelEditBtn");
 
-    const chatFab          = document.getElementById("chatFab");
-    const chatPanel        = document.getElementById("chatPanel");
-    const chatCloseBtn     = document.getElementById("chatCloseBtn");
-    const chatFeed         = document.getElementById("chatFeed");
-    const chatSenderSelect = document.getElementById("chatSenderSelect");
-    const chatMessageInput = document.getElementById("chatMessageInput");
-    const chatSendBtn      = document.getElementById("chatSendBtn");
-
+    const chatFab             = document.getElementById("chatFab");
+    const chatPanel           = document.getElementById("chatPanel");
+    const chatCloseBtn        = document.getElementById("chatCloseBtn");
+    const chatFeed            = document.getElementById("chatFeed");
+    const chatSenderSelect    = document.getElementById("chatSenderSelect");
+    const chatTypingIndicator = document.getElementById("chatTypingIndicator");
+    const chatReplyPreview    = document.getElementById("chatReplyPreview");
+    const chatReplySender     = document.getElementById("chatReplySender");
+    const chatReplyText       = document.getElementById("chatReplyText");
+    const chatReplyClose      = document.getElementById("chatReplyClose");
+    const chatMessageInput    = document.getElementById("chatMessageInput");
+    const chatSendBtn         = document.getElementById("chatSendBtn");
+    const chatPhotoBtn        = document.getElementById("chatPhotoBtn");
+    const chatPhotoInput      = document.getElementById("chatPhotoInput");
+    const chatCameraInput     = document.getElementById("chatCameraInput");
+    const photoLightbox       = document.getElementById("photoLightbox");
+    const lightboxImg         = document.getElementById("lightboxImg");
+    const lightboxClose       = document.getElementById("lightboxClose");
+    const photoSourceSheet    = document.getElementById("photoSourceSheet");
+    const chooseFromGalleryBtn= document.getElementById("chooseFromGalleryBtn");
+    const takePhotoBtn        = document.getElementById("takePhotoBtn");
+    const closePhotoSourceBtn = document.getElementById("closePhotoSourceBtn");
     const moodFab          = document.getElementById("moodFab");
     const moodPanel        = document.getElementById("moodPanel");
     const moodCloseBtn     = document.getElementById("moodCloseBtn");
@@ -2927,50 +2872,559 @@
       return `${label} • ${stamp}`;
     };
 
-    /* ── chat ─────────────────────────────────────────────── */
-    function buildChatBubble(data) {
-      const wrap = document.createElement("div");
-      wrap.className = `chat-bubble-wrap ${data.sender === "vince" ? "vince" : "riri"}`;
 
-      const bubble = document.createElement("div");
-      bubble.className = "chat-bubble";
-      if (data.isMoodMessage) {
-        bubble.classList.add(data.moodClass || (data.sender === "vince" ? "mood-bubble-blue" : "mood-bubble-pink"));
+    const REACTION_EMOJIS = ["❤️","😂","😮","😢","🔥","🌹"];
+    const senderLabel = sender => sender==="vince" ? "Vince" : "Riri";
+    const truncateChatPreview = (text, max=72) => {
+      const safe = String(text || "").replace(/\s+/g, " ").trim();
+      return safe.length > max ? `${safe.slice(0, max - 1)}…` : safe;
+    };
+    const getMessagePreviewText = data => {
+      if (!data) return "Message";
+      if (data.isPhoto) return "📷 Photo";
+      return truncateChatPreview(data.text || "Message");
+    };
+    const buildReplyPayload = () => {
+      if (!activeReplyMessage) return null;
+      return {
+        key: activeReplyMessage.key || "",
+        sender: activeReplyMessage.sender || "riri",
+        text: activeReplyMessage.text || "Message",
+        isPhoto: !!activeReplyMessage.isPhoto
+      };
+    };
+
+
+function openPhotoSourceSheet() {
+      photoSourceSheet.classList.add("open");
+      photoSourceSheet.setAttribute("aria-hidden", "false");
+    }
+
+    function closePhotoSourceSheet() {
+      photoSourceSheet.classList.remove("open");
+      photoSourceSheet.setAttribute("aria-hidden", "true");
+    }
+
+    function isMobileLikeDevice() {
+      return window.matchMedia("(max-width: 680px)").matches || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    }
+
+    const pendingPhotoUploads = new Map();
+    let chatTypingState = {};
+    let typingIdleTimer = null;
+    let typingExpiryTimer = null;
+    let lastTypingSender = chatSenderSelect.value || "riri";
+    let activeReplyMessage = null;
+
+
+    function isChatPhotoConvertible(file) {
+      if (!file) return false;
+      const type = (file.type || "").toLowerCase();
+      const name = (file.name || "").toLowerCase();
+      return (
+        type.includes("heic") ||
+        type.includes("heif") ||
+        type.includes("bmp") ||
+        type.includes("tiff") ||
+        /\.(heic|heif|bmp|tif|tiff)$/i.test(name)
+      );
+    }
+
+    async function prepareChatPhotoFile(file) {
+      if (!file || !file.type || !file.type.startsWith("image/")) return file;
+      if (!isChatPhotoConvertible(file)) return file;
+
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            const max = 1800;
+            if (width > max || height > max) {
+              const ratio = Math.min(max / width, max / height);
+              width = Math.round(width * ratio);
+              height = Math.round(height * ratio);
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+              resolve(file);
+              return;
+            }
+
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                resolve(file);
+                return;
+              }
+              const safeName = (file.name || "photo").replace(/\.[^.]+$/, "") + ".jpg";
+              resolve(new File([blob], safeName, { type: "image/jpeg" }));
+            }, "image/jpeg", 0.9);
+          };
+          img.onerror = () => resolve(file);
+          img.src = reader.result;
+        };
+        reader.onerror = () => resolve(file);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error("Could not read photo file"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function prepareInlineChatPhotoDataUrl(file) {
+      if (!file) throw new Error("Missing photo file");
+      if (!file.type || !file.type.startsWith("image/")) return await fileToDataUrl(file);
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            const max = 1280;
+            if (width > max || height > max) {
+              const ratio = Math.min(max / width, max / height);
+              width = Math.round(width * ratio);
+              height = Math.round(height * ratio);
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+              resolve(reader.result);
+              return;
+            }
+
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                resolve(reader.result);
+                return;
+              }
+              const safeName = (file.name || "photo").replace(/\.[^.]+$/, "") + ".jpg";
+              fileToDataUrl(new File([blob], safeName, { type: "image/jpeg" }))
+                .then(resolve)
+                .catch(() => resolve(reader.result));
+            }, "image/jpeg", 0.82);
+          };
+          img.onerror = () => resolve(reader.result);
+          img.src = reader.result;
+        };
+        reader.onerror = () => reject(reader.error || new Error("Could not prepare inline photo"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderReplyPreview() {
+      if (!activeReplyMessage) {
+        chatReplyPreview.classList.remove("show");
+        chatReplySender.textContent = "";
+        chatReplyText.textContent = "";
+        return;
+      }
+      chatReplySender.textContent = senderLabel(activeReplyMessage.sender);
+      chatReplyText.textContent = activeReplyMessage.text || "Message";
+      chatReplyPreview.classList.add("show");
+    }
+
+    function clearReplyTarget() {
+      activeReplyMessage = null;
+      renderReplyPreview();
+    }
+
+    function setReplyTarget(data, msgKey) {
+      if (!data) return;
+      activeReplyMessage = {
+        key: msgKey || "",
+        sender: data.sender || "riri",
+        text: getMessagePreviewText(data),
+        isPhoto: !!data.isPhoto
+      };
+      renderReplyPreview();
+      chatMessageInput.focus();
+    }
+
+    async function pushTypingState(sender, active) {
+      if (!sender) return;
+      try {
+        await set(ref(db, `chatTyping/${sender}`), { active: !!active, updatedAt: Date.now() });
+      } catch (err) {
+        console.error("Typing status failed:", err);
+      }
+    }
+
+    function renderTypingIndicator() {
+      if (typingExpiryTimer) {
+        clearTimeout(typingExpiryTimer);
+        typingExpiryTimer = null;
       }
 
-      const t = document.createElement("div");
-      t.textContent = data.text;
-      const m = document.createElement("div");
-      m.className = "chat-meta";
-      m.textContent = formatChatTimestamp(data.createdAt, data.sender);
-      bubble.appendChild(t);
+      const me = chatSenderSelect.value || "riri";
+      const other = me === "vince" ? "riri" : "vince";
+      const otherState = chatTypingState?.[other] || null;
+      const updatedAt = Number(otherState?.updatedAt || 0);
+      const age = Date.now() - updatedAt;
+      const isVisible = !!otherState?.active && age < 7000;
+
+      if (isVisible) {
+        chatTypingIndicator.textContent = `${senderLabel(other)} is typing...`;
+        chatTypingIndicator.classList.add("show");
+        typingExpiryTimer = setTimeout(renderTypingIndicator, Math.max(250, 7100 - age));
+      } else {
+        chatTypingIndicator.textContent = "";
+        chatTypingIndicator.classList.remove("show");
+      }
+    }
+
+    function scheduleTypingState() {
+      const sender = chatSenderSelect.value || "riri";
+      if (lastTypingSender && lastTypingSender !== sender) {
+        pushTypingState(lastTypingSender, false);
+      }
+      lastTypingSender = sender;
+
+      if (typingIdleTimer) clearTimeout(typingIdleTimer);
+
+      if (chatMessageInput.value.trim()) {
+        pushTypingState(sender, true);
+        typingIdleTimer = setTimeout(() => pushTypingState(sender, false), 1400);
+      } else {
+        pushTypingState(sender, false);
+      }
+    }
+
+    function stopTypingState(sender = (chatSenderSelect.value || lastTypingSender || "riri")) {
+      if (typingIdleTimer) {
+        clearTimeout(typingIdleTimer);
+        typingIdleTimer = null;
+      }
+      pushTypingState(sender, false);
+    }
+
+    async function handleChatPhotoFile(file, inputEl) {
+      if (!file) return;
+      const sender = chatSenderSelect.value;
+      const createdAt = Date.now();
+      const replyTo = buildReplyPayload();
+      const uploadFile = await prepareChatPhotoFile(file);
+      const pendingId = `pending-${createdAt}-${Math.random().toString(36).slice(2,8)}`;
+      const localUrl = URL.createObjectURL(uploadFile);
+      const tempWrap = buildChatBubble({ sender, isPhoto:true, photoUrl:localUrl, createdAt, replyTo }, null);
+      const meta = tempWrap.querySelector(".chat-meta-info");
+      if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • sending...`;
+      tempWrap.dataset.pendingClientId = pendingId;
+      chatFeed.appendChild(tempWrap);
+      chatFeed.scrollTop = chatFeed.scrollHeight;
+      pendingPhotoUploads.set(pendingId, { wrap: tempWrap, localUrl });
+
+      try {
+        let finalPhotoUrl = "";
+
+        try {
+          const path = `chatPhotos/${Date.now()}-${uploadFile.name}`;
+          const sRef = storageRef(storage, path);
+          await uploadBytes(sRef, uploadFile);
+          finalPhotoUrl = await getDownloadURL(sRef);
+        } catch (storageError) {
+          console.warn("Storage upload failed, falling back to inline photo:", storageError);
+          finalPhotoUrl = await prepareInlineChatPhotoDataUrl(uploadFile);
+        }
+
+        await push(ref(db,"messages"), {
+          sender,
+          isPhoto:true,
+          photoUrl:finalPhotoUrl,
+          createdAt:Date.now(),
+          pendingClientId:pendingId,
+          ...(replyTo ? { replyTo } : {})
+        });
+        clearReplyTarget();
+        stopTypingState(sender);
+      } catch(e) {
+        console.error("Photo upload failed:", e);
+        if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • failed to send`;
+        tempWrap.style.opacity = "0.72";
+        pendingPhotoUploads.delete(pendingId);
+      } finally {
+        if (inputEl) inputEl.value = "";
+        closePhotoSourceSheet();
+      }
+    }
+
+    chatPhotoBtn.addEventListener("click", () => {
+      if (isMobileLikeDevice()) {
+        openPhotoSourceSheet();
+      } else {
+        chatPhotoInput.click();
+      }
+    });
+
+    chooseFromGalleryBtn.addEventListener("click", () => {
+      closePhotoSourceSheet();
+      chatPhotoInput.click();
+    });
+
+    takePhotoBtn.addEventListener("click", () => {
+      closePhotoSourceSheet();
+      chatCameraInput.click();
+    });
+
+    closePhotoSourceBtn.addEventListener("click", closePhotoSourceSheet);
+    photoSourceSheet.addEventListener("click", e => {
+      if (e.target === photoSourceSheet) closePhotoSourceSheet();
+    });
+
+    chatPhotoInput.addEventListener("change", async () => {
+      await handleChatPhotoFile(chatPhotoInput.files[0], chatPhotoInput);
+    });
+
+    chatCameraInput.addEventListener("change", async () => {
+      await handleChatPhotoFile(chatCameraInput.files[0], chatCameraInput);
+    });
+
+    /* ── photo lightbox ───────────────────────────────────────── */
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      photoLightbox.classList.add("open");
+    }
+    function closeLightbox() { photoLightbox.classList.remove("open"); }
+
+    lightboxClose.addEventListener("click", closeLightbox);
+    photoLightbox.addEventListener("click", e => { if(e.target===photoLightbox) closeLightbox(); });
+
+    /* ── chat + reactions ─────────────────────────────────────── */
+    chatFab.addEventListener("click",()=>{
+      chatPanel.classList.toggle("open");
+      if(chatPanel.classList.contains("open")) chatFeed.scrollTop=chatFeed.scrollHeight;
+    });
+    chatCloseBtn.addEventListener("click",()=>chatPanel.classList.remove("open"));
+
+    let openPickerWrap=null;
+    function closeAllPickers(){
+      if(openPickerWrap){ openPickerWrap.querySelector(".reaction-picker")?.classList.remove("open"); openPickerWrap=null; }
+    }
+
+    function buildChatBubble(data,msgKey){
+      const wrap=document.createElement("div");
+      wrap.className=`chat-bubble-wrap ${data.sender==="vince"?"vince":"riri"}`;
+      wrap.dataset.key=msgKey||"";
+
+      const picker=document.createElement("div");
+      picker.className="reaction-picker";
+      REACTION_EMOJIS.forEach(em=>{
+        const btn=document.createElement("button");
+        btn.className="reaction-opt";btn.textContent=em;
+        btn.addEventListener("click",e=>{ e.stopPropagation();addReaction(msgKey,em);closeAllPickers(); });
+        picker.appendChild(btn);
+      });
+
+      const bubble=document.createElement("div");
+
+      if (data.isPhoto) {
+        bubble.className = "chat-bubble photo-bubble";
+      } else {
+        bubble.className = "chat-bubble";
+        if(data.isMoodMessage) bubble.classList.add(data.moodClass||"mood-bubble-pink");
+      }
+
+      if (data.replyTo) {
+        const replyQuote=document.createElement("div");
+        replyQuote.className="chat-reply-quote";
+        const replySender=document.createElement("div");
+        replySender.className="chat-reply-sender";
+        replySender.textContent=senderLabel(data.replyTo.sender);
+        const replyText=document.createElement("div");
+        replyText.className="chat-reply-text";
+        replyText.textContent=data.replyTo.isPhoto ? "📷 Photo" : truncateChatPreview(data.replyTo.text || "Message", 52);
+        replyQuote.appendChild(replySender);
+        replyQuote.appendChild(replyText);
+        bubble.appendChild(replyQuote);
+      }
+
+      if (data.isPhoto) {
+        const img = document.createElement("img");
+        img.src = data.photoUrl || "";
+        img.alt = "Photo";
+        img.loading = "lazy";
+        img.addEventListener("click", () => openLightbox(img.src));
+        bubble.appendChild(img);
+      } else {
+        const textDiv=document.createElement("div");
+        textDiv.textContent=data.text;
+        bubble.appendChild(textDiv);
+      }
+
+      const meta=document.createElement("div");
+      meta.className="chat-meta";
+
+      const metaRow=document.createElement("div");
+      metaRow.className="chat-meta-row";
+
+      const metaInfo=document.createElement("span");
+      metaInfo.className="chat-meta-info";
+      metaInfo.textContent=formatChatTimestamp(data.createdAt, data.sender);
+
+      const replyBtn=document.createElement("button");
+      replyBtn.type="button";
+      replyBtn.className="chat-reply-btn";
+      replyBtn.textContent="Reply";
+      replyBtn.addEventListener("click",e=>{
+        e.stopPropagation();
+        setReplyTarget(data,msgKey);
+      });
+
+      metaRow.appendChild(metaInfo);
+      metaRow.appendChild(replyBtn);
+      meta.appendChild(metaRow);
+
+      let pressTimer;
+      bubble.addEventListener("mousedown",e=>{ pressTimer=setTimeout(()=>{ e.stopPropagation();closeAllPickers();picker.classList.add("open");openPickerWrap=wrap; },400); });
+      bubble.addEventListener("mouseup",()=>clearTimeout(pressTimer));
+      bubble.addEventListener("mouseleave",()=>clearTimeout(pressTimer));
+      bubble.addEventListener("touchstart",e=>{ pressTimer=setTimeout(()=>{ e.preventDefault();closeAllPickers();picker.classList.add("open");openPickerWrap=wrap; },400); },{passive:false});
+      bubble.addEventListener("touchend",()=>clearTimeout(pressTimer));
+      bubble.addEventListener("touchmove",()=>clearTimeout(pressTimer));
+
+      const reactionStrip=document.createElement("div");
+      reactionStrip.className="reaction-strip";
+      reactionStrip.id=`reactions-${msgKey}`;
+
+      wrap.appendChild(picker);
       wrap.appendChild(bubble);
-      wrap.appendChild(m);
+      wrap.appendChild(meta);
+      wrap.appendChild(reactionStrip);
       return wrap;
     }
 
-    async function sendChatMessage() {
-      const text   = chatMessageInput.value.trim();
-      const sender = chatSenderSelect.value;
-      if (!text) return;
-      await push(ref(db, "messages"), { text, sender, createdAt: Date.now() });
-      chatMessageInput.value = "";
+    async function addReaction(msgKey,emoji){
+      if(!msgKey) return;
+      onValue(ref(db,`messageReactions/${msgKey}/${encodeEmoji(emoji)}`),(snap)=>{
+        update(ref(db,`messageReactions/${msgKey}`),{[encodeEmoji(emoji)]:(snap.val()||0)+1});
+      },{onlyOnce:true});
     }
 
-    chatFab.addEventListener("click", () => {
-      chatPanel.classList.toggle("open");
-      if (chatPanel.classList.contains("open")) chatFeed.scrollTop = chatFeed.scrollHeight;
+    const encodeEmoji=e=>[...e].map(c=>c.codePointAt(0).toString(16)).join("_");
+    const decodeEmoji=k=>k.split("_").map(h=>String.fromCodePoint(parseInt(h,16))).join("");
+
+    function watchReactions(msgKey){
+      if(!msgKey) return;
+      onValue(ref(db,`messageReactions/${msgKey}`),(snap)=>{
+        const strip=document.getElementById(`reactions-${msgKey}`);
+        if(!strip) return;
+        strip.innerHTML="";
+        const data=snap.val()||{};
+        const entries=Object.entries(data);
+        if(!entries.length){ strip.style.display="none"; return; }
+        strip.style.display="flex";
+        entries.forEach(([key,count])=>{
+          const pill=document.createElement("div");
+          pill.className="reaction-pill";
+          pill.innerHTML=`${decodeEmoji(key)} <span class="r-count">${count}</span>`;
+          pill.addEventListener("click",e=>{ e.stopPropagation();addReaction(msgKey,decodeEmoji(key)); });
+          strip.appendChild(pill);
+        });
+      });
+    }
+
+    async function sendChatMessage(){
+      const text=chatMessageInput.value.trim();
+      const sender=chatSenderSelect.value;
+      const replyTo=buildReplyPayload();
+      if(!text) return;
+      await push(ref(db,"messages"),{
+        text,sender,createdAt:Date.now(),
+        ...(replyTo ? { replyTo } : {})
+      });
+      chatMessageInput.value="";
+      clearReplyTarget();
+      stopTypingState(sender);
+    }
+
+    chatSendBtn.addEventListener("click",sendChatMessage);
+    chatReplyClose.addEventListener("click",clearReplyTarget);
+    chatMessageInput.addEventListener("input",scheduleTypingState);
+    chatMessageInput.addEventListener("blur",()=>stopTypingState());
+    chatSenderSelect.addEventListener("change",()=>{
+      const currentSender = chatSenderSelect.value || "riri";
+      if (lastTypingSender && lastTypingSender !== currentSender) {
+        stopTypingState(lastTypingSender);
+      }
+      lastTypingSender = currentSender;
+      renderTypingIndicator();
+    });
+    chatMessageInput.addEventListener("keydown",e=>{
+      if(e.key==="Escape" && activeReplyMessage){
+        clearReplyTarget();
+        return;
+      }
+      if((e.metaKey||e.ctrlKey)&&e.key==="Enter") sendChatMessage();
     });
 
-    chatCloseBtn.addEventListener("click", () => chatPanel.classList.remove("open"));
-    chatSendBtn.addEventListener("click", sendChatMessage);
-    chatMessageInput.addEventListener("keydown", e => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") sendChatMessage();
+    ["click","touchend"].forEach(evt=>{
+      chatMessageInput.addEventListener(evt,()=>{
+        requestAnimationFrame(()=>chatMessageInput.focus());
+      },{passive:true});
+    });
+    chatPhotoBtn.addEventListener("touchend",()=>requestAnimationFrame(()=>chatPhotoBtn.blur()),{passive:true});
+    chatSendBtn.addEventListener("touchend",()=>requestAnimationFrame(()=>chatSendBtn.blur()),{passive:true});
+
+    document.addEventListener("click",e=>{
+      if(!e.target.closest(".reaction-picker")&&!e.target.closest(".chat-bubble")) closeAllPickers();
+      if(!e.target.closest(".music-shell")&&musicPanel.classList.contains("open")) closeMusicPanel();
     });
 
-    onChildAdded(query(ref(db, "messages"), limitToLast(200)), snap => {
-      chatFeed.appendChild(buildChatBubble(snap.val()));
-      chatFeed.scrollTop = chatFeed.scrollHeight;
+    window.addEventListener("beforeunload",()=>stopTypingState());
+    window.addEventListener("pagehide",()=>stopTypingState());
+    onValue(ref(db,"chatTyping"),snap=>{
+      chatTypingState = snap.val() || {};
+      renderTypingIndicator();
+    });
+
+    onChildAdded(query(ref(db,"messages"),limitToLast(200)),snap=>{
+      const data=snap.val();
+      const pendingId = data?.pendingClientId;
+
+      if (pendingId && pendingPhotoUploads.has(pendingId)) {
+        const pending = pendingPhotoUploads.get(pendingId);
+
+        if (pending?.wrap) {
+          pending.wrap.dataset.key = snap.key || "";
+          delete pending.wrap.dataset.pendingClientId;
+
+          const img = pending.wrap.querySelector("img");
+          if (img && data?.photoUrl) img.src = data.photoUrl;
+
+          const meta = pending.wrap.querySelector(".chat-meta-info");
+          if (meta) meta.textContent = formatChatTimestamp(data.createdAt, data.sender);
+
+          if (pending?.localUrl && pending.localUrl !== data?.photoUrl) {
+            URL.revokeObjectURL(pending.localUrl);
+          }
+
+          pendingPhotoUploads.delete(pendingId);
+          chatFeed.scrollTop = chatFeed.scrollHeight;
+          watchReactions(snap.key);
+          return;
+        }
+      }
+
+      chatFeed.appendChild(buildChatBubble(data,snap.key));
+      chatFeed.scrollTop=chatFeed.scrollHeight;
+      watchReactions(snap.key);
     });
 
     /* ── music ────────────────────────────────────────────── */
