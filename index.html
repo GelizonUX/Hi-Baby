@@ -453,6 +453,30 @@
     .chat-sender-label { font-size:12px; color:#9d6881; flex-shrink:0; }
     .chat-sender-select { border:none; outline:none; background:rgba(255,236,245,0.75); color:var(--text-soft); border-radius:999px; padding:7px 12px; font-size:13px; font-family:"Inter",sans-serif; cursor:pointer; }
 
+    .chat-status-row { display:flex; align-items:center; justify-content:flex-start; min-height:16px; margin-bottom:8px; }
+    .chat-typing-indicator { font-size:11px; color:#b56c8d; opacity:0; transform:translateY(4px); transition:opacity 0.22s ease,transform 0.22s ease; pointer-events:none; }
+    .chat-typing-indicator.show { opacity:0.95; transform:translateY(0); }
+
+    .chat-reply-preview { display:none; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:8px; padding:10px 12px; border-radius:14px; background:rgba(255,236,245,0.72); border:1px solid rgba(255,183,214,0.4); }
+    .chat-reply-preview.show { display:flex; animation:fadeSlideUp 0.25s var(--ease-out-expo); }
+    .chat-reply-preview-main { min-width:0; flex:1; }
+    .chat-reply-preview-label { font-size:10px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:#b56c8d; margin-bottom:2px; }
+    .chat-reply-preview-sender { font-size:12px; font-weight:600; color:var(--pink-7); margin-bottom:2px; }
+    .chat-reply-preview-text { font-size:12px; color:var(--text-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:210px; }
+    .chat-reply-close { width:24px; height:24px; flex-shrink:0; border:none; border-radius:999px; cursor:pointer; color:var(--pink-7); background:rgba(255,255,255,0.72); font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; transition:transform 0.25s var(--ease-spring),background 0.2s ease; }
+    .chat-reply-close:hover { transform:scale(1.08) rotate(90deg); background:rgba(255,255,255,0.92); }
+
+    .chat-reply-quote { display:flex; flex-direction:column; gap:2px; margin-bottom:8px; padding:7px 9px; border-radius:10px; background:rgba(255,255,255,0.42); border-left:3px solid rgba(255,255,255,0.66); }
+    .chat-bubble-wrap.riri .chat-reply-quote { border-left-color:rgba(255,113,181,0.55); }
+    .chat-bubble-wrap.vince .chat-reply-quote { border-left-color:rgba(91,184,245,0.58); }
+    .chat-reply-sender { font-size:11px; font-weight:600; opacity:0.9; }
+    .chat-reply-text { font-size:12px; line-height:1.35; opacity:0.82; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+    .chat-meta-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .chat-bubble-wrap.riri .chat-meta-row { justify-content:flex-start; }
+    .chat-bubble-wrap.vince .chat-meta-row { justify-content:flex-end; }
+    .chat-reply-btn { border:none; background:transparent; padding:0; font-size:10.5px; font-weight:600; color:#b56c8d; cursor:pointer; opacity:0.88; }
+    .chat-reply-btn:hover { opacity:1; text-decoration:underline; }
+
     /* photo + text input row */
     .chat-input-row { display:flex; gap:8px; align-items:flex-end; }
 
@@ -741,6 +765,8 @@
       .chat-bubble-wrap { max-width:86%; }
       .chat-bubble { font-size:12.5px; }
       .chat-bubble.photo-bubble img { width:min(170px,60vw); }
+      .chat-reply-preview-text { max-width:150px; }
+      .chat-reply-text { max-width:130px; }
       .chat-message-input { height:52px; font-size:13px; }
       .chat-send-btn,.chat-photo-btn { width:40px; height:40px; font-size:16px; }
 
@@ -959,6 +985,17 @@ I'll message you pag gising ko, MWA!
           <option value="vince">Vince</option>
         </select>
       </div>
+      <div class="chat-status-row">
+        <div class="chat-typing-indicator" id="chatTypingIndicator"></div>
+      </div>
+      <div class="chat-reply-preview" id="chatReplyPreview">
+        <div class="chat-reply-preview-main">
+          <div class="chat-reply-preview-label">Replying to</div>
+          <div class="chat-reply-preview-sender" id="chatReplySender"></div>
+          <div class="chat-reply-preview-text" id="chatReplyText"></div>
+        </div>
+        <button class="chat-reply-close" id="chatReplyClose" aria-label="Clear reply">✕</button>
+      </div>
       <div class="chat-input-row">
         <!-- photo button -->
         <button class="chat-photo-btn" id="chatPhotoBtn" title="Send a photo">📷</button>
@@ -1057,6 +1094,11 @@ I'll message you pag gising ko, MWA!
     const chatCloseBtn        = document.getElementById("chatCloseBtn");
     const chatFeed            = document.getElementById("chatFeed");
     const chatSenderSelect    = document.getElementById("chatSenderSelect");
+    const chatTypingIndicator = document.getElementById("chatTypingIndicator");
+    const chatReplyPreview    = document.getElementById("chatReplyPreview");
+    const chatReplySender     = document.getElementById("chatReplySender");
+    const chatReplyText       = document.getElementById("chatReplyText");
+    const chatReplyClose      = document.getElementById("chatReplyClose");
     const chatMessageInput    = document.getElementById("chatMessageInput");
     const chatSendBtn         = document.getElementById("chatSendBtn");
     const chatPhotoBtn        = document.getElementById("chatPhotoBtn");
@@ -1288,6 +1330,25 @@ I'll message you pag gising ko, MWA!
       const label = sender==="vince" ? "Vince" : "Riri";
       return `${label} • ${d.toLocaleString([],{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true})}`;
     };
+    const senderLabel = sender => sender==="vince" ? "Vince" : "Riri";
+    const truncateChatPreview = (text, max=72) => {
+      const safe = String(text || "").replace(/\s+/g, " ").trim();
+      return safe.length > max ? `${safe.slice(0, max - 1)}…` : safe;
+    };
+    const getMessagePreviewText = data => {
+      if (!data) return "Message";
+      if (data.isPhoto) return "📷 Photo";
+      return truncateChatPreview(data.text || "Message");
+    };
+    const buildReplyPayload = () => {
+      if (!activeReplyMessage) return null;
+      return {
+        key: activeReplyMessage.key || "",
+        sender: activeReplyMessage.sender || "riri",
+        text: activeReplyMessage.text || "Message",
+        isPhoto: !!activeReplyMessage.isPhoto
+      };
+    };
 
     const openMusicPanel  = () => musicPanel.classList.add("open");
     const closeMusicPanel = () => musicPanel.classList.remove("open");
@@ -1509,6 +1570,12 @@ I'll message you pag gising ko, MWA!
     }
 
     const pendingPhotoUploads = new Map();
+    let chatTypingState = {};
+    let typingIdleTimer = null;
+    let typingExpiryTimer = null;
+    let lastTypingSender = chatSenderSelect.value || "riri";
+    let activeReplyMessage = null;
+
 
     function isChatPhotoConvertible(file) {
       if (!file) return false;
@@ -1622,15 +1689,102 @@ I'll message you pag gising ko, MWA!
       });
     }
 
+    function renderReplyPreview() {
+      if (!activeReplyMessage) {
+        chatReplyPreview.classList.remove("show");
+        chatReplySender.textContent = "";
+        chatReplyText.textContent = "";
+        return;
+      }
+      chatReplySender.textContent = senderLabel(activeReplyMessage.sender);
+      chatReplyText.textContent = activeReplyMessage.text || "Message";
+      chatReplyPreview.classList.add("show");
+    }
+
+    function clearReplyTarget() {
+      activeReplyMessage = null;
+      renderReplyPreview();
+    }
+
+    function setReplyTarget(data, msgKey) {
+      if (!data) return;
+      activeReplyMessage = {
+        key: msgKey || "",
+        sender: data.sender || "riri",
+        text: getMessagePreviewText(data),
+        isPhoto: !!data.isPhoto
+      };
+      renderReplyPreview();
+      chatMessageInput.focus();
+    }
+
+    async function pushTypingState(sender, active) {
+      if (!sender) return;
+      try {
+        await set(ref(db, `chatTyping/${sender}`), { active: !!active, updatedAt: Date.now() });
+      } catch (err) {
+        console.error("Typing status failed:", err);
+      }
+    }
+
+    function renderTypingIndicator() {
+      if (typingExpiryTimer) {
+        clearTimeout(typingExpiryTimer);
+        typingExpiryTimer = null;
+      }
+
+      const me = chatSenderSelect.value || "riri";
+      const other = me === "vince" ? "riri" : "vince";
+      const otherState = chatTypingState?.[other] || null;
+      const updatedAt = Number(otherState?.updatedAt || 0);
+      const age = Date.now() - updatedAt;
+      const isVisible = !!otherState?.active && age < 7000;
+
+      if (isVisible) {
+        chatTypingIndicator.textContent = `${senderLabel(other)} is typing...`;
+        chatTypingIndicator.classList.add("show");
+        typingExpiryTimer = setTimeout(renderTypingIndicator, Math.max(250, 7100 - age));
+      } else {
+        chatTypingIndicator.textContent = "";
+        chatTypingIndicator.classList.remove("show");
+      }
+    }
+
+    function scheduleTypingState() {
+      const sender = chatSenderSelect.value || "riri";
+      if (lastTypingSender && lastTypingSender !== sender) {
+        pushTypingState(lastTypingSender, false);
+      }
+      lastTypingSender = sender;
+
+      if (typingIdleTimer) clearTimeout(typingIdleTimer);
+
+      if (chatMessageInput.value.trim()) {
+        pushTypingState(sender, true);
+        typingIdleTimer = setTimeout(() => pushTypingState(sender, false), 1400);
+      } else {
+        pushTypingState(sender, false);
+      }
+    }
+
+    function stopTypingState(sender = (chatSenderSelect.value || lastTypingSender || "riri")) {
+      if (typingIdleTimer) {
+        clearTimeout(typingIdleTimer);
+        typingIdleTimer = null;
+      }
+      pushTypingState(sender, false);
+    }
+
     async function handleChatPhotoFile(file, inputEl) {
       if (!file) return;
       const sender = chatSenderSelect.value;
       const createdAt = Date.now();
+      const replyTo = buildReplyPayload();
       const uploadFile = await prepareChatPhotoFile(file);
       const pendingId = `pending-${createdAt}-${Math.random().toString(36).slice(2,8)}`;
       const localUrl = URL.createObjectURL(uploadFile);
-      const tempWrap = buildChatBubble({ sender, isPhoto:true, photoUrl:localUrl, createdAt }, null);
-      const meta = tempWrap.querySelector(".chat-meta");
+      const tempWrap = buildChatBubble({ sender, isPhoto:true, photoUrl:localUrl, createdAt, replyTo }, null);
+      const meta = tempWrap.querySelector(".chat-meta-info");
       if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • sending...`;
       tempWrap.dataset.pendingClientId = pendingId;
       chatFeed.appendChild(tempWrap);
@@ -1655,8 +1809,11 @@ I'll message you pag gising ko, MWA!
           isPhoto:true,
           photoUrl:finalPhotoUrl,
           createdAt:Date.now(),
-          pendingClientId:pendingId
+          pendingClientId:pendingId,
+          ...(replyTo ? { replyTo } : {})
         });
+        clearReplyTarget();
+        stopTypingState(sender);
       } catch(e) {
         console.error("Photo upload failed:", e);
         if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • failed to send`;
@@ -1738,8 +1895,27 @@ I'll message you pag gising ko, MWA!
       const bubble=document.createElement("div");
 
       if (data.isPhoto) {
-        // photo bubble
         bubble.className = "chat-bubble photo-bubble";
+      } else {
+        bubble.className = "chat-bubble";
+        if(data.isMoodMessage) bubble.classList.add(data.moodClass||"mood-bubble-pink");
+      }
+
+      if (data.replyTo) {
+        const replyQuote=document.createElement("div");
+        replyQuote.className="chat-reply-quote";
+        const replySender=document.createElement("div");
+        replySender.className="chat-reply-sender";
+        replySender.textContent=senderLabel(data.replyTo.sender);
+        const replyText=document.createElement("div");
+        replyText.className="chat-reply-text";
+        replyText.textContent=data.replyTo.isPhoto ? "📷 Photo" : truncateChatPreview(data.replyTo.text || "Message", 52);
+        replyQuote.appendChild(replySender);
+        replyQuote.appendChild(replyText);
+        bubble.appendChild(replyQuote);
+      }
+
+      if (data.isPhoto) {
         const img = document.createElement("img");
         img.src = data.photoUrl || "";
         img.alt = "Photo";
@@ -1747,9 +1923,6 @@ I'll message you pag gising ko, MWA!
         img.addEventListener("click", () => openLightbox(img.src));
         bubble.appendChild(img);
       } else {
-        // text bubble
-        bubble.className = "chat-bubble";
-        if(data.isMoodMessage) bubble.classList.add(data.moodClass||"mood-bubble-pink");
         const textDiv=document.createElement("div");
         textDiv.textContent=data.text;
         bubble.appendChild(textDiv);
@@ -1757,7 +1930,26 @@ I'll message you pag gising ko, MWA!
 
       const meta=document.createElement("div");
       meta.className="chat-meta";
-      meta.textContent=formatChatTimestamp(data.createdAt, data.sender);
+
+      const metaRow=document.createElement("div");
+      metaRow.className="chat-meta-row";
+
+      const metaInfo=document.createElement("span");
+      metaInfo.className="chat-meta-info";
+      metaInfo.textContent=formatChatTimestamp(data.createdAt, data.sender);
+
+      const replyBtn=document.createElement("button");
+      replyBtn.type="button";
+      replyBtn.className="chat-reply-btn";
+      replyBtn.textContent="Reply";
+      replyBtn.addEventListener("click",e=>{
+        e.stopPropagation();
+        setReplyTarget(data,msgKey);
+      });
+
+      metaRow.appendChild(metaInfo);
+      metaRow.appendChild(replyBtn);
+      meta.appendChild(metaRow);
 
       let pressTimer;
       bubble.addEventListener("mousedown",e=>{ pressTimer=setTimeout(()=>{ e.stopPropagation();closeAllPickers();picker.classList.add("open");openPickerWrap=wrap; },400); });
@@ -1811,19 +2003,47 @@ I'll message you pag gising ko, MWA!
     async function sendChatMessage(){
       const text=chatMessageInput.value.trim();
       const sender=chatSenderSelect.value;
+      const replyTo=buildReplyPayload();
       if(!text) return;
-      await push(ref(db,"messages"),{text,sender,createdAt:Date.now()});
+      await push(ref(db,"messages"),{
+        text,sender,createdAt:Date.now(),
+        ...(replyTo ? { replyTo } : {})
+      });
       chatMessageInput.value="";
+      clearReplyTarget();
+      stopTypingState(sender);
     }
 
     chatSendBtn.addEventListener("click",sendChatMessage);
+    chatReplyClose.addEventListener("click",clearReplyTarget);
+    chatMessageInput.addEventListener("input",scheduleTypingState);
+    chatMessageInput.addEventListener("blur",()=>stopTypingState());
+    chatSenderSelect.addEventListener("change",()=>{
+      const currentSender = chatSenderSelect.value || "riri";
+      if (lastTypingSender && lastTypingSender !== currentSender) {
+        stopTypingState(lastTypingSender);
+      }
+      lastTypingSender = currentSender;
+      renderTypingIndicator();
+    });
     chatMessageInput.addEventListener("keydown",e=>{
+      if(e.key==="Escape" && activeReplyMessage){
+        clearReplyTarget();
+        return;
+      }
       if((e.metaKey||e.ctrlKey)&&e.key==="Enter") sendChatMessage();
     });
 
     document.addEventListener("click",e=>{
       if(!e.target.closest(".reaction-picker")&&!e.target.closest(".chat-bubble")) closeAllPickers();
       if(!e.target.closest(".music-shell")&&musicPanel.classList.contains("open")) closeMusicPanel();
+    });
+
+    window.addEventListener("beforeunload",()=>stopTypingState());
+    window.addEventListener("pagehide",()=>stopTypingState());
+    onValue(ref(db,"chatTyping"),snap=>{
+      chatTypingState = snap.val() || {};
+      renderTypingIndicator();
     });
 
     onChildAdded(query(ref(db,"messages"),limitToLast(200)),snap=>{
@@ -1840,7 +2060,7 @@ I'll message you pag gising ko, MWA!
           const img = pending.wrap.querySelector("img");
           if (img && data?.photoUrl) img.src = data.photoUrl;
 
-          const meta = pending.wrap.querySelector(".chat-meta");
+          const meta = pending.wrap.querySelector(".chat-meta-info");
           if (meta) meta.textContent = formatChatTimestamp(data.createdAt, data.sender);
 
           if (pending?.localUrl && pending.localUrl !== data?.photoUrl) {
