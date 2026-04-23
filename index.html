@@ -1637,6 +1637,7 @@ I'll message you pag gising ko, MWA!
 
   
 <!-- ── MUSIC ─────────────────────────────────────────────── -->
+<button id="musicToggleBtn" type="button" hidden aria-hidden="true" tabindex="-1"></button>
 <div class="music-shell">
   <div class="music-panel" id="musicPanel">
     <div class="music-panel-top">
@@ -1949,7 +1950,7 @@ let currentSongIndex = 0, isDraggingSeek = false;
 
 /* ── Spotify shared playlist ─────────────────────────────── */
 const SPOTIFY_CLIENT_ID   = "a5a7b9029a2249178bd13f7db1bbc75f";
-const SPOTIFY_REDIRECT_URI = "https://gelizonux.github.io/Hi-Baby/index.html";
+const SPOTIFY_REDIRECT_URI = `${window.location.origin}${window.location.pathname}`;
 const SPOTIFY_SCOPES = [
   "playlist-read-private",
   "playlist-read-collaborative",
@@ -3995,21 +3996,23 @@ const playPrevSong = () => playPrevSpotifyTrack();
 
     
 /* ── Spotify events ───────────────────────────────────────── */
-spotifyConnectBtn.addEventListener("click", async () => {
-  const token = await ensureSpotifyAccessToken();
-  if (!token) {
-    beginSpotifyLogin();
-    return;
-  }
+spotifyConnectBtn?.addEventListener("click", async () => {
   try {
+    const token = await ensureSpotifyAccessToken();
+    if (!token) {
+      await beginSpotifyLogin();
+      return;
+    }
+
     setSpotifyStatus("Refreshing");
     await fetchSpotifyProfile();
     await fetchSpotifyPlaylists();
     await refreshPlaybackStateFromApi();
     setSpotifyStatus("Connected");
   } catch (err) {
+    console.error("Spotify connect failed:", err);
     setSpotifyStatus("Spotify error");
-    if (spotifyUser) spotifyUser.textContent = err?.message || "Spotify could not refresh your playlists.";
+    if (spotifyUser) spotifyUser.textContent = err?.message || "Spotify could not connect right now.";
   }
 });
 
@@ -4022,7 +4025,7 @@ spotifyDisconnectBtn?.addEventListener("click", () => {
   disconnectSpotifySession();
 });
 
-spotifySetPlaylistBtn.addEventListener("click", async () => {
+spotifySetPlaylistBtn?.addEventListener("click", async () => {
   try {
     await setSharedSpotifyPlaylist();
   } catch (err) {
@@ -4052,21 +4055,21 @@ spotifySearchInput?.addEventListener("keydown", async e => {
 });
 
 /* ── music events ─────────────────────────────────────────── */
-musicToggleBtn.addEventListener("click", openMusicPanel);
-musicCollapseBtn.addEventListener("click", closeMusicPanel);
-musicMiniInfo.addEventListener("click", openMusicPanel);
-musicMiniInfo.addEventListener("keydown", e => {
+musicToggleBtn?.addEventListener("click", openMusicPanel);
+musicCollapseBtn?.addEventListener("click", closeMusicPanel);
+musicMiniInfo?.addEventListener("click", openMusicPanel);
+musicMiniInfo?.addEventListener("keydown", e => {
   if (e.key === "Enter" || e.key === " ") {
     e.preventDefault();
     openMusicPanel();
   }
 });
 
-if (playSongBtn) playSongBtn.addEventListener("click", toggleSpotifyPlayback);
-if (musicMiniPlayBtn) musicMiniPlayBtn.addEventListener("click", toggleSpotifyPlayback);
-if (prevSongBtn) prevSongBtn.addEventListener("click", playPrevSpotifyTrack);
-if (nextSongBtn) nextSongBtn.addEventListener("click", playNextSpotifyTrack);
-if (restartSongBtn) restartSongBtn.addEventListener("click", restartSpotifyTrack);
+playSongBtn?.addEventListener("click", toggleSpotifyPlayback);
+musicMiniPlayBtn?.addEventListener("click", toggleSpotifyPlayback);
+prevSongBtn?.addEventListener("click", playPrevSpotifyTrack);
+nextSongBtn?.addEventListener("click", playNextSpotifyTrack);
+restartSongBtn?.addEventListener("click", restartSpotifyTrack);
 
 if (musicSeekBar) musicSeekBar.addEventListener("mousedown", () => isDraggingSeek = true);
 if (musicSeekBar) musicSeekBar.addEventListener("touchstart", () => isDraggingSeek = true, { passive: true });
