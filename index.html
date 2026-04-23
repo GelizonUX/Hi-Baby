@@ -1950,7 +1950,10 @@ let currentSongIndex = 0, isDraggingSeek = false;
 
 /* ── Spotify shared playlist ─────────────────────────────── */
 const SPOTIFY_CLIENT_ID   = "a5a7b9029a2249178bd13f7db1bbc75f";
-const SPOTIFY_REDIRECT_URI = `${window.location.origin}${window.location.pathname}`;
+const spotifyRedirectPath = window.location.pathname.endsWith("/")
+  ? `${window.location.pathname}index.html`
+  : window.location.pathname;
+const SPOTIFY_REDIRECT_URI = `${window.location.origin}${spotifyRedirectPath}`;
 const SPOTIFY_SCOPES = [
   "playlist-read-private",
   "playlist-read-collaborative",
