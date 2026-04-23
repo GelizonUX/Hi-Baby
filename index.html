@@ -585,6 +585,124 @@
     .music-mini-title { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .music-mini-time { font-size:11px; opacity:0.92; white-space:nowrap; flex-shrink:0; min-width:74px; text-align:right; padding-right:2px; }
 
+
+    /* ── SPOTIFY SHARED PLAYLIST ───────────────────────────── */
+    .spotify-card {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,183,214,0.28);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .spotify-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .spotify-kicker {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #b5698d;
+      margin-bottom: 4px;
+    }
+    .spotify-title {
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      color: var(--pink-7);
+      line-height: 1.1;
+    }
+    .spotify-status {
+      font-size: 11px;
+      font-weight: 600;
+      color: #9b6680;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,236,245,0.72);
+      white-space: nowrap;
+    }
+    .spotify-connect-btn,
+    .spotify-set-btn,
+    .spotify-open-link {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: "Inter", sans-serif;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s var(--ease-spring), filter 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    }
+    .spotify-connect-btn,
+    .spotify-set-btn {
+      color: white;
+      background: linear-gradient(135deg, #1db954 0%, #169c46 100%);
+      box-shadow: 0 12px 24px rgba(29,185,84,0.18);
+    }
+    .spotify-connect-btn:hover,
+    .spotify-set-btn:hover,
+    .spotify-open-link:hover {
+      transform: translateY(-2px) scale(1.01);
+      filter: brightness(1.04);
+    }
+    .spotify-open-link {
+      color: var(--text-soft);
+      background: rgba(255,236,245,0.82);
+      box-shadow: 0 10px 20px rgba(255,87,165,0.08);
+    }
+    .spotify-user {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #9b6680;
+      min-height: 18px;
+    }
+    .spotify-select-wrap {
+      display: grid;
+      gap: 10px;
+    }
+    .spotify-shared-wrap {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,236,245,0.52);
+      border: 1px solid rgba(255,183,214,0.32);
+    }
+    .spotify-shared-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #b5698d;
+    }
+    .spotify-shared-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-soft);
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .spotify-embed-wrap {
+      display: none;
+      margin-top: 2px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,183,214,0.32);
+      background: rgba(255,255,255,0.7);
+    }
+    .spotify-embed-wrap.show { display: block; }
+    .spotify-embed {
+      width: 100%;
+      height: 352px;
+      border: 0;
+      display: block;
+    }
+
     /* ══════════════════════════════════════════════════════════
        MOOD WIDGET + SWITCHER
     ══════════════════════════════════════════════════════════ */
@@ -806,6 +924,10 @@
       .photo-source-card { width:100%; border-radius:22px; padding:12px; }
       .photo-source-title { font-size:20px; }
     }
+        @media (max-width:680px) {
+      .spotify-status { white-space: normal; text-align: right; }
+      .spotify-embed { height: 320px; }
+    }
     @media (max-width:400px) {
       .music-shell { left:78px; right:78px; max-width:none; }
     }
@@ -954,6 +1076,37 @@ I'll message you pag gising ko, MWA!
         <button class="music-play-btn" id="playSongBtn" aria-label="Play"><span id="musicPlayIcon">▶</span><span id="musicPlayText" aria-hidden="true">Play</span></button>
         <button class="music-icon-btn" id="nextSongBtn">⏭</button>
         <button class="music-icon-btn" id="restartSongBtn">↺</button>
+      </div>
+
+      <div class="spotify-card" id="spotifyCard">
+        <div class="spotify-card-top">
+          <div>
+            <div class="spotify-kicker">spotify</div>
+            <div class="spotify-title">shared playlist</div>
+          </div>
+          <div class="spotify-status" id="spotifyStatus">Not connected</div>
+        </div>
+        <button class="spotify-connect-btn" id="spotifyConnectBtn" type="button">Connect Spotify</button>
+        <div class="spotify-user" id="spotifyUser">Connect your Spotify account to load your playlists.</div>
+        <div class="spotify-select-wrap" id="spotifySelectWrap" hidden>
+          <select id="spotifyPlaylistSelect" class="music-select"></select>
+          <button class="spotify-set-btn" id="spotifySetPlaylistBtn" type="button">Set as shared playlist</button>
+        </div>
+        <div class="spotify-shared-wrap" id="spotifySharedWrap" hidden>
+          <div class="spotify-shared-label">Current shared playlist</div>
+          <div class="spotify-shared-name" id="spotifySharedName">No shared playlist yet.</div>
+          <a class="spotify-open-link" id="spotifyOpenLink" href="#" target="_blank" rel="noopener noreferrer" hidden>Open in Spotify</a>
+        </div>
+        <div class="spotify-embed-wrap" id="spotifyEmbedWrap" hidden>
+          <iframe
+            class="spotify-embed"
+            id="spotifyEmbed"
+            loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            src="about:blank"
+            title="Shared Spotify playlist">
+          </iframe>
+        </div>
       </div>
     </div>
     <div class="music-mini-bar">
@@ -1144,6 +1297,18 @@ I'll message you pag gising ko, MWA!
     const musicPlayIcon       = document.getElementById("musicPlayIcon");
     const musicPlayText       = document.getElementById("musicPlayText");
 
+    const spotifyStatus       = document.getElementById("spotifyStatus");
+    const spotifyConnectBtn   = document.getElementById("spotifyConnectBtn");
+    const spotifyUser         = document.getElementById("spotifyUser");
+    const spotifySelectWrap   = document.getElementById("spotifySelectWrap");
+    const spotifyPlaylistSelect = document.getElementById("spotifyPlaylistSelect");
+    const spotifySetPlaylistBtn = document.getElementById("spotifySetPlaylistBtn");
+    const spotifySharedWrap   = document.getElementById("spotifySharedWrap");
+    const spotifySharedName   = document.getElementById("spotifySharedName");
+    const spotifyOpenLink     = document.getElementById("spotifyOpenLink");
+    const spotifyEmbedWrap    = document.getElementById("spotifyEmbedWrap");
+    const spotifyEmbed        = document.getElementById("spotifyEmbed");
+
     /* ── Playlist ─────────────────────────────────────────────── */
     const playlist = [
       { title:"Inner child",         file:"lovesong.mp3"  },
@@ -1154,6 +1319,338 @@ I'll message you pag gising ko, MWA!
       { title:"Wish list",           file:"songsix.mp3"   }
     ];
     let currentSongIndex = 0, isDraggingSeek = false;
+
+    /* ── Spotify shared playlist ─────────────────────────────── */
+    const SPOTIFY_CLIENT_ID   = "a5a7b9029a2249178bd13f7db1bbc75f";
+    const SPOTIFY_REDIRECT_URI = "https://gelizonux.github.io/Hi-Baby/index.html";
+    const SPOTIFY_SCOPES = [
+      "playlist-read-private",
+      "playlist-read-collaborative",
+      "user-read-private",
+      "user-read-email"
+    ].join(" ");
+    const SPOTIFY_SHARED_REF = ref(db, "siteConfig/spotifySharedPlaylist");
+    const SPOTIFY_CODE_VERIFIER_KEY = "spotify_pkce_code_verifier";
+    const SPOTIFY_AUTH_STATE_KEY    = "spotify_pkce_auth_state";
+    const SPOTIFY_ACCESS_TOKEN_KEY  = "spotify_access_token";
+    const SPOTIFY_REFRESH_TOKEN_KEY = "spotify_refresh_token";
+    const SPOTIFY_EXPIRES_AT_KEY    = "spotify_access_token_expires_at";
+
+    let spotifyProfile = null;
+    let spotifyPlaylists = [];
+
+    function randomSpotifyString(length = 64) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const buffer = new Uint8Array(length);
+      crypto.getRandomValues(buffer);
+      return Array.from(buffer, n => chars[n % chars.length]).join("");
+    }
+
+    async function sha256ToBase64Url(input) {
+      const data = new TextEncoder().encode(input);
+      const digest = await crypto.subtle.digest("SHA-256", data);
+      return btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
+    }
+
+    function setSpotifyStatus(message) {
+      if (spotifyStatus) spotifyStatus.textContent = message;
+    }
+
+    function saveSpotifyTokenData(data) {
+      if (data.access_token) localStorage.setItem(SPOTIFY_ACCESS_TOKEN_KEY, data.access_token);
+      if (data.refresh_token) localStorage.setItem(SPOTIFY_REFRESH_TOKEN_KEY, data.refresh_token);
+      if (data.expires_in) {
+        const expiresAt = Date.now() + Math.max(0, (Number(data.expires_in) - 60)) * 1000;
+        localStorage.setItem(SPOTIFY_EXPIRES_AT_KEY, String(expiresAt));
+      }
+    }
+
+    function clearSpotifyTokens() {
+      localStorage.removeItem(SPOTIFY_ACCESS_TOKEN_KEY);
+      localStorage.removeItem(SPOTIFY_REFRESH_TOKEN_KEY);
+      localStorage.removeItem(SPOTIFY_EXPIRES_AT_KEY);
+      sessionStorage.removeItem(SPOTIFY_CODE_VERIFIER_KEY);
+      sessionStorage.removeItem(SPOTIFY_AUTH_STATE_KEY);
+    }
+
+    function getStoredSpotifyAccessToken() {
+      return localStorage.getItem(SPOTIFY_ACCESS_TOKEN_KEY) || "";
+    }
+
+    function hasValidSpotifyAccessToken() {
+      const token = getStoredSpotifyAccessToken();
+      const expiresAt = Number(localStorage.getItem(SPOTIFY_EXPIRES_AT_KEY) || 0);
+      return !!token && expiresAt > Date.now();
+    }
+
+    async function refreshSpotifyAccessToken() {
+      const refreshToken = localStorage.getItem(SPOTIFY_REFRESH_TOKEN_KEY);
+      if (!refreshToken) return null;
+
+      const body = new URLSearchParams({
+        client_id: SPOTIFY_CLIENT_ID,
+        grant_type: "refresh_token",
+        refresh_token: refreshToken
+      });
+
+      const res = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body
+      });
+
+      if (!res.ok) {
+        clearSpotifyTokens();
+        return null;
+      }
+
+      const tokenData = await res.json();
+      saveSpotifyTokenData(tokenData);
+      return getStoredSpotifyAccessToken();
+    }
+
+    async function ensureSpotifyAccessToken() {
+      if (hasValidSpotifyAccessToken()) return getStoredSpotifyAccessToken();
+      return refreshSpotifyAccessToken();
+    }
+
+    async function spotifyApi(path, options = {}) {
+      let token = await ensureSpotifyAccessToken();
+      if (!token) throw new Error("Spotify login required.");
+
+      const request = async accessToken => fetch(`https://api.spotify.com/v1${path}`, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+
+      let res = await request(token);
+      if (res.status === 401) {
+        token = await refreshSpotifyAccessToken();
+        if (!token) throw new Error("Spotify session expired. Connect again.");
+        res = await request(token);
+      }
+      if (!res.ok) {
+        let message = `Spotify request failed (${res.status})`;
+        try {
+          const err = await res.json();
+          message = err?.error?.message || message;
+        } catch (_) {}
+        throw new Error(message);
+      }
+      return res.json();
+    }
+
+    function updateSpotifyUI() {
+      const connected = !!getStoredSpotifyAccessToken();
+      setSpotifyStatus(connected ? "Connected" : "Not connected");
+      if (spotifyConnectBtn) spotifyConnectBtn.textContent = connected ? "Refresh playlists" : "Connect Spotify";
+
+      if (spotifyUser) {
+        if (spotifyProfile) {
+          const name = spotifyProfile.display_name || spotifyProfile.id || "Spotify account";
+          spotifyUser.textContent = `Connected as ${name}. Pick a playlist, then set it as the shared playlist for both of you.`;
+        } else if (connected) {
+          spotifyUser.textContent = "Spotify connected. Refresh your playlists if they do not appear yet.";
+        } else {
+          spotifyUser.textContent = "Connect your Spotify account to load your playlists.";
+        }
+      }
+    }
+
+    function populateSpotifyPlaylistSelect() {
+      if (!spotifyPlaylistSelect) return;
+      spotifyPlaylistSelect.innerHTML = "";
+
+      if (!spotifyPlaylists.length) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "No playlists found";
+        spotifyPlaylistSelect.appendChild(opt);
+        spotifySelectWrap.hidden = false;
+        return;
+      }
+
+      spotifyPlaylists.forEach((playlist, index) => {
+        const opt = document.createElement("option");
+        opt.value = playlist.id;
+        const owner = playlist.owner?.display_name || playlist.owner?.id || "Spotify";
+        opt.textContent = `${playlist.name} • ${owner}`;
+        if (index === 0) opt.selected = true;
+        spotifyPlaylistSelect.appendChild(opt);
+      });
+      spotifySelectWrap.hidden = false;
+    }
+
+    function renderSharedSpotifyPlaylist(shared) {
+      const hasShared = !!(shared && shared.id);
+      spotifySharedWrap.hidden = !hasShared;
+      spotifyEmbedWrap.hidden = !hasShared;
+      spotifyEmbedWrap.classList.toggle("show", hasShared);
+
+      if (!hasShared) {
+        spotifySharedName.textContent = "No shared playlist yet.";
+        spotifyOpenLink.hidden = true;
+        spotifyEmbed.src = "about:blank";
+        return;
+      }
+
+      spotifySharedName.textContent = shared.name || "Spotify playlist";
+      if (shared.externalUrl) {
+        spotifyOpenLink.hidden = false;
+        spotifyOpenLink.href = shared.externalUrl;
+      } else {
+        spotifyOpenLink.hidden = true;
+      }
+      spotifyEmbed.src = `https://open.spotify.com/embed/playlist/${shared.id}?utm_source=generator`;
+    }
+
+    async function fetchSpotifyProfile() {
+      spotifyProfile = await spotifyApi("/me");
+      updateSpotifyUI();
+    }
+
+    async function fetchSpotifyPlaylists() {
+      const collected = [];
+      let nextPath = "/me/playlists?limit=50";
+      let guard = 0;
+
+      while (nextPath && guard < 4) {
+        const data = await spotifyApi(nextPath.startsWith("/") ? nextPath : nextPath.replace("https://api.spotify.com/v1", ""));
+        const items = Array.isArray(data?.items) ? data.items : [];
+        collected.push(...items);
+        nextPath = data?.next ? data.next.replace("https://api.spotify.com/v1", "") : "";
+        guard += 1;
+      }
+
+      spotifyPlaylists = collected.filter(item => item && item.id);
+      populateSpotifyPlaylistSelect();
+      updateSpotifyUI();
+    }
+
+    async function beginSpotifyLogin() {
+      const codeVerifier = randomSpotifyString(64);
+      const state = randomSpotifyString(16);
+      const codeChallenge = await sha256ToBase64Url(codeVerifier);
+      sessionStorage.setItem(SPOTIFY_CODE_VERIFIER_KEY, codeVerifier);
+      sessionStorage.setItem(SPOTIFY_AUTH_STATE_KEY, state);
+
+      const params = new URLSearchParams({
+        client_id: SPOTIFY_CLIENT_ID,
+        response_type: "code",
+        redirect_uri: SPOTIFY_REDIRECT_URI,
+        scope: SPOTIFY_SCOPES,
+        code_challenge_method: "S256",
+        code_challenge: codeChallenge,
+        state
+      });
+
+      window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
+    }
+
+    async function handleSpotifyCallback() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const state = params.get("state");
+      const error = params.get("error");
+
+      if (error) {
+        setSpotifyStatus("Spotify login failed");
+        if (spotifyUser) spotifyUser.textContent = `Spotify returned: ${error}`;
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+        return;
+      }
+      if (!code) return;
+
+      const expectedState = sessionStorage.getItem(SPOTIFY_AUTH_STATE_KEY);
+      const codeVerifier = sessionStorage.getItem(SPOTIFY_CODE_VERIFIER_KEY);
+      if (!expectedState || !codeVerifier || state !== expectedState) {
+        setSpotifyStatus("Spotify state mismatch");
+        if (spotifyUser) spotifyUser.textContent = "Spotify login could not be verified. Try connecting again.";
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+        return;
+      }
+
+      const body = new URLSearchParams({
+        client_id: SPOTIFY_CLIENT_ID,
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: SPOTIFY_REDIRECT_URI,
+        code_verifier: codeVerifier
+      });
+
+      const res = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body
+      });
+
+      if (!res.ok) {
+        setSpotifyStatus("Spotify token failed");
+        if (spotifyUser) spotifyUser.textContent = "Spotify could not finish login. Check your redirect URI and allowed users.";
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+        return;
+      }
+
+      const tokenData = await res.json();
+      saveSpotifyTokenData(tokenData);
+      sessionStorage.removeItem(SPOTIFY_CODE_VERIFIER_KEY);
+      sessionStorage.removeItem(SPOTIFY_AUTH_STATE_KEY);
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+      setSpotifyStatus("Connected");
+    }
+
+    async function setSharedSpotifyPlaylist() {
+      const selectedId = spotifyPlaylistSelect?.value || "";
+      if (!selectedId) return;
+      const selected = spotifyPlaylists.find(item => item.id === selectedId);
+      if (!selected) return;
+
+      const payload = {
+        id: selected.id,
+        name: selected.name || "Spotify playlist",
+        externalUrl: selected.external_urls?.spotify || "",
+        owner: selected.owner?.display_name || selected.owner?.id || "Spotify",
+        cover: selected.images?.[0]?.url || "",
+        updatedAt: Date.now(),
+        setBy: spotifyProfile?.display_name || spotifyProfile?.id || "Spotify user"
+      };
+
+      await set(SPOTIFY_SHARED_REF, payload);
+      setSpotifyStatus("Shared playlist updated");
+      if (spotifyUser) spotifyUser.textContent = `Shared playlist set to ${payload.name}. Both of you will now see it on the site.`;
+    }
+
+    async function initSpotifyIntegration() {
+      updateSpotifyUI();
+
+      onValue(SPOTIFY_SHARED_REF, snap => {
+        renderSharedSpotifyPlaylist(snap.val() || null);
+      });
+
+      await handleSpotifyCallback();
+      const token = await ensureSpotifyAccessToken();
+      updateSpotifyUI();
+
+      if (token) {
+        try {
+          await fetchSpotifyProfile();
+          await fetchSpotifyPlaylists();
+        } catch (err) {
+          if (spotifyUser) spotifyUser.textContent = err?.message || "Spotify could not load your playlists.";
+        }
+      }
+    }
+
 
     /* ── Persona data ─────────────────────────────────────────── */
     const PERSONAS = {
@@ -2079,6 +2576,34 @@ I'll message you pag gising ko, MWA!
       watchReactions(snap.key);
     });
 
+
+
+    /* ── Spotify events ───────────────────────────────────────── */
+    spotifyConnectBtn.addEventListener("click", async () => {
+      const token = await ensureSpotifyAccessToken();
+      if (!token) {
+        beginSpotifyLogin();
+        return;
+      }
+      try {
+        setSpotifyStatus("Refreshing playlists");
+        await fetchSpotifyProfile();
+        await fetchSpotifyPlaylists();
+        setSpotifyStatus("Connected");
+      } catch (err) {
+        setSpotifyStatus("Spotify error");
+        if (spotifyUser) spotifyUser.textContent = err?.message || "Spotify could not refresh your playlists.";
+      }
+    });
+    spotifySetPlaylistBtn.addEventListener("click", async () => {
+      try {
+        await setSharedSpotifyPlaylist();
+      } catch (err) {
+        setSpotifyStatus("Save failed");
+        if (spotifyUser) spotifyUser.textContent = err?.message || "Spotify playlist could not be saved right now.";
+      }
+    });
+
     /* ── music events ─────────────────────────────────────────── */
     musicToggleBtn.addEventListener("click",openMusicPanel);
     musicCollapseBtn.addEventListener("click",closeMusicPanel);
@@ -2110,6 +2635,7 @@ I'll message you pag gising ko, MWA!
     bgMusic.addEventListener("error",()=>console.error("Audio failed:",bgMusic.currentSrc));
 
     /* ── init ─────────────────────────────────────────────────── */
+    initSpotifyIntegration();
     loadSong(0);
     updateMusicTitles();
     updateMusicButtons();
