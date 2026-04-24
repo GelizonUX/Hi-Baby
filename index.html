@@ -2266,145 +2266,203 @@ body.music-open .music-shell { z-index:43; }
       display:none !important;
     }
 
+  
 
+/* Final Spotify search layout guard: prevents clipped buttons, overflow, and hidden results */
+.music-panel {
+  overflow-x:hidden !important;
+}
+.music-panel > .spotify-search-top {
+  order:0;
+  position:sticky;
+  top:58px;
+  z-index:12;
+  display:grid;
+  gap:14px;
+  width:100%;
+  max-width:100%;
+  padding:16px 18px;
+  margin:0;
+  border-radius:26px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,246,251,0.94));
+  border:1px solid rgba(255,183,214,0.36);
+  box-shadow:0 16px 34px rgba(255,87,165,0.07), inset 0 1px 0 rgba(255,255,255,0.78);
+  overflow:hidden;
+  box-sizing:border-box;
+}
+.music-panel > .spotify-search-top[hidden] {
+  display:none !important;
+}
+.music-panel > .spotify-search-top *,
+.music-panel > .spotify-search-top *::before,
+.music-panel > .spotify-search-top *::after {
+  box-sizing:border-box;
+}
+.spotify-search-head {
+  display:flex !important;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  min-width:0;
+}
+.spotify-search-kicker {
+  color:var(--mood-title);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:0.16em;
+  line-height:1.2;
+  text-transform:uppercase;
+}
+.spotify-search-title {
+  margin-top:4px;
+  color:var(--mood-title);
+  font-family:"Playfair Display",serif;
+  font-size:24px;
+  line-height:1.05;
+}
+.music-panel > .spotify-search-top .spotify-search-row {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) clamp(112px,14vw,154px) !important;
+  gap:12px;
+  align-items:stretch;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow:visible;
+}
+.music-panel > .spotify-search-top .spotify-search-input {
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  height:56px;
+  min-height:56px;
+  border-radius:22px;
+  padding:0 20px;
+  font-size:15px;
+  box-sizing:border-box;
+  background:rgba(255,236,245,0.66);
+  border:1px solid rgba(255,183,214,0.46);
+}
+.music-panel > .spotify-search-top .spotify-search-btn {
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  height:56px;
+  min-height:56px;
+  padding:0 16px;
+  border-radius:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+.spotify-search-clear-btn {
+  width:42px;
+  height:42px;
+  flex:0 0 42px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--mood-title);
+  background:rgba(255,236,245,0.94);
+  box-shadow:0 8px 20px rgba(255,80,158,0.10);
+  font-size:16px;
+  line-height:1;
+  transition:transform 0.25s var(--ease-spring), background 0.2s ease;
+}
+.spotify-search-clear-btn[hidden] {
+  display:none !important;
+}
+.spotify-search-clear-btn:hover {
+  transform:scale(1.06);
+  background:rgba(255,222,240,0.98);
+}
+.music-panel > .spotify-search-top .spotify-search-results {
+  max-height:260px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding-right:3px;
+  display:grid;
+  gap:10px;
+}
+.music-panel > .spotify-search-top .spotify-search-results[hidden],
+.music-panel > .spotify-search-top .spotify-search-empty[hidden] {
+  display:none !important;
+}
+.music-panel > .spotify-search-top .spotify-search-empty {
+  color:#9b6680;
+  padding:10px 4px 0;
+  font-size:13px;
+}
+.music-panel > .spotify-search-top .spotify-search-item {
+  min-width:0;
+  border-radius:20px;
+  padding:14px;
+  background:rgba(255,236,245,0.48);
+  border:1px solid rgba(255,183,214,0.32);
+}
+.music-panel > .spotify-search-top .spotify-search-actions {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.music-panel > .spotify-search-top .spotify-result-play,
+.music-panel > .spotify-search-top .spotify-result-open {
+  min-width:0;
+  width:100%;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+}
+@media (max-width:760px) {
+  .music-panel > .spotify-search-top {
+    top:52px;
+    padding:13px;
+    gap:12px;
+    border-radius:22px;
+  }
+  .spotify-search-title {
+    font-size:21px;
+  }
+  .music-panel > .spotify-search-top .spotify-search-row {
+    grid-template-columns:1fr !important;
+    gap:9px;
+  }
+  .music-panel > .spotify-search-top .spotify-search-input,
+  .music-panel > .spotify-search-top .spotify-search-btn {
+    height:50px;
+    min-height:50px;
+    border-radius:18px;
+  }
+  .music-panel > .spotify-search-top .spotify-search-results {
+    max-height:34dvh;
+  }
+  .music-panel > .spotify-search-top .spotify-search-actions {
+    grid-template-columns:1fr;
+  }
+}
+@media (max-width:430px) {
+  .spotify-search-head {
+    gap:8px;
+  }
+  .spotify-search-title {
+    font-size:19px;
+  }
+  .spotify-search-clear-btn {
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+  }
+}
 
-    /* ── FINAL SPOTIFY SEARCH TOP FIX ───────────────────────── */
-    .music-panel > .spotify-search-top {
-      flex:0 0 auto !important;
-      display:grid;
-      gap:10px;
-      position:sticky;
-      top:70px;
-      z-index:7;
-      margin:0 !important;
-      padding:14px !important;
-      border-radius:22px !important;
-      background:linear-gradient(180deg,rgba(255,255,255,0.99),rgba(255,244,250,0.96)) !important;
-      border:1px solid rgba(255,183,214,0.34) !important;
-      box-shadow:0 16px 34px rgba(255,87,165,0.10), inset 0 1px 0 rgba(255,255,255,0.8) !important;
-      backdrop-filter:blur(16px);
-    }
-
-    .music-panel > .spotify-search-top[hidden] {
-      display:none !important;
-    }
-
-    .spotify-search-top-label {
-      font-size:10px;
-      font-weight:800;
-      letter-spacing:0.16em;
-      text-transform:uppercase;
-      color:var(--mood-title);
-      opacity:0.82;
-      line-height:1;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-row {
-      display:grid !important;
-      grid-template-columns:minmax(0,1fr) 50px 128px !important;
-      gap:10px !important;
-      align-items:center !important;
-      width:100% !important;
-      min-width:0 !important;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-input {
-      width:100% !important;
-      min-height:50px !important;
-      padding:0 18px !important;
-      border-radius:18px !important;
-      background:rgba(255,236,245,0.86) !important;
-      border:1px solid rgba(255,183,214,0.30) !important;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,0.62) !important;
-      color:var(--text-soft) !important;
-      font-size:15px !important;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-btn {
-      min-height:50px !important;
-      padding:0 18px !important;
-      border-radius:18px !important;
-      white-space:nowrap !important;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-clear-btn {
-      min-width:50px !important;
-      width:50px !important;
-      min-height:50px !important;
-      height:50px !important;
-      display:flex !important;
-      align-items:center !important;
-      justify-content:center !important;
-      border:none !important;
-      border-radius:18px !important;
-      cursor:pointer !important;
-      color:var(--mood-title) !important;
-      background:rgba(255,236,245,0.92) !important;
-      border:1px solid rgba(255,183,214,0.34) !important;
-      box-shadow:0 8px 18px rgba(255,87,165,0.08), inset 0 1px 0 rgba(255,255,255,0.65) !important;
-      font-size:17px !important;
-      font-weight:800 !important;
-      line-height:1 !important;
-      transition:transform 0.25s var(--ease-spring), filter 0.2s ease, background 0.2s ease !important;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-clear-btn:hover {
-      transform:translateY(-1px) scale(1.04) !important;
-      filter:brightness(1.03) !important;
-      background:rgba(255,226,240,0.98) !important;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-clear-btn:active {
-      transform:scale(0.95) !important;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-clear-btn[hidden] {
-      display:none !important;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-results {
-      max-height:min(38vh,420px) !important;
-      overflow-y:auto !important;
-      overflow-x:hidden !important;
-      padding-right:3px !important;
-      overscroll-behavior:contain;
-    }
-
-    .music-panel > .spotify-search-top .spotify-search-empty {
-      padding:10px 2px 0 !important;
-      color:#9b6680 !important;
-      font-size:12px !important;
-    }
-
-    @media (max-width:680px) {
-      .music-panel > .spotify-search-top {
-        top:64px !important;
-        padding:12px !important;
-        border-radius:20px !important;
-      }
-      .music-panel > .spotify-search-top .spotify-search-row {
-        grid-template-columns:minmax(0,1fr) 46px !important;
-      }
-      .music-panel > .spotify-search-top .spotify-search-btn {
-        grid-column:1 / -1 !important;
-      }
-      .music-panel > .spotify-search-top .spotify-search-input,
-      .music-panel > .spotify-search-top .spotify-search-btn,
-      .music-panel > .spotify-search-top .spotify-search-clear-btn {
-        min-height:46px !important;
-        height:46px !important;
-        border-radius:16px !important;
-      }
-      .music-panel > .spotify-search-top .spotify-search-clear-btn {
-        min-width:46px !important;
-        width:46px !important;
-      }
-      .music-panel > .spotify-search-top .spotify-search-results {
-        max-height:min(32vh,300px) !important;
-      }
-    }
-
-  </style>
+</style>
 </head>
 <body>
   <div class="site-photo-bg"></div>
@@ -2525,10 +2583,15 @@ I'll message you pag gising ko, MWA!
     </div>
 
     <div class="spotify-search-wrap spotify-search-top" id="spotifySearchWrap" hidden>
-      <div class="spotify-search-top-label">Search Spotify</div>
+      <div class="spotify-search-head">
+        <div>
+          <div class="spotify-search-kicker">Search music</div>
+          <div class="spotify-search-title">Find any song or artist</div>
+        </div>
+        <button class="spotify-search-clear-btn" id="spotifySearchClearBtn" type="button" aria-label="Clear Spotify search" hidden>✕</button>
+      </div>
       <div class="spotify-search-row">
         <input id="spotifySearchInput" class="spotify-search-input" type="text" placeholder="Search any song or artist" autocomplete="off" />
-        <button class="spotify-search-clear-btn" id="spotifySearchClearBtn" type="button" aria-label="Clear search results" title="Clear search" hidden>✕</button>
         <button class="spotify-search-btn" id="spotifySearchBtn" type="button">Search</button>
       </div>
       <div class="spotify-search-results" id="spotifySearchResults" hidden></div>
@@ -3876,10 +3939,9 @@ function populateSpotifyPlaylistSelect() {
   spotifySelectWrap.hidden = false;
 }
 
-function clearSpotifySearchUi(options = {}) {
-  const shouldFocus = !!options.focus;
-  spotifyTrackResults = [];
-  if (spotifySearchInput) spotifySearchInput.value = "";
+function clearSpotifySearchResults(options = {}) {
+  const keepInput = !!options.keepInput;
+  if (!keepInput && spotifySearchInput) spotifySearchInput.value = "";
   if (spotifySearchResults) {
     spotifySearchResults.innerHTML = "";
     spotifySearchResults.hidden = true;
@@ -3888,29 +3950,25 @@ function clearSpotifySearchUi(options = {}) {
     spotifySearchEmpty.hidden = true;
     spotifySearchEmpty.textContent = "Search results will appear here.";
   }
-  if (spotifySearchClearBtn) spotifySearchClearBtn.hidden = true;
-  if (shouldFocus && spotifySearchInput) spotifySearchInput.focus();
-}
-
-function syncSpotifySearchClearButton() {
-  if (!spotifySearchClearBtn) return;
-  const hasText = !!spotifySearchInput?.value?.trim();
-  const hasResults = Array.isArray(spotifyTrackResults) && spotifyTrackResults.length > 0;
-  const hasMessage = !!spotifySearchEmpty && !spotifySearchEmpty.hidden;
-  spotifySearchClearBtn.hidden = !(hasText || hasResults || hasMessage);
+  if (spotifySearchClearBtn) spotifySearchClearBtn.hidden = !(spotifySearchInput?.value || "").trim();
 }
 
 function renderSpotifySearchResults(results = []) {
   if (!spotifySearchResults || !spotifySearchEmpty) return;
   spotifySearchResults.innerHTML = "";
   spotifyTrackResults = Array.isArray(results) ? results : [];
+  const hasQuery = !!(spotifySearchInput?.value || "").trim();
+  if (spotifySearchClearBtn) spotifySearchClearBtn.hidden = !hasQuery;
+
+  if (!hasQuery) {
+    clearSpotifySearchResults({ keepInput:true });
+    return;
+  }
 
   if (!spotifyTrackResults.length) {
     spotifySearchResults.hidden = true;
-    const hasQuery = !!spotifySearchInput?.value?.trim();
-    spotifySearchEmpty.hidden = !hasQuery;
-    spotifySearchEmpty.textContent = hasQuery ? "No matching songs found." : "Search results will appear here.";
-    syncSpotifySearchClearButton();
+    spotifySearchEmpty.hidden = false;
+    spotifySearchEmpty.textContent = "No matching songs found.";
     return;
   }
 
@@ -3945,13 +4003,8 @@ function renderSpotifySearchResults(results = []) {
     playBtn.type = "button";
     playBtn.textContent = "Play";
     playBtn.addEventListener("click", async () => {
-      try {
-        await playSpotifyTrack(track);
-        clearSpotifySearchUi();
-      } catch (err) {
-        setSpotifyStatus("Play failed");
-        if (spotifyUser) spotifyUser.textContent = err?.message || "Spotify could not start this song right now.";
-      }
+      await playSpotifyTrack(track);
+      clearSpotifySearchResults();
     });
 
     const open = document.createElement("a");
@@ -3968,8 +4021,6 @@ function renderSpotifySearchResults(results = []) {
     item.appendChild(actions);
     spotifySearchResults.appendChild(item);
   });
-
-  syncSpotifySearchClearButton();
 }
 
 function renderSharedSpotifyPlaylist(shared) {
@@ -4116,10 +4167,9 @@ async function fetchSpotifyPlaylists() {
 async function searchSpotifyTracks(query) {
   const safeQuery = (query || "").trim();
   if (!safeQuery) {
-    clearSpotifySearchUi();
+    renderSpotifySearchResults([]);
     return;
   }
-  syncSpotifySearchClearButton();
   setSpotifyStatus("Searching");
   const data = await spotifyApi(`/search?type=track&limit=8&q=${encodeURIComponent(safeQuery)}`);
   const items = Array.isArray(data?.tracks?.items) ? data.tracks.items : [];
@@ -5257,6 +5307,17 @@ spotifySetPlaylistBtn?.addEventListener("click", async () => {
   }
 });
 
+spotifySearchClearBtn?.addEventListener("click", () => {
+  clearSpotifySearchResults();
+  spotifySearchInput?.focus();
+});
+
+spotifySearchInput?.addEventListener("input", () => {
+  const hasValue = !!(spotifySearchInput.value || "").trim();
+  if (spotifySearchClearBtn) spotifySearchClearBtn.hidden = !hasValue;
+  if (!hasValue) clearSpotifySearchResults({ keepInput:true });
+});
+
 spotifySearchBtn?.addEventListener("click", async () => {
   try {
     await searchSpotifyTracks(spotifySearchInput?.value || "");
@@ -5275,19 +5336,6 @@ spotifySearchInput?.addEventListener("keydown", async e => {
     setSpotifyStatus("Search failed");
     if (spotifyUser) spotifyUser.textContent = err?.message || "Spotify search could not run right now.";
   }
-});
-
-spotifySearchClearBtn?.addEventListener("click", () => {
-  clearSpotifySearchUi({ focus: true });
-});
-
-spotifySearchInput?.addEventListener("input", () => {
-  const hasQuery = !!spotifySearchInput.value.trim();
-  if (!hasQuery) {
-    clearSpotifySearchUi();
-    return;
-  }
-  syncSpotifySearchClearButton();
 });
 
 /* ── music events ─────────────────────────────────────────── */
