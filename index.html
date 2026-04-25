@@ -2779,7 +2779,58 @@ body.music-open .music-shell { z-index:43; }
     flex-basis:100% !important;
   }
 }
-  </style>
+  
+
+/* ── Final Spotify controls alignment fix ── */
+.spotify-account-card {
+  overflow:hidden !important;
+}
+
+.spotify-account-actions {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  align-items:stretch !important;
+  justify-content:stretch !important;
+  gap:12px !important;
+  width:100% !important;
+}
+
+.spotify-account-actions > button,
+.spotify-account-actions > .spotify-connect-btn,
+.spotify-account-actions > .spotify-disconnect-btn,
+.spotify-account-actions > .spotify-switch-btn {
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  min-height:48px !important;
+  flex:none !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:12px 14px !important;
+  border-radius:999px !important;
+  text-align:center !important;
+  line-height:1.12 !important;
+  white-space:normal !important;
+}
+
+@media (max-width:720px) {
+  .spotify-account-actions {
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+  }
+
+  .spotify-account-actions > button,
+  .spotify-account-actions > .spotify-connect-btn,
+  .spotify-account-actions > .spotify-disconnect-btn,
+  .spotify-account-actions > .spotify-switch-btn {
+    min-height:44px !important;
+    padding:11px 14px !important;
+    font-size:13px !important;
+    white-space:nowrap !important;
+  }
+}
+</style>
 </head>
 <body>
   <div class="site-photo-bg"></div>
