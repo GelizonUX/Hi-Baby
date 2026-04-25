@@ -2677,6 +2677,108 @@ body.music-open .music-shell { z-index:43; }
 }
 
 
+
+/* ── Spotify account controls polish: compact responsive pills ── */
+.spotify-account-card {
+  gap:12px !important;
+  padding:16px !important;
+  border-radius:24px !important;
+}
+
+.spotify-account-card .spotify-card-top {
+  align-items:center !important;
+  gap:12px !important;
+}
+
+.spotify-account-card .spotify-status {
+  text-align:center !important;
+  line-height:1.1 !important;
+  padding:8px 14px !important;
+  border-radius:999px !important;
+  white-space:nowrap !important;
+}
+
+.spotify-account-actions {
+  display:flex !important;
+  flex-wrap:wrap !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:10px !important;
+}
+
+.spotify-account-actions > button {
+  width:auto !important;
+  min-width:0 !important;
+  min-height:42px !important;
+  flex:0 1 auto !important;
+  padding:10px 16px !important;
+  border-radius:999px !important;
+  font-size:13px !important;
+  line-height:1.12 !important;
+  white-space:nowrap !important;
+}
+
+.spotify-account-actions > .spotify-connect-btn {
+  min-width:142px !important;
+}
+
+.spotify-account-actions > .spotify-disconnect-btn {
+  min-width:150px !important;
+}
+
+.spotify-account-actions > .spotify-switch-btn {
+  min-width:180px !important;
+}
+
+.spotify-account-card .spotify-user {
+  margin-top:0 !important;
+  padding:2px 2px 0 !important;
+}
+
+@media (max-width:680px) {
+  .spotify-account-card {
+    padding:14px !important;
+    gap:10px !important;
+  }
+
+  .spotify-account-card .spotify-card-top {
+    align-items:flex-start !important;
+    gap:8px !important;
+  }
+
+  .spotify-account-card .spotify-title {
+    font-size:20px !important;
+  }
+
+  .spotify-account-actions {
+    justify-content:stretch !important;
+    gap:8px !important;
+  }
+
+  .spotify-account-actions > button {
+    flex:1 1 calc(50% - 4px) !important;
+    width:auto !important;
+    min-width:0 !important;
+    min-height:40px !important;
+    padding:10px 12px !important;
+    font-size:12.5px !important;
+  }
+
+  .spotify-account-actions > .spotify-switch-btn {
+    flex-basis:100% !important;
+  }
+}
+
+@media (max-width:420px) {
+  .spotify-account-card .spotify-card-top {
+    display:grid !important;
+    grid-template-columns:1fr auto !important;
+  }
+
+  .spotify-account-actions > button {
+    flex-basis:100% !important;
+  }
+}
   </style>
 </head>
 <body>
