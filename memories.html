@@ -3796,6 +3796,99 @@ body.chat-open .music-shell { right:96px !important; }
 }
 /* === FINAL INDEX-MATCHED SPOTIFY PATCH END === */
 
+
+
+/* === FINAL DOCK SPACING FIX START ===
+   Real spacing fix: keeps the chat panel, chat bubble, Spotify mini player,
+   and Spotify panel from sitting on top of each other on mobile. */
+:root {
+  --chat-panel-bottom: 118px;
+  --music-panel-bottom: 118px;
+  --dock-side-gap: 28px;
+}
+
+.chat-panel {
+  bottom: var(--chat-panel-bottom) !important;
+  right: max(18px, env(safe-area-inset-right, 0px) + 18px) !important;
+  transform-origin: bottom right !important;
+}
+
+.music-panel {
+  bottom: var(--music-panel-bottom) !important;
+  transform-origin: bottom right !important;
+}
+
+.chat-fab,
+.music-mini-bar {
+  transform-origin: center center !important;
+}
+
+@media (max-width: 760px) {
+  .chat-fab {
+    right: max(16px, env(safe-area-inset-right, 0px) + 16px) !important;
+    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
+    width: 58px !important;
+    height: 58px !important;
+    flex: 0 0 58px !important;
+  }
+
+  .music-shell {
+    left: 16px !important;
+    right: 112px !important;
+    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .chat-panel {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: var(--chat-panel-bottom) !important;
+    width: auto !important;
+    height: min(58vh, calc(100dvh - var(--chat-panel-bottom) - 22px)) !important;
+    max-height: calc(100dvh - var(--chat-panel-bottom) - 22px) !important;
+    border-radius: 24px !important;
+  }
+
+  .music-panel {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: var(--music-panel-bottom) !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - var(--music-panel-bottom) - 18px) !important;
+    border-radius: 26px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .chat-fab {
+    right: max(14px, env(safe-area-inset-right, 0px) + 14px) !important;
+    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
+  }
+
+  .music-shell {
+    left: 12px !important;
+    right: 104px !important;
+    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
+  }
+
+  .chat-panel {
+    left: 10px !important;
+    right: 10px !important;
+    height: min(56vh, calc(100dvh - var(--chat-panel-bottom) - 22px)) !important;
+    max-height: calc(100dvh - var(--chat-panel-bottom) - 22px) !important;
+    border-radius: 22px !important;
+  }
+
+  .music-panel {
+    left: 10px !important;
+    right: 10px !important;
+    border-radius: 24px !important;
+  }
+}
+/* === FINAL DOCK SPACING FIX END === */
+
 </style>
 </head>
 <body>
@@ -5766,8 +5859,8 @@ const playPrevSong = () => playPrevSpotifyTrack();
 
     function getCardMediaMarkup(memory) {
       return getMediaType(memory) === "video"
-        ? `<video src="${memory.imageUrl}" playsinline muted preload="metadata"></video>`
-        : `<img src="${memory.imageUrl}" alt="${memory.title || "Memory"}" />`;
+        ? `<video src="${memory.imageUrl}" playsinline muted preload="none"></video>`
+        : `<img src="${memory.imageUrl}" alt="${memory.title || "Memory"}" loading="lazy" decoding="async" />`;
     }
 
     function formatDisplayDate(v) {
@@ -6010,7 +6103,13 @@ const playPrevSong = () => playPrevSpotifyTrack();
     });
 
     /* ── firebase memories listener ───────────────────────── */
-    onChildAdded(query(ref(db, "memories"), orderByChild("createdAt")), snap => {
+    // Performance note:
+    // Keep the full memory system/UI the same, but avoid forcing every stored memory
+    // to create media-heavy cards on first paint. Latest cards load first.
+    const INITIAL_MEMORY_LIMIT = 48;
+    const memoriesInitialQuery = query(ref(db, "memories"), orderByChild("createdAt"), limitToLast(INITIAL_MEMORY_LIMIT));
+
+    onChildAdded(memoriesInitialQuery, snap => {
       const memory = { key: snap.key, ...snap.val() };
       memoryMap.set(memory.key, memory);
       createMemoryCard(memory);
@@ -6609,9 +6708,57 @@ function openPhotoSourceSheet() {
     photoLightbox.addEventListener("click", e => { if(e.target===photoLightbox) closeLightbox(); });
 
     /* ── chat + reactions ─────────────────────────────────────── */
+    let chatRealtimeStarted = false;
+
+    function startChatRealtime() {
+      if (chatRealtimeStarted) return;
+      chatRealtimeStarted = true;
+
+      onValue(ref(db,"chatTyping"),snap=>{
+        chatTypingState = snap.val() || {};
+        renderTypingIndicator();
+      });
+
+      onChildAdded(query(ref(db,"messages"),limitToLast(30)),snap=>{
+        const data=snap.val();
+        const pendingId = data?.pendingClientId;
+
+        if (pendingId && pendingPhotoUploads.has(pendingId)) {
+          const pending = pendingPhotoUploads.get(pendingId);
+
+          if (pending?.wrap) {
+            pending.wrap.dataset.key = snap.key || "";
+            delete pending.wrap.dataset.pendingClientId;
+
+            const img = pending.wrap.querySelector("img");
+            if (img && data?.photoUrl) img.src = data.photoUrl;
+
+            const meta = pending.wrap.querySelector(".chat-meta-info");
+            if (meta) meta.textContent = formatChatTimestamp(data.createdAt, data.sender);
+
+            if (pending?.localUrl && pending.localUrl !== data?.photoUrl) {
+              URL.revokeObjectURL(pending.localUrl);
+            }
+
+            pendingPhotoUploads.delete(pendingId);
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+            watchReactions(snap.key);
+            return;
+          }
+        }
+
+        chatFeed.appendChild(buildChatBubble(data,snap.key));
+        chatFeed.scrollTop=chatFeed.scrollHeight;
+        watchReactions(snap.key);
+      });
+    }
+
     chatFab.addEventListener("click",()=>{
       chatPanel.classList.toggle("open");
-      if(chatPanel.classList.contains("open")) chatFeed.scrollTop=chatFeed.scrollHeight;
+      if(chatPanel.classList.contains("open")) {
+        startChatRealtime();
+        requestAnimationFrame(() => { chatFeed.scrollTop=chatFeed.scrollHeight; });
+      }
     });
     chatCloseBtn.addEventListener("click",()=>chatPanel.classList.remove("open"));
 
@@ -6662,6 +6809,7 @@ function openPhotoSourceSheet() {
         img.src = data.photoUrl || "";
         img.alt = "Photo";
         img.loading = "lazy";
+        img.decoding = "async";
         img.addEventListener("click", () => openLightbox(img.src));
         bubble.appendChild(img);
       } else {
@@ -6791,43 +6939,7 @@ function openPhotoSourceSheet() {
 
     window.addEventListener("beforeunload",()=>stopTypingState());
     window.addEventListener("pagehide",()=>stopTypingState());
-    onValue(ref(db,"chatTyping"),snap=>{
-      chatTypingState = snap.val() || {};
-      renderTypingIndicator();
-    });
-
-    onChildAdded(query(ref(db,"messages"),limitToLast(200)),snap=>{
-      const data=snap.val();
-      const pendingId = data?.pendingClientId;
-
-      if (pendingId && pendingPhotoUploads.has(pendingId)) {
-        const pending = pendingPhotoUploads.get(pendingId);
-
-        if (pending?.wrap) {
-          pending.wrap.dataset.key = snap.key || "";
-          delete pending.wrap.dataset.pendingClientId;
-
-          const img = pending.wrap.querySelector("img");
-          if (img && data?.photoUrl) img.src = data.photoUrl;
-
-          const meta = pending.wrap.querySelector(".chat-meta-info");
-          if (meta) meta.textContent = formatChatTimestamp(data.createdAt, data.sender);
-
-          if (pending?.localUrl && pending.localUrl !== data?.photoUrl) {
-            URL.revokeObjectURL(pending.localUrl);
-          }
-
-          pendingPhotoUploads.delete(pendingId);
-          chatFeed.scrollTop = chatFeed.scrollHeight;
-          watchReactions(snap.key);
-          return;
-        }
-      }
-
-      chatFeed.appendChild(buildChatBubble(data,snap.key));
-      chatFeed.scrollTop=chatFeed.scrollHeight;
-      watchReactions(snap.key);
-    });
+    // Chat Firebase listeners are started lazily inside startChatRealtime().
 
 /* ── Spotify events ───────────────────────────────────────── */
 spotifyConnectBtn?.addEventListener("click", async () => {
@@ -6977,7 +7089,82 @@ updateProgressUI();
   };
   hideLegacySpotify();
   document.addEventListener("DOMContentLoaded", hideLegacySpotify);
-  new MutationObserver(hideLegacySpotify).observe(document.documentElement, { childList:true, subtree:true, attributes:true, attributeFilter:["hidden","class","style"] });
+  // Avoid watching the entire document forever. This keeps the Spotify cleanup,
+  // but removes a global MutationObserver that was firing during unrelated UI updates.
+  setTimeout(hideLegacySpotify, 250);
+  setTimeout(hideLegacySpotify, 1000);
+})();
+</script>
+
+
+
+<script>
+/* === FLOATING DOCK SPACING FIX ===
+   Calculates the real rendered height of the bottom dock controls, then keeps
+   the open panels above the full dock area with a clear breathing gap. */
+(function () {
+  const root = document.documentElement;
+  const cleanPx = value => Math.max(0, Math.round(value)) + 'px';
+  const panelGap = () => window.innerWidth <= 760 ? 28 : 22;
+
+  function dockBottomFor(element) {
+    if (!element) return null;
+    const rect = element.getBoundingClientRect();
+    if (!rect || rect.height <= 0) return null;
+    const bottomInset = Math.max(0, window.innerHeight - rect.bottom);
+    return bottomInset + rect.height + panelGap();
+  }
+
+  function updateDockAlignment() {
+    const chatFab = document.getElementById('chatFab');
+    const musicMini = document.getElementById('musicMiniBar');
+
+    const chatDockBottom = dockBottomFor(chatFab);
+    const musicDockBottom = dockBottomFor(musicMini);
+
+    const chatBottom = window.innerWidth <= 760
+      ? Math.max(chatDockBottom || 0, musicDockBottom || 0)
+      : chatDockBottom;
+
+    if (chatBottom) {
+      root.style.setProperty('--chat-panel-bottom', cleanPx(chatBottom));
+    }
+
+    if (musicDockBottom) {
+      root.style.setProperty('--music-panel-bottom', cleanPx(musicDockBottom));
+    }
+  }
+
+  let ticking = false;
+  function scheduleDockAlignment() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      updateDockAlignment();
+    });
+  }
+
+  window.addEventListener('load', scheduleDockAlignment, { once: true });
+  window.addEventListener('resize', scheduleDockAlignment);
+  window.addEventListener('orientationchange', () => setTimeout(scheduleDockAlignment, 220));
+
+  document.addEventListener('click', event => {
+    if (event.target.closest('#chatFab, #chatCloseBtn, #musicMiniBar, #musicMiniInfo, #musicCollapseBtn')) {
+      scheduleDockAlignment();
+      setTimeout(scheduleDockAlignment, 80);
+    }
+  });
+
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(scheduleDockAlignment);
+    const watchTargets = [document.getElementById('chatFab'), document.getElementById('musicMiniBar')];
+    watchTargets.forEach(target => target && observer.observe(target));
+  }
+
+  scheduleDockAlignment();
+  setTimeout(scheduleDockAlignment, 120);
+  setTimeout(scheduleDockAlignment, 600);
 })();
 </script>
 
