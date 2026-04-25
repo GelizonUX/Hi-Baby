@@ -2830,6 +2830,145 @@ body.music-open .music-shell { z-index:43; }
     white-space:nowrap !important;
   }
 }
+
+
+/* ── Spotify account section stability fix ───────────────────
+   Fixes clipped account header + uneven controls on small panel widths. */
+.music-panel {
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  align-content:start !important;
+  padding-bottom:calc(18px + env(safe-area-inset-bottom)) !important;
+}
+
+.spotify-account-card {
+  flex:0 0 auto !important;
+  min-height:max-content !important;
+  height:auto !important;
+  overflow:visible !important;
+  scroll-margin-bottom:24px !important;
+  padding:16px !important;
+  gap:14px !important;
+}
+
+.spotify-account-card .spotify-card-top {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  gap:12px !important;
+}
+
+.spotify-account-card .spotify-title {
+  font-size:clamp(22px,4vw,30px) !important;
+  line-height:1.05 !important;
+  margin:0 !important;
+}
+
+.spotify-account-card .spotify-status {
+  align-self:start !important;
+  min-width:96px !important;
+  padding:9px 16px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.spotify-account-actions {
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  grid-template-areas:
+    "disconnect refresh"
+    "change change" !important;
+  gap:10px !important;
+  width:100% !important;
+  align-items:stretch !important;
+}
+
+.spotify-account-actions > .spotify-disconnect-btn { grid-area:disconnect !important; }
+.spotify-account-actions > .spotify-connect-btn { grid-area:refresh !important; }
+.spotify-account-actions > .spotify-switch-btn { grid-area:change !important; }
+
+.spotify-account-actions > button,
+.spotify-account-actions > .spotify-connect-btn,
+.spotify-account-actions > .spotify-disconnect-btn,
+.spotify-account-actions > .spotify-switch-btn {
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  min-height:46px !important;
+  height:auto !important;
+  padding:11px 14px !important;
+  border-radius:18px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  line-height:1.15 !important;
+  white-space:normal !important;
+  word-break:normal !important;
+}
+
+.spotify-account-card .spotify-user {
+  margin:0 !important;
+  padding:0 2px !important;
+  line-height:1.45 !important;
+}
+
+@media (max-width:680px) {
+  .music-panel {
+    top:max(10px,calc(env(safe-area-inset-top) + 8px)) !important;
+    bottom:84px !important;
+    padding:12px 12px calc(18px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .spotify-player-card {
+    padding:12px !important;
+    gap:12px !important;
+  }
+
+  .spotify-account-card {
+    padding:14px !important;
+    gap:12px !important;
+  }
+
+  .spotify-account-card .spotify-card-top {
+    grid-template-columns:minmax(0,1fr) auto !important;
+  }
+
+  .spotify-account-card .spotify-title {
+    font-size:24px !important;
+  }
+
+  .spotify-account-actions {
+    grid-template-columns:1fr !important;
+    grid-template-areas:
+      "disconnect"
+      "refresh"
+      "change" !important;
+    gap:8px !important;
+  }
+
+  .spotify-account-actions > button,
+  .spotify-account-actions > .spotify-connect-btn,
+  .spotify-account-actions > .spotify-disconnect-btn,
+  .spotify-account-actions > .spotify-switch-btn {
+    min-height:42px !important;
+    padding:10px 14px !important;
+    border-radius:999px !important;
+    white-space:nowrap !important;
+  }
+}
+
+@media (max-width:390px) {
+  .spotify-account-card .spotify-card-top {
+    grid-template-columns:1fr !important;
+  }
+
+  .spotify-account-card .spotify-status {
+    justify-self:start !important;
+  }
+}
+
 </style>
 </head>
 <body>
