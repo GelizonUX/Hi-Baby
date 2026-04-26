@@ -1006,7 +1006,7 @@
     .chat-fab:hover { transform:scale(1.12) rotate(-8deg); box-shadow:0 22px 44px rgba(255,41,133,0.32); }
     .chat-fab:active { transform:scale(0.95); }
 
-    .chat-panel { position:fixed; right:18px; bottom:var(--chat-panel-bottom, 112px); width:340px; height:510px; border-radius:22px; background:linear-gradient(180deg,rgba(255,255,255,0.97),rgba(255,245,250,0.96)); border:1px solid rgba(255,255,255,0.74); box-shadow:0 28px 75px rgba(255,87,165,0.14),inset 0 1px 0 rgba(255,255,255,0.75); overflow:hidden; display:none; flex-direction:column; z-index:71; transform-origin:bottom right; }
+    .chat-panel { position:fixed; right:18px; bottom:88px; width:340px; height:510px; border-radius:22px; background:linear-gradient(180deg,rgba(255,255,255,0.97),rgba(255,245,250,0.96)); border:1px solid rgba(255,255,255,0.74); box-shadow:0 28px 75px rgba(255,87,165,0.14),inset 0 1px 0 rgba(255,255,255,0.75); overflow:hidden; display:none; flex-direction:column; z-index:71; transform-origin:bottom right; }
     .chat-panel.open { display:flex; animation:panelPopIn 0.45s var(--ease-spring); }
     @keyframes panelPopIn { from{opacity:0;transform:scale(0.82) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
 
@@ -1173,7 +1173,7 @@
   position:fixed;
   right:86px;
   top:16px;
-  bottom:var(--music-panel-bottom, 120px);
+  bottom:110px;
   width:min(380px,calc(100vw - 184px));
   max-width:min(380px,calc(100vw - 184px));
   min-width:0;
@@ -2723,7 +2723,7 @@ body.music-open .music-shell { z-index:43; }
 
       /* chat mobile */
       .chat-fab { right:14px; bottom:14px; width:54px; height:54px; font-size:22px; }
-      .chat-panel { right:10px; left:10px; bottom:var(--chat-panel-bottom, 116px); width:auto; height:min(65vh,520px); border-radius:20px; }
+      .chat-panel { right:10px; left:10px; bottom:78px; width:auto; height:min(65vh,520px); border-radius:20px; }
       .chat-header-title { font-size:20px; }
       .chat-bubble-wrap { max-width:86%; }
       .chat-bubble { font-size:12.5px; }
@@ -3786,21 +3786,6 @@ body.music-open .music-shell { z-index:43; }
 
   .spotify-account-card .spotify-status {
     justify-self:start !important;
-  }
-}
-
-
-/* ── Final chat dock spacing tweak ─────────────────────────
-   Keeps the open chat panel away from the chat bubble and music dock. */
-.chat-panel {
-  bottom: var(--chat-panel-bottom, 112px) !important;
-  height: min(510px, calc(100dvh - var(--chat-panel-bottom, 112px) - 18px)) !important;
-}
-
-@media (max-width: 760px) {
-  .chat-panel {
-    bottom: var(--chat-panel-bottom, 116px) !important;
-    height: min(65vh, 520px) !important;
   }
 }
 
@@ -5647,6 +5632,13 @@ async function initSpotifyIntegration() {
   }
 }
 
+        let previewObjectUrl = null;
+    let hasAnyMemory     = false;
+    let currentModalMemory = null;
+
+    const memoryMap = new Map();
+    const cardMap   = new Map();
+
     /* ── helpers ──────────────────────────────────────────── */
     /* ── music helpers ────────────────────────────────────────── */
     const formatTime = s => !Number.isFinite(s)||s<0 ? "0:00" : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
@@ -5687,7 +5679,7 @@ const closeMusicPanel = () => {
   musicPanel.classList.remove("open");
   musicPanel.setAttribute("aria-hidden", "true");
   document.body.classList.remove("music-open");
-  collapseSpotifySearchResults({ clearInput: true, clearButton: true });
+  collapseSpotifySearchState({ keepFocus: false });
 };
 const hasLocalSongs   = () => Array.isArray(playlist) && playlist.length > 0;
 
@@ -7003,7 +6995,7 @@ updateProgressUI();
 (function () {
   const root = document.documentElement;
   const cleanPx = value => Math.max(0, Math.round(value)) + 'px';
-  const panelGap = () => window.innerWidth <= 760 ? 34 : 34;
+  const panelGap = () => window.innerWidth <= 760 ? 28 : 22;
 
   function dockBottomFor(element) {
     if (!element) return null;
