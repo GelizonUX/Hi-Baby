@@ -1006,7 +1006,7 @@
     .chat-fab:hover { transform:scale(1.12) rotate(-8deg); box-shadow:0 22px 44px rgba(255,41,133,0.32); }
     .chat-fab:active { transform:scale(0.95); }
 
-    .chat-panel { position:fixed; right:18px; bottom:88px; width:340px; height:510px; border-radius:22px; background:linear-gradient(180deg,rgba(255,255,255,0.97),rgba(255,245,250,0.96)); border:1px solid rgba(255,255,255,0.74); box-shadow:0 28px 75px rgba(255,87,165,0.14),inset 0 1px 0 rgba(255,255,255,0.75); overflow:hidden; display:none; flex-direction:column; z-index:71; transform-origin:bottom right; }
+    .chat-panel { position:fixed; right:18px; bottom:var(--chat-panel-bottom, 112px); width:340px; height:510px; border-radius:22px; background:linear-gradient(180deg,rgba(255,255,255,0.97),rgba(255,245,250,0.96)); border:1px solid rgba(255,255,255,0.74); box-shadow:0 28px 75px rgba(255,87,165,0.14),inset 0 1px 0 rgba(255,255,255,0.75); overflow:hidden; display:none; flex-direction:column; z-index:71; transform-origin:bottom right; }
     .chat-panel.open { display:flex; animation:panelPopIn 0.45s var(--ease-spring); }
     @keyframes panelPopIn { from{opacity:0;transform:scale(0.82) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
 
@@ -1173,7 +1173,7 @@
   position:fixed;
   right:86px;
   top:16px;
-  bottom:110px;
+  bottom:var(--music-panel-bottom, 120px);
   width:min(380px,calc(100vw - 184px));
   max-width:min(380px,calc(100vw - 184px));
   min-width:0;
@@ -2267,7 +2267,7 @@ body.music-open .music-shell { z-index:43; }
 }
 
 
-        /* ── MOOD WIDGET ─────────────────────────────────────────── */
+    /* ── MOOD WIDGET ─────────────────────────────────────────── */
 
     .mood-cluster {
       position: fixed;
@@ -2723,7 +2723,7 @@ body.music-open .music-shell { z-index:43; }
 
       /* chat mobile */
       .chat-fab { right:14px; bottom:14px; width:54px; height:54px; font-size:22px; }
-      .chat-panel { right:10px; left:10px; bottom:78px; width:auto; height:min(65vh,520px); border-radius:20px; }
+      .chat-panel { right:10px; left:10px; bottom:var(--chat-panel-bottom, 116px); width:auto; height:min(65vh,520px); border-radius:20px; }
       .chat-header-title { font-size:20px; }
       .chat-bubble-wrap { max-width:86%; }
       .chat-bubble { font-size:12.5px; }
@@ -2777,223 +2777,7 @@ body.music-open .music-shell { z-index:43; }
         max-width: none;
       }
     }
-/* FINAL MUSIC PANEL STABILITY PATCH
-   Keeps search, player, playlist, and account settings in normal document flow. */
-.music-panel,
-.music-panel.open {
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:stretch !important;
-  gap:14px !important;
-  overflow-x:hidden !important;
-  overflow-y:auto !important;
-}
-.music-panel > * {
-  width:100% !important;
-  min-width:0 !important;
-  flex:0 0 auto !important;
-}
-.music-panel-top {
-  position:relative !important;
-  top:auto !important;
-  margin:0 !important;
-  z-index:5 !important;
-}
-.spotify-search-wrap.spotify-search-top {
-  position:relative !important;
-  inset:auto !important;
-  top:auto !important;
-  z-index:4 !important;
-  display:grid !important;
-  grid-template-columns:1fr !important;
-  gap:12px !important;
-  margin:0 !important;
-  padding:16px !important;
-  min-height:0 !important;
-  height:auto !important;
-  overflow:visible !important;
-  border-radius:24px !important;
-  background:linear-gradient(180deg,rgba(255,255,255,0.985),rgba(255,244,250,0.96)) !important;
-  border:1px solid rgba(255,183,214,0.36) !important;
-  box-shadow:0 16px 34px rgba(255,87,165,0.09), inset 0 1px 0 rgba(255,255,255,0.86) !important;
-}
-.spotify-search-wrap.spotify-search-top[hidden] {
-  display:none !important;
-}
-.spotify-search-head {
-  display:flex !important;
-  align-items:flex-start !important;
-  justify-content:space-between !important;
-  gap:12px !important;
-}
-.spotify-search-top-label {
-  font-size:11px !important;
-  line-height:1 !important;
-  font-weight:800 !important;
-  letter-spacing:0.18em !important;
-  text-transform:uppercase !important;
-  color:var(--mood-title) !important;
-  white-space:nowrap !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-row {
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) 52px 150px !important;
-  gap:10px !important;
-  align-items:center !important;
-  width:100% !important;
-  min-width:0 !important;
-  margin:0 !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-input,
-.spotify-search-wrap.spotify-search-top .spotify-search-clear-btn,
-.spotify-search-wrap.spotify-search-top .spotify-search-btn {
-  height:52px !important;
-  min-height:52px !important;
-  max-height:52px !important;
-  border-radius:18px !important;
-  margin:0 !important;
-  box-sizing:border-box !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-input {
-  width:100% !important;
-  min-width:0 !important;
-  padding:0 18px !important;
-  background:rgba(255,236,245,0.78) !important;
-  border:1px solid rgba(255,183,214,0.35) !important;
-  color:var(--text-soft) !important;
-  font-size:15px !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.58) !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-clear-btn {
-  width:52px !important;
-  min-width:52px !important;
-  padding:0 !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  border:1px solid rgba(255,183,214,0.34) !important;
-  color:var(--mood-title) !important;
-  background:rgba(255,236,245,0.88) !important;
-  box-shadow:0 8px 18px rgba(255,87,165,0.08) !important;
-  cursor:pointer !important;
-  font-size:18px !important;
-  font-weight:800 !important;
-  line-height:1 !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-clear-btn[hidden] {
-  display:none !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-btn {
-  width:100% !important;
-  min-width:0 !important;
-  padding:0 20px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  white-space:nowrap !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-results {
-  display:grid !important;
-  gap:10px !important;
-  max-height:min(34vh,340px) !important;
-  overflow-y:auto !important;
-  overflow-x:hidden !important;
-  padding:0 3px 0 0 !important;
-  overscroll-behavior:contain !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-results[hidden],
-.spotify-search-wrap.spotify-search-top .spotify-search-empty[hidden] {
-  display:none !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-item {
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) minmax(220px,0.7fr) !important;
-  gap:10px !important;
-  align-items:center !important;
-  padding:12px !important;
-  border-radius:18px !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-actions {
-  display:grid !important;
-  grid-template-columns:1fr 1fr !important;
-  gap:8px !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-result-play,
-.spotify-search-wrap.spotify-search-top .spotify-result-open {
-  min-height:42px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-}
-.spotify-player-card {
-  position:relative !important;
-  z-index:2 !important;
-  margin:0 !important;
-  overflow:hidden !important;
-}
-.spotify-card {
-  position:relative !important;
-  z-index:1 !important;
-  margin:0 !important;
-}
-@media (max-width:760px) {
-  .spotify-search-wrap.spotify-search-top {
-    padding:14px !important;
-    border-radius:22px !important;
-  }
-  .spotify-search-wrap.spotify-search-top .spotify-search-row {
-    grid-template-columns:minmax(0,1fr) 48px !important;
-    gap:9px !important;
-  }
-  .spotify-search-wrap.spotify-search-top .spotify-search-btn {
-    grid-column:1 / -1 !important;
-  }
-  .spotify-search-wrap.spotify-search-top .spotify-search-input,
-  .spotify-search-wrap.spotify-search-top .spotify-search-clear-btn,
-  .spotify-search-wrap.spotify-search-top .spotify-search-btn {
-    height:48px !important;
-    min-height:48px !important;
-    max-height:48px !important;
-    border-radius:16px !important;
-  }
-  .spotify-search-wrap.spotify-search-top .spotify-search-clear-btn {
-    width:48px !important;
-    min-width:48px !important;
-  }
-  .spotify-search-wrap.spotify-search-top .spotify-search-item {
-    grid-template-columns:1fr !important;
-  }
-  .spotify-search-wrap.spotify-search-top .spotify-search-actions {
-    grid-template-columns:1fr 1fr !important;
-  }
-}
-@media (max-width:430px) {
-  .spotify-search-wrap.spotify-search-top {
-    padding:12px !important;
-  }
-  .spotify-search-wrap.spotify-search-top .spotify-search-input {
-    font-size:14px !important;
-    padding:0 14px !important;
-  }
-}
 
-
-/* FINAL VISIBILITY + SEARCH CLEAR FIX
-   The music panel must stay hidden until opened. */
-.music-panel:not(.open) {
-  display:none !important;
-}
-.music-panel.open {
-  display:flex !important;
-}
-.spotify-search-results[hidden],
-.spotify-search-empty[hidden],
-.spotify-search-wrap.spotify-search-top .spotify-search-results.is-collapsed {
-  display:none !important;
-}
-
-  
-/* === EXACT INDEX MUSIC OVERRIDE START === */
 /* Music and Spotify polish patch */
 .music-shell {
   width:min(380px,calc(100vw - 184px));
@@ -3293,1113 +3077,732 @@ body.music-open .music-shell { z-index:43; }
     bottom:94px;
   }
 }
-
-
-/* Final Spotify rebuild: stable player + visible playlist */
-.music-shell { right:96px !important; bottom:max(18px,env(safe-area-inset-bottom)) !important; left:auto !important; width:min(430px,calc(100vw - 200px)) !important; max-width:min(430px,calc(100vw - 200px)) !important; z-index:42 !important; }
-.music-panel { left:auto !important; right:18px !important; top:18px !important; bottom:104px !important; width:min(900px,calc(100vw - 36px)) !important; max-width:min(900px,calc(100vw - 36px)) !important; max-height:calc(100dvh - 122px) !important; min-height:0 !important; padding:18px !important; gap:16px !important; overflow-x:hidden !important; overflow-y:auto !important; border-radius:30px !important; scroll-padding:18px !important; }
-.music-panel.open { display:flex !important; }
-.music-panel-top { flex:0 0 auto !important; position:sticky !important; top:0 !important; z-index:8 !important; padding:0 0 12px !important; border-bottom:1px solid rgba(255,183,214,0.28) !important; background:linear-gradient(180deg,rgba(255,255,255,0.99),rgba(255,255,255,0.92)) !important; }
-.music-panel-title { font-size:clamp(26px,3vw,34px) !important; line-height:1.02 !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
-.spotify-player-card { flex:0 0 auto !important; display:grid !important; grid-template-rows:auto auto auto auto !important; gap:16px !important; padding:18px !important; min-height:auto !important; overflow:visible !important; border-radius:26px !important; background:linear-gradient(180deg,rgba(255,255,255,0.97),rgba(255,242,249,0.94)) !important; border:1px solid rgba(255,183,214,0.38) !important; box-shadow:0 18px 38px rgba(255,87,165,0.08) !important; }
-.spotify-player-top { display:grid !important; grid-template-columns:104px minmax(0,1fr) !important; gap:16px !important; align-items:center !important; }
-.spotify-player-cover { width:104px !important; height:104px !important; border-radius:24px !important; }
-.spotify-player-main { min-width:0 !important; display:grid !important; gap:5px !important; align-content:center !important; }
-.spotify-player-label-row { display:flex !important; align-items:center !important; gap:8px !important; min-width:0 !important; }
-.spotify-player-badge { justify-self:start !important; width:max-content !important; max-width:100% !important; }
-.spotify-player-track { font-size:clamp(34px,5vw,56px) !important; line-height:0.95 !important; max-width:100% !important; }
-.spotify-player-artist { font-size:16px !important; }
-.spotify-player-album { font-size:13px !important; }
-.music-progress-wrap,.music-controls,.spotify-player-hint { position:relative !important; z-index:1 !important; }
-.music-controls { display:grid !important; grid-template-columns:58px minmax(160px,1fr) 58px 58px !important; gap:10px !important; align-items:center !important; }
-.music-icon-btn { width:58px !important; height:58px !important; border-radius:18px !important; }
-.music-play-btn { min-height:58px !important; border-radius:18px !important; }
-.spotify-browser-primary { order:8 !important; flex:0 0 auto !important; display:none !important; margin:0 !important; padding:0 !important; border:0 !important; background:transparent !important; box-shadow:none !important; overflow:visible !important; }
-.spotify-browser-primary.show { display:block !important; }
-.spotify-card { order:12 !important; flex:0 0 auto !important; padding:16px !important; border-radius:26px !important; background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,245,250,0.9)) !important; border:1px solid rgba(255,183,214,0.25) !important; box-shadow:0 14px 30px rgba(255,87,165,0.07) !important; }
-.spotify-library-shell { display:grid !important; gap:12px !important; padding:18px !important; margin:0 !important; border-radius:28px !important; background:linear-gradient(180deg,#181216 0%,#0c0b0d 100%) !important; border:1px solid rgba(255,255,255,0.10) !important; box-shadow:0 24px 56px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06) !important; }
-.spotify-library-head { display:grid !important; grid-template-columns:minmax(0,1fr) auto !important; align-items:start !important; gap:14px !important; }
-.spotify-preview-section-title { font-size:12px !important; font-weight:800 !important; letter-spacing:0.18em !important; text-transform:uppercase !important; color:#ff7bbe !important; }
-.spotify-library-status { margin-top:4px !important; color:rgba(255,255,255,0.68) !important; font-size:13px !important; line-height:1.45 !important; }
-.spotify-library-head-actions { display:flex !important; align-items:center !important; justify-content:flex-end !important; gap:10px !important; }
-.spotify-library-head-link { width:auto !important; min-width:130px !important; border-radius:999px !important; padding:11px 16px !important; white-space:nowrap !important; }
-.spotify-library-summary-row { display:flex !important; align-items:center !important; justify-content:flex-end !important; min-height:18px !important; }
-.spotify-library-count { color:rgba(255,255,255,0.58) !important; font-size:12px !important; font-weight:800 !important; letter-spacing:0.08em !important; text-transform:uppercase !important; text-align:right !important; white-space:nowrap !important; }
-.spotify-library-table-head,.spotify-library-track,.spotify-library-track.is-active,.spotify-library-track.is-paused { display:grid !important; grid-template-columns:36px 52px minmax(190px,2fr) minmax(120px,1fr) minmax(84px,0.7fr) minmax(86px,0.75fr) 58px !important; gap:12px !important; align-items:center !important; }
-.spotify-library-table-head { padding:0 12px 8px !important; color:rgba(255,255,255,0.46) !important; border-bottom:1px solid rgba(255,255,255,0.08) !important; }
-.spotify-library-list { display:grid !important; gap:2px !important; max-height:min(46vh,520px) !important; min-height:180px !important; overflow:auto !important; padding:2px 4px 2px 0 !important; scrollbar-width:thin !important; scrollbar-color:rgba(255,255,255,0.22) transparent !important; }
-.spotify-library-track { min-height:62px !important; padding:8px 12px !important; border-radius:10px !important; background:transparent !important; border:1px solid transparent !important; box-shadow:none !important; cursor:pointer !important; transition:background 0.18s ease,border-color 0.18s ease !important; }
-.spotify-library-track:hover { background:rgba(255,255,255,0.075) !important; border-color:rgba(255,255,255,0.08) !important; transform:none !important; box-shadow:none !important; }
-.spotify-library-track.is-active { background:linear-gradient(90deg,rgba(255,47,141,0.20),rgba(255,255,255,0.055)) !important; border-color:rgba(255,123,191,0.34) !important; }
-.spotify-library-track.is-paused { background:rgba(255,255,255,0.055) !important; }
-.spotify-library-track-cover { width:52px !important; height:52px !important; border-radius:8px !important; box-shadow:0 10px 20px rgba(0,0,0,0.24) !important; }
-.spotify-library-track-index { color:rgba(255,255,255,0.60) !important; }
-.spotify-library-track-indicator { color:#1ed760 !important; }
-.spotify-library-track-name { color:#fff !important; font-size:14px !important; font-weight:800 !important; }
-.spotify-library-track-meta,.spotify-library-track-album,.spotify-library-track-added-by,.spotify-library-track-date,.spotify-library-track-time { color:rgba(255,255,255,0.58) !important; font-size:12px !important; line-height:1.35 !important; }
-.spotify-library-track-time { text-align:right !important; white-space:nowrap !important; font-variant-numeric:tabular-nums !important; }
-.spotify-library-empty { min-height:120px !important; display:flex !important; align-items:center !important; border-radius:16px !important; padding:16px !important; background:rgba(255,255,255,0.04) !important; border:1px dashed rgba(255,255,255,0.14) !important; color:rgba(255,255,255,0.70) !important; }
-.spotify-search-results { max-height:360px !important; overflow:auto !important; }
-body.chat-open .music-shell { right:96px !important; }
-.chat-fab { z-index:55 !important; }
-@media (max-width:980px) { .music-panel { right:14px !important; width:min(760px,calc(100vw - 28px)) !important; max-width:min(760px,calc(100vw - 28px)) !important; } .spotify-library-table-head,.spotify-library-track,.spotify-library-track.is-active,.spotify-library-track.is-paused { grid-template-columns:34px 50px minmax(150px,2fr) minmax(110px,1fr) 58px !important; } .spotify-library-table-head > div:nth-child(5),.spotify-library-table-head > div:nth-child(6),.spotify-library-track-added-by,.spotify-library-track-date { display:none !important; } }
-@media (max-width:680px) { .music-shell { left:72px !important; right:82px !important; width:auto !important; max-width:none !important; bottom:max(14px,env(safe-area-inset-bottom)) !important; } .music-panel { left:10px !important; right:10px !important; top:max(10px,calc(env(safe-area-inset-top) + 6px)) !important; bottom:96px !important; width:auto !important; max-width:none !important; max-height:calc(100dvh - 106px) !important; padding:12px !important; gap:12px !important; border-radius:24px !important; } .music-panel-title { font-size:24px !important; } .spotify-player-card,.spotify-card,.spotify-library-shell { padding:14px !important; border-radius:22px !important; } .spotify-player-top { grid-template-columns:72px minmax(0,1fr) !important; gap:12px !important; align-items:center !important; } .spotify-player-cover { width:72px !important; height:72px !important; border-radius:18px !important; } .spotify-player-track { font-size:clamp(28px,9vw,38px) !important; } .music-controls { grid-template-columns:46px minmax(0,1fr) 46px 46px !important; gap:8px !important; } .music-icon-btn,.music-play-btn { min-height:46px !important; height:46px !important; border-radius:15px !important; } .music-icon-btn { width:46px !important; font-size:17px !important; } .music-play-btn { padding:0 10px !important; } .spotify-library-head { grid-template-columns:1fr !important; } .spotify-library-head-actions { display:grid !important; grid-template-columns:1fr 1fr !important; width:100% !important; } .spotify-library-head-link { min-width:0 !important; width:100% !important; } .spotify-library-summary-row { justify-content:flex-start !important; } .spotify-library-count { text-align:left !important; } .spotify-library-table-head { display:none !important; } .spotify-library-list { max-height:42vh !important; min-height:180px !important; } .spotify-library-track,.spotify-library-track.is-active,.spotify-library-track.is-paused { grid-template-columns:30px 48px minmax(0,1fr) !important; gap:10px !important; min-height:64px !important; padding:9px 8px !important; } .spotify-library-track-cover { width:48px !important; height:48px !important; } .spotify-library-track-album,.spotify-library-track-added-by,.spotify-library-track-date,.spotify-library-track-time { display:none !important; } .spotify-account-actions,.spotify-select-wrap,.spotify-search-row { grid-template-columns:1fr !important; } .spotify-search-results { max-height:240px !important; } }
-@media (max-width:420px) { .music-shell { left:70px !important; right:78px !important; } .music-panel { bottom:92px !important; } #musicPlayText { display:none !important; } .music-controls { grid-template-columns:42px minmax(0,1fr) 42px 42px !important; gap:7px !important; } .music-icon-btn,.music-play-btn { height:42px !important; min-height:42px !important; } .music-icon-btn { width:42px !important; } }
-
-/* FINAL MUSIC PANEL STABILITY PATCH
-   Keeps search, player, playlist, and account settings in normal document flow. */
-.music-panel,
-.music-panel.open {
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:stretch !important;
-  gap:14px !important;
-  overflow-x:hidden !important;
-  overflow-y:auto !important;
-}
-.music-panel > * {
-  width:100% !important;
-  min-width:0 !important;
-  flex:0 0 auto !important;
-}
-.music-panel-top {
-  position:relative !important;
-  top:auto !important;
-  margin:0 !important;
-  z-index:5 !important;
-}
-.spotify-search-wrap.spotify-search-top {
-  position:relative !important;
-  inset:auto !important;
-  top:auto !important;
-  z-index:4 !important;
-  display:grid !important;
-  grid-template-columns:1fr !important;
-  gap:12px !important;
-  margin:0 !important;
-  padding:16px !important;
-  min-height:0 !important;
-  height:auto !important;
-  overflow:visible !important;
-  border-radius:24px !important;
-  background:linear-gradient(180deg,rgba(255,255,255,0.985),rgba(255,244,250,0.96)) !important;
-  border:1px solid rgba(255,183,214,0.36) !important;
-  box-shadow:0 16px 34px rgba(255,87,165,0.09), inset 0 1px 0 rgba(255,255,255,0.86) !important;
-}
-.spotify-search-wrap.spotify-search-top[hidden] {
-  display:none !important;
-}
-.spotify-search-head {
-  display:flex !important;
-  align-items:flex-start !important;
-  justify-content:space-between !important;
-  gap:12px !important;
-}
-.spotify-search-top-label {
-  font-size:11px !important;
-  line-height:1 !important;
-  font-weight:800 !important;
-  letter-spacing:0.18em !important;
-  text-transform:uppercase !important;
-  color:var(--mood-title) !important;
-  white-space:nowrap !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-row {
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) 52px 150px !important;
-  gap:10px !important;
-  align-items:center !important;
-  width:100% !important;
-  min-width:0 !important;
-  margin:0 !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-input,
-.spotify-search-wrap.spotify-search-top .spotify-search-clear-btn,
-.spotify-search-wrap.spotify-search-top .spotify-search-btn {
-  height:52px !important;
-  min-height:52px !important;
-  max-height:52px !important;
-  border-radius:18px !important;
-  margin:0 !important;
-  box-sizing:border-box !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-input {
-  width:100% !important;
-  min-width:0 !important;
-  padding:0 18px !important;
-  background:rgba(255,236,245,0.78) !important;
-  border:1px solid rgba(255,183,214,0.35) !important;
-  color:var(--text-soft) !important;
-  font-size:15px !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.58) !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-clear-btn {
-  width:52px !important;
-  min-width:52px !important;
-  padding:0 !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  border:1px solid rgba(255,183,214,0.34) !important;
-  color:var(--mood-title) !important;
-  background:rgba(255,236,245,0.88) !important;
-  box-shadow:0 8px 18px rgba(255,87,165,0.08) !important;
-  cursor:pointer !important;
-  font-size:18px !important;
-  font-weight:800 !important;
-  line-height:1 !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-clear-btn[hidden] {
-  display:none !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-btn {
-  width:100% !important;
-  min-width:0 !important;
-  padding:0 20px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  white-space:nowrap !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-results {
-  display:grid !important;
-  gap:10px !important;
-  max-height:min(34vh,340px) !important;
-  overflow-y:auto !important;
-  overflow-x:hidden !important;
-  padding:0 3px 0 0 !important;
-  overscroll-behavior:contain !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-results[hidden],
-.spotify-search-wrap.spotify-search-top .spotify-search-empty[hidden] {
-  display:none !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-item {
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) minmax(220px,0.7fr) !important;
-  gap:10px !important;
-  align-items:center !important;
-  padding:12px !important;
-  border-radius:18px !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-search-actions {
-  display:grid !important;
-  grid-template-columns:1fr 1fr !important;
-  gap:8px !important;
-}
-.spotify-search-wrap.spotify-search-top .spotify-result-play,
-.spotify-search-wrap.spotify-search-top .spotify-result-open {
-  min-height:42px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-}
-.spotify-player-card {
-  position:relative !important;
-  z-index:2 !important;
-  margin:0 !important;
-  overflow:hidden !important;
-}
-.spotify-card {
-  position:relative !important;
-  z-index:1 !important;
-  margin:0 !important;
-}
-@media (max-width:760px) {
-  .spotify-search-wrap.spotify-search-top {
-    padding:14px !important;
-    border-radius:22px !important;
+    /* removed letter card hearts */
+    .letter-heart-bg,
+    .letter-corner-tl,
+    .letter-corner-tr,
+    .letter-corner-bl,
+    .letter-corner-br {
+      display:none !important;
+    }
+/* Final mobile music bar polish: restore icon visibility and keep the player compact beside chat */
+@media (max-width:680px) {
+  .music-shell {
+    left:max(16px, env(safe-area-inset-left)) !important;
+    right:auto !important;
+    bottom:max(12px, env(safe-area-inset-bottom)) !important;
+    width:min(70vw, 292px) !important;
+    max-width:calc(100vw - 112px) !important;
+    min-width:0 !important;
   }
-  .spotify-search-wrap.spotify-search-top .spotify-search-row {
-    grid-template-columns:minmax(0,1fr) 48px !important;
+
+  .music-mini-bar {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    min-height:62px !important;
+    padding:8px 10px !important;
     gap:9px !important;
+    border-radius:20px !important;
+    align-items:center !important;
+    overflow:hidden !important;
   }
-  .spotify-search-wrap.spotify-search-top .spotify-search-btn {
-    grid-column:1 / -1 !important;
+
+  .music-mini-cover {
+    display:flex !important;
+    position:relative !important;
+    width:38px !important;
+    height:38px !important;
+    min-width:38px !important;
+    flex:0 0 38px !important;
+    border-radius:14px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    background-image:none !important;
+    background:rgba(255,255,255,0.22) !important;
+    color:transparent !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.22), 0 8px 18px rgba(255,47,141,0.12) !important;
   }
-  .spotify-search-wrap.spotify-search-top .spotify-search-input,
-  .spotify-search-wrap.spotify-search-top .spotify-search-clear-btn,
-  .spotify-search-wrap.spotify-search-top .spotify-search-btn {
-    height:48px !important;
-    min-height:48px !important;
-    max-height:48px !important;
-    border-radius:16px !important;
+
+  .music-mini-cover::after {
+    content:"🌹";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#ffffff;
+    font-size:18px;
+    line-height:1;
+    text-shadow:0 3px 10px rgba(180,0,86,0.24);
   }
-  .spotify-search-wrap.spotify-search-top .spotify-search-clear-btn {
-    width:48px !important;
-    min-width:48px !important;
+
+  .music-mini-info {
+    min-width:0 !important;
+    flex:1 1 auto !important;
+    gap:1px !important;
   }
-  .spotify-search-wrap.spotify-search-top .spotify-search-item {
-    grid-template-columns:1fr !important;
+
+  .music-mini-label {
+    font-size:9px !important;
+    letter-spacing:0.11em !important;
   }
-  .spotify-search-wrap.spotify-search-top .spotify-search-actions {
-    grid-template-columns:1fr 1fr !important;
+
+  .music-mini-title {
+    font-size:13px !important;
+    line-height:1.16 !important;
+    -webkit-line-clamp:1 !important;
+  }
+
+  .music-mini-sub {
+    font-size:11px !important;
+    line-height:1.2 !important;
+  }
+
+  .music-mini-btn {
+    width:38px !important;
+    height:38px !important;
+    min-width:38px !important;
+    flex:0 0 38px !important;
+    border-radius:14px !important;
+    font-size:16px !important;
   }
 }
-@media (max-width:430px) {
-  .spotify-search-wrap.spotify-search-top {
-    padding:12px !important;
+
+@media (max-width:400px) {
+  .music-shell {
+    left:max(12px, env(safe-area-inset-left)) !important;
+    width:min(68vw, 260px) !important;
+    max-width:calc(100vw - 104px) !important;
   }
-  .spotify-search-wrap.spotify-search-top .spotify-search-input {
-    font-size:14px !important;
-    padding:0 14px !important;
+
+  .music-mini-bar {
+    min-height:58px !important;
+    padding:8px 9px !important;
+    gap:8px !important;
+  }
+
+  .music-mini-cover,
+  .music-mini-btn {
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    flex-basis:36px !important;
+    border-radius:13px !important;
+  }
+
+  .music-mini-cover::after {
+    font-size:17px;
+  }
+
+  .music-mini-title {
+    font-size:12.5px !important;
+  }
+
+  .music-mini-sub {
+    font-size:10.5px !important;
   }
 }
 
 
-/* FINAL VISIBILITY + SEARCH CLEAR FIX
-   The music panel must stay hidden until opened. */
-.music-panel:not(.open) {
-  display:none !important;
-}
-.music-panel.open {
-  display:flex !important;
-}
-.spotify-search-results[hidden],
-.spotify-search-empty[hidden],
-.spotify-search-wrap.spotify-search-top .spotify-search-results.is-collapsed {
-  display:none !important;
-}
-/* === EXACT INDEX MUSIC OVERRIDE END === */
-
-  
-
-/* === FINAL INDEX-MATCHED SPOTIFY PATCH START === */
-/* Force the memories page Spotify UI to use the same minimal search-first system as index.html. */
+/* ── Spotify minimal redesign patch ───────────────────────── */
 .spotify-hidden-legacy,
 .spotify-hidden-legacy.show,
 .spotify-select-wrap.spotify-hidden-legacy,
 .spotify-shared-wrap.spotify-hidden-legacy,
-.spotify-embed-wrap.spotify-hidden-legacy,
-.spotify-library-shell,
-.spotify-browser-primary,
-.spotify-preview-card {
+.spotify-embed-wrap.spotify-hidden-legacy {
   display:none !important;
   visibility:hidden !important;
   pointer-events:none !important;
-  height:0 !important;
-  min-height:0 !important;
-  max-height:0 !important;
-  overflow:hidden !important;
-  opacity:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
 }
+
 .music-panel {
-  right:18px !important;
-  top:18px !important;
-  bottom:106px !important;
-  width:min(860px,calc(100vw - 36px)) !important;
-  max-width:min(860px,calc(100vw - 36px)) !important;
-  max-height:none !important;
-  padding:18px !important;
-  gap:14px !important;
-  overflow-x:hidden !important;
-  overflow-y:auto !important;
-  border-radius:30px !important;
-  background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,247,251,0.96)) !important;
-  scroll-padding:18px !important;
+  right:18px;
+  top:18px;
+  bottom:106px;
+  width:min(560px,calc(100vw - 36px));
+  max-width:min(560px,calc(100vw - 36px));
+  gap:12px;
+  padding:16px;
+  overflow-x:hidden;
 }
-.music-panel:not(.open) { display:none !important; }
-.music-panel.open { display:flex !important; }
+
 .music-panel-top {
-  padding:0 0 10px !important;
-  background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,255,255,0.88)) !important;
-  border-bottom:1px solid rgba(255,183,214,0.28) !important;
+  border-bottom:1px solid rgba(255,183,214,0.24);
+  padding-bottom:12px;
+  margin-bottom:2px;
 }
+
+.music-panel-title {
+  font-size:clamp(20px,2.5vw,28px);
+}
+
 .spotify-section-label {
-  font-size:12px !important;
-  font-weight:800 !important;
-  letter-spacing:.16em !important;
-  text-transform:uppercase !important;
-  color:var(--mood-title) !important;
-  margin-bottom:14px !important;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--mood-title);
+  margin-bottom:8px;
 }
+
 .spotify-search-wrap {
-  order:1 !important;
-  display:block !important;
-  padding:18px !important;
-  border-radius:26px !important;
-  background:linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,245,250,0.92)) !important;
-  border:1px solid rgba(255,183,214,0.35) !important;
-  box-shadow:0 16px 34px rgba(255,87,165,0.08) !important;
+  order:1;
+  display:grid;
+  gap:10px;
+  padding:14px;
+  border-radius:24px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,245,250,0.93));
+  border:1px solid rgba(255,183,214,0.28);
+  box-shadow:0 16px 34px rgba(255,87,165,0.08);
 }
-.spotify-search-wrap[hidden] { display:none !important; }
+
+.spotify-search-wrap[hidden] {
+  display:none !important;
+}
+
 .spotify-search-row {
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) 128px !important;
-  gap:12px !important;
-  align-items:center !important;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
 }
-.spotify-search-field { position:relative !important; min-width:0 !important; }
+
+.spotify-search-field {
+  position:relative;
+  min-width:0;
+}
+
 .spotify-search-input {
-  width:100% !important;
-  height:56px !important;
-  border-radius:20px !important;
-  padding:0 50px 0 18px !important;
-  border:1px solid rgba(255,183,214,0.38) !important;
-  background:rgba(255,236,245,0.58) !important;
-  color:var(--text-soft) !important;
-  font-size:15px !important;
-  box-shadow:none !important;
+  height:48px;
+  padding:0 44px 0 16px;
+  border-radius:16px;
+  background:rgba(255,236,245,0.72);
+  border:1px solid rgba(255,183,214,0.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.42);
 }
-.spotify-search-clear,
-.spotify-search-clear-btn {
-  position:absolute !important;
-  right:10px !important;
-  top:50% !important;
-  transform:translateY(-50%) !important;
-  width:34px !important;
-  height:34px !important;
-  border-radius:999px !important;
-  border:none !important;
-  color:var(--mood-title) !important;
-  background:rgba(255,255,255,0.78) !important;
-  cursor:pointer !important;
+
+.spotify-search-input:focus {
+  background:rgba(255,255,255,0.96);
+  border-color:rgba(255,92,169,0.42);
+  box-shadow:0 0 0 4px rgba(255,92,169,0.11), inset 0 1px 0 rgba(255,255,255,0.72);
 }
-.spotify-search-clear[hidden],
-.spotify-search-clear-btn[hidden] { display:none !important; }
-.spotify-search-btn {
-  height:56px !important;
-  border-radius:20px !important;
-  padding:0 18px !important;
-  font-size:14px !important;
-  font-weight:800 !important;
-  color:white !important;
-  background:linear-gradient(135deg,var(--mood-grad-a) 0%,var(--mood-grad-b) 100%) !important;
-  box-shadow:0 12px 26px var(--mood-glow) !important;
+
+.spotify-search-clear {
+  position:absolute;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:999px;
+  background:rgba(255,255,255,0.82);
+  color:var(--mood-title);
+  cursor:pointer;
+  font-size:14px;
+  line-height:1;
+  box-shadow:0 8px 18px rgba(255,87,165,0.08);
+  transition:transform 0.24s var(--ease-spring), background 0.2s ease, opacity 0.2s ease;
 }
+
+.spotify-search-clear:hover {
+  transform:translateY(-50%) scale(1.06) rotate(90deg);
+  background:rgba(255,236,245,0.98);
+}
+
+.spotify-search-clear[hidden] {
+  display:none !important;
+}
+
+.spotify-search-results {
+  max-height:min(38vh,320px);
+  padding-right:2px;
+}
+
+.spotify-search-item {
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.72);
+  border:1px solid rgba(255,183,214,0.24);
+  transition:transform 0.24s var(--ease-spring), box-shadow 0.24s ease, border-color 0.2s ease;
+}
+
+.spotify-search-item:hover {
+  transform:translateY(-2px);
+  border-color:rgba(255,92,169,0.36);
+  box-shadow:0 12px 26px rgba(255,87,165,0.10);
+}
+
+.spotify-search-actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.spotify-result-open,
+.spotify-result-play {
+  min-width:72px;
+  padding:10px 12px;
+  border-radius:999px;
+}
+
 .spotify-player-card {
-  order:2 !important;
-  display:grid !important;
-  gap:16px !important;
-  padding:18px !important;
-  border-radius:26px !important;
-  background:linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,242,249,0.92)) !important;
-  border:1px solid rgba(255,183,214,0.35) !important;
-  box-shadow:0 16px 34px rgba(255,87,165,0.08) !important;
+  order:2;
 }
-.spotify-player-card[hidden] { display:none !important; }
+
+.spotify-player-card[hidden] {
+  display:none !important;
+}
+
 .spotify-account-card {
-  order:3 !important;
-  padding:18px !important;
-  border-radius:26px !important;
-  background:linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,245,250,0.92)) !important;
-  border:1px solid rgba(255,183,214,0.26) !important;
-  box-shadow:0 16px 34px rgba(255,87,165,0.08) !important;
-  min-height:auto !important;
-  overflow:visible !important;
+  order:3;
+  padding:14px;
+  border-radius:24px;
 }
-.spotify-account-card .spotify-card-top {
-  display:flex !important;
-  align-items:flex-start !important;
-  justify-content:space-between !important;
-  gap:14px !important;
-  margin-bottom:18px !important;
-}
-.spotify-account-card .spotify-kicker {
-  font-size:12px !important;
-  letter-spacing:.16em !important;
-  text-transform:uppercase !important;
-  color:var(--mood-title) !important;
-}
-.spotify-account-card .spotify-title {
-  font-family:"Playfair Display",serif !important;
-  font-size:clamp(28px,4.4vw,42px) !important;
-  line-height:1 !important;
-  color:var(--mood-title) !important;
-}
-.spotify-account-card .spotify-status {
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  min-height:42px !important;
-  padding:0 18px !important;
-  border-radius:999px !important;
-  background:rgba(255,255,255,0.86) !important;
-  color:var(--mood-title) !important;
-  font-weight:800 !important;
-  white-space:nowrap !important;
-}
+
 .spotify-account-actions {
-  display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  gap:12px !important;
-  align-items:stretch !important;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
 }
-.spotify-account-actions > button,
+
 .spotify-connect-btn,
 .spotify-switch-btn,
 .spotify-disconnect-btn {
+  min-width:0;
+  width:100%;
+  padding:12px 14px;
+  border-radius:16px;
+}
+
+.spotify-connect-btn[hidden],
+.spotify-switch-btn[hidden],
+.spotify-disconnect-btn[hidden] {
+  display:none !important;
+}
+
+.spotify-user {
+  margin-top:0;
+  padding-bottom:0;
+}
+
+.music-mini-sub {
+  max-width:100%;
+}
+
+@media (max-width:680px) {
+  .music-panel {
+    left:10px !important;
+    right:10px !important;
+    top:max(10px,calc(env(safe-area-inset-top) + 6px)) !important;
+    bottom:92px !important;
+    width:auto !important;
+    max-width:none !important;
+    padding:12px !important;
+    border-radius:24px !important;
+  }
+
+  .music-shell {
+    left:max(76px, env(safe-area-inset-left) + 76px) !important;
+    right:max(76px, env(safe-area-inset-right) + 76px) !important;
+    bottom:max(12px, env(safe-area-inset-bottom)) !important;
+    width:auto !important;
+    max-width:none !important;
+    min-width:0 !important;
+    transform:none !important;
+    justify-content:center !important;
+  }
+
+  .music-mini-bar {
+    min-height:60px !important;
+    padding:8px 10px !important;
+    gap:8px !important;
+    border-radius:20px !important;
+  }
+
+  .spotify-search-row,
+  .spotify-account-actions {
+    grid-template-columns:1fr;
+  }
+
+  .spotify-search-item {
+    grid-template-columns:1fr;
+  }
+
+  .spotify-search-actions {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+  }
+
+  .spotify-result-open,
+  .spotify-result-play {
+    width:100%;
+    min-width:0;
+  }
+
+  .spotify-player-top {
+    grid-template-columns:68px minmax(0,1fr) !important;
+  }
+
+  .spotify-player-cover {
+    width:68px !important;
+    height:68px !important;
+  }
+
+  .music-controls {
+    grid-template-columns:44px minmax(0,1fr) 44px 44px !important;
+    gap:7px !important;
+  }
+
+  .music-icon-btn,
+  .music-play-btn {
+    min-height:44px !important;
+    height:44px !important;
+    border-radius:14px !important;
+  }
+}
+
+@media (max-width:400px) {
+  .music-shell {
+    left:max(70px, env(safe-area-inset-left) + 70px) !important;
+    right:max(70px, env(safe-area-inset-right) + 70px) !important;
+    width:auto !important;
+    max-width:none !important;
+    min-width:0 !important;
+  }
+
+  .music-mini-cover,
+  .music-mini-btn {
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    flex-basis:34px !important;
+  }
+
+  .music-mini-title {
+    font-size:12px !important;
+  }
+
+  .music-mini-sub {
+    font-size:10px !important;
+  }
+}
+
+
+
+/* ── Spotify account controls polish: compact responsive pills ── */
+.spotify-account-card {
+  gap:12px !important;
+  padding:16px !important;
+  border-radius:24px !important;
+}
+
+.spotify-account-card .spotify-card-top {
+  align-items:center !important;
+  gap:12px !important;
+}
+
+.spotify-account-card .spotify-status {
+  text-align:center !important;
+  line-height:1.1 !important;
+  padding:8px 14px !important;
+  border-radius:999px !important;
+  white-space:nowrap !important;
+}
+
+.spotify-account-actions {
+  display:flex !important;
+  flex-wrap:wrap !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:10px !important;
+}
+
+.spotify-account-actions > button {
+  width:auto !important;
+  min-width:0 !important;
+  min-height:42px !important;
+  flex:0 1 auto !important;
+  padding:10px 16px !important;
+  border-radius:999px !important;
+  font-size:13px !important;
+  line-height:1.12 !important;
+  white-space:nowrap !important;
+}
+
+.spotify-account-actions > .spotify-connect-btn {
+  min-width:142px !important;
+}
+
+.spotify-account-actions > .spotify-disconnect-btn {
+  min-width:150px !important;
+}
+
+.spotify-account-actions > .spotify-switch-btn {
+  min-width:180px !important;
+}
+
+.spotify-account-card .spotify-user {
+  margin-top:0 !important;
+  padding:2px 2px 0 !important;
+}
+
+@media (max-width:680px) {
+  .spotify-account-card {
+    padding:14px !important;
+    gap:10px !important;
+  }
+
+  .spotify-account-card .spotify-card-top {
+    align-items:flex-start !important;
+    gap:8px !important;
+  }
+
+  .spotify-account-card .spotify-title {
+    font-size:20px !important;
+  }
+
+  .spotify-account-actions {
+    justify-content:stretch !important;
+    gap:8px !important;
+  }
+
+  .spotify-account-actions > button {
+    flex:1 1 calc(50% - 4px) !important;
+    width:auto !important;
+    min-width:0 !important;
+    min-height:40px !important;
+    padding:10px 12px !important;
+    font-size:12.5px !important;
+  }
+
+  .spotify-account-actions > .spotify-switch-btn {
+    flex-basis:100% !important;
+  }
+}
+
+@media (max-width:420px) {
+  .spotify-account-card .spotify-card-top {
+    display:grid !important;
+    grid-template-columns:1fr auto !important;
+  }
+
+  .spotify-account-actions > button {
+    flex-basis:100% !important;
+  }
+}
+  
+
+/* ── Final Spotify controls alignment fix ── */
+.spotify-account-card {
+  overflow:hidden !important;
+}
+
+.spotify-account-actions {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  align-items:stretch !important;
+  justify-content:stretch !important;
+  gap:12px !important;
+  width:100% !important;
+}
+
+.spotify-account-actions > button,
+.spotify-account-actions > .spotify-connect-btn,
+.spotify-account-actions > .spotify-disconnect-btn,
+.spotify-account-actions > .spotify-switch-btn {
   width:100% !important;
   min-width:0 !important;
-  min-height:56px !important;
+  max-width:none !important;
+  min-height:48px !important;
+  flex:none !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:12px 14px !important;
+  border-radius:999px !important;
+  text-align:center !important;
+  line-height:1.12 !important;
+  white-space:normal !important;
+}
+
+@media (max-width:720px) {
+  .spotify-account-actions {
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+  }
+
+  .spotify-account-actions > button,
+  .spotify-account-actions > .spotify-connect-btn,
+  .spotify-account-actions > .spotify-disconnect-btn,
+  .spotify-account-actions > .spotify-switch-btn {
+    min-height:44px !important;
+    padding:11px 14px !important;
+    font-size:13px !important;
+    white-space:nowrap !important;
+  }
+}
+
+
+/* ── Spotify account section stability fix ───────────────────
+   Fixes clipped account header + uneven controls on small panel widths. */
+.music-panel {
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  align-content:start !important;
+  padding-bottom:calc(18px + env(safe-area-inset-bottom)) !important;
+}
+
+.spotify-account-card {
+  flex:0 0 auto !important;
+  min-height:max-content !important;
   height:auto !important;
+  overflow:visible !important;
+  scroll-margin-bottom:24px !important;
+  padding:16px !important;
+  gap:14px !important;
+}
+
+.spotify-account-card .spotify-card-top {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:center !important;
+  gap:12px !important;
+}
+
+.spotify-account-card .spotify-title {
+  font-size:clamp(22px,4vw,30px) !important;
+  line-height:1.05 !important;
+  margin:0 !important;
+}
+
+.spotify-account-card .spotify-status {
+  align-self:start !important;
+  min-width:96px !important;
+  padding:9px 16px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.spotify-account-actions {
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  grid-template-areas:
+    "disconnect refresh"
+    "change change" !important;
+  gap:10px !important;
+  width:100% !important;
+  align-items:stretch !important;
+}
+
+.spotify-account-actions > .spotify-disconnect-btn { grid-area:disconnect !important; }
+.spotify-account-actions > .spotify-connect-btn { grid-area:refresh !important; }
+.spotify-account-actions > .spotify-switch-btn { grid-area:change !important; }
+
+.spotify-account-actions > button,
+.spotify-account-actions > .spotify-connect-btn,
+.spotify-account-actions > .spotify-disconnect-btn,
+.spotify-account-actions > .spotify-switch-btn {
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  min-height:46px !important;
+  height:auto !important;
+  padding:11px 14px !important;
+  border-radius:18px !important;
   display:flex !important;
   align-items:center !important;
   justify-content:center !important;
   text-align:center !important;
-  padding:12px 16px !important;
-  border-radius:20px !important;
-  font-size:14px !important;
-  font-weight:800 !important;
-  line-height:1.2 !important;
+  line-height:1.15 !important;
   white-space:normal !important;
+  word-break:normal !important;
 }
-.spotify-account-actions > button[hidden] { display:none !important; }
+
 .spotify-account-card .spotify-user {
-  margin-top:14px !important;
-  padding:0 4px !important;
-  font-size:13px !important;
-  line-height:1.6 !important;
-  color:#9b6680 !important;
+  margin:0 !important;
+  padding:0 2px !important;
+  line-height:1.45 !important;
 }
-.spotify-search-results[hidden],
-.spotify-search-empty[hidden],
-.spotify-search-results.is-collapsed { display:none !important; }
-@media (max-width:760px) {
-  .music-shell {
-    left:16px !important;
-    right:84px !important;
-    bottom:16px !important;
-    width:auto !important;
-    max-width:none !important;
-  }
+
+@media (max-width:680px) {
   .music-panel {
-    left:12px !important;
-    right:12px !important;
-    top:12px !important;
-    bottom:92px !important;
-    width:auto !important;
-    max-width:none !important;
-    border-radius:26px !important;
-    padding:16px !important;
-  }
-  .spotify-search-row { grid-template-columns:1fr !important; }
-  .spotify-search-btn { width:100% !important; }
-  .spotify-player-top { grid-template-columns:72px minmax(0,1fr) !important; }
-  .spotify-player-cover { width:72px !important; height:72px !important; border-radius:18px !important; }
-  .music-controls { grid-template-columns:48px minmax(0,1fr) 48px 48px !important; gap:8px !important; }
-  .music-icon-btn { width:48px !important; height:48px !important; border-radius:16px !important; }
-  .music-play-btn { min-height:48px !important; border-radius:16px !important; }
-  .spotify-account-actions { grid-template-columns:1fr !important; }
-  .spotify-account-card .spotify-card-top { align-items:flex-start !important; }
-}
-@media (max-width:430px) {
-  .music-panel { left:10px !important; right:10px !important; padding:14px !important; }
-  .spotify-search-wrap,
-  .spotify-player-card,
-  .spotify-account-card { padding:14px !important; border-radius:22px !important; }
-  .spotify-account-card .spotify-title { font-size:30px !important; }
-  .spotify-account-card .spotify-status { min-height:36px !important; padding:0 14px !important; font-size:12px !important; }
-}
-/* === FINAL INDEX-MATCHED SPOTIFY PATCH END === */
-
-
-
-/* === FINAL DOCK SPACING FIX START ===
-   Real spacing fix: keeps the chat panel, chat bubble, Spotify mini player,
-   and Spotify panel from sitting on top of each other on mobile. */
-:root {
-  --chat-panel-bottom: 118px;
-  --music-panel-bottom: 118px;
-  --dock-side-gap: 28px;
-}
-
-.chat-panel {
-  bottom: var(--chat-panel-bottom) !important;
-  right: max(18px, env(safe-area-inset-right, 0px) + 18px) !important;
-  transform-origin: bottom right !important;
-}
-
-.music-panel {
-  bottom: var(--music-panel-bottom) !important;
-  transform-origin: bottom right !important;
-}
-
-.chat-fab,
-.music-mini-bar {
-  transform-origin: center center !important;
-}
-
-@media (max-width: 760px) {
-  .chat-fab {
-    right: max(16px, env(safe-area-inset-right, 0px) + 16px) !important;
-    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
-    width: 58px !important;
-    height: 58px !important;
-    flex: 0 0 58px !important;
+    top:max(10px,calc(env(safe-area-inset-top) + 8px)) !important;
+    bottom:84px !important;
+    padding:12px 12px calc(18px + env(safe-area-inset-bottom)) !important;
   }
 
-  .music-shell {
-    left: 16px !important;
-    right: 112px !important;
-    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
-    width: auto !important;
-    max-width: none !important;
+  .spotify-player-card {
+    padding:12px !important;
+    gap:12px !important;
   }
 
-  .chat-panel {
-    left: 12px !important;
-    right: 12px !important;
-    bottom: var(--chat-panel-bottom) !important;
-    width: auto !important;
-    height: min(58vh, calc(100dvh - var(--chat-panel-bottom) - 22px)) !important;
-    max-height: calc(100dvh - var(--chat-panel-bottom) - 22px) !important;
-    border-radius: 24px !important;
-  }
-
-  .music-panel {
-    left: 12px !important;
-    right: 12px !important;
-    bottom: var(--music-panel-bottom) !important;
-    width: auto !important;
-    max-width: none !important;
-    max-height: calc(100dvh - var(--music-panel-bottom) - 18px) !important;
-    border-radius: 26px !important;
-  }
-}
-
-@media (max-width: 430px) {
-  .chat-fab {
-    right: max(14px, env(safe-area-inset-right, 0px) + 14px) !important;
-    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
-  }
-
-  .music-shell {
-    left: 12px !important;
-    right: 104px !important;
-    bottom: max(18px, env(safe-area-inset-bottom, 0px) + 18px) !important;
-  }
-
-  .chat-panel {
-    left: 10px !important;
-    right: 10px !important;
-    height: min(56vh, calc(100dvh - var(--chat-panel-bottom) - 22px)) !important;
-    max-height: calc(100dvh - var(--chat-panel-bottom) - 22px) !important;
-    border-radius: 22px !important;
-  }
-
-  .music-panel {
-    left: 10px !important;
-    right: 10px !important;
-    border-radius: 24px !important;
-  }
-}
-/* === FINAL DOCK SPACING FIX END === */
-
-
-
-/* === FINAL RESPONSIVE SPOTIFY + DOCK ALIGNMENT PATCH START === */
-@media (min-width: 861px) {
-  .music-panel { left:auto !important; right:18px !important; top:18px !important; bottom:var(--music-panel-bottom,112px) !important; width:min(680px,calc(100vw - 48px)) !important; max-width:min(680px,calc(100vw - 48px)) !important; max-height:calc(100dvh - var(--music-panel-bottom,112px) - 18px) !important; border-radius:30px !important; }
-  .music-shell { left:auto !important; right:96px !important; bottom:max(18px,env(safe-area-inset-bottom,0px) + 18px) !important; width:min(420px,calc(100vw - 220px)) !important; max-width:min(420px,calc(100vw - 220px)) !important; }
-  .spotify-account-card .spotify-title { font-size:clamp(30px,3.2vw,42px) !important; }
-}
-@media (max-width: 1100px) {
-  .mood-cluster { left:max(16px,env(safe-area-inset-left,0px) + 16px) !important; bottom:max(18px,env(safe-area-inset-bottom,0px) + 18px) !important; }
-  .chat-fab { right:max(18px,env(safe-area-inset-right,0px) + 18px) !important; bottom:max(18px,env(safe-area-inset-bottom,0px) + 18px) !important; width:64px !important; height:64px !important; flex:0 0 64px !important; z-index:72 !important; }
-  .music-shell { left:clamp(128px,15vw,170px) !important; right:clamp(104px,12vw,140px) !important; bottom:max(18px,env(safe-area-inset-bottom,0px) + 18px) !important; width:auto !important; max-width:none !important; z-index:42 !important; }
-  .music-mini-bar { width:100% !important; min-height:76px !important; padding:10px 12px !important; gap:12px !important; border-radius:26px !important; }
-  .music-mini-cover { width:56px !important; height:56px !important; border-radius:18px !important; flex:0 0 56px !important; }
-  .music-mini-btn { width:56px !important; height:56px !important; border-radius:20px !important; flex:0 0 56px !important; }
-  .chat-panel { left:auto !important; right:max(18px,env(safe-area-inset-right,0px) + 18px) !important; bottom:var(--chat-panel-bottom,124px) !important; width:min(520px,calc(100vw - 36px)) !important; height:min(64vh,calc(100dvh - var(--chat-panel-bottom,124px) - 24px)) !important; max-height:calc(100dvh - var(--chat-panel-bottom,124px) - 24px) !important; border-radius:26px !important; }
-  .music-panel { left:max(14px,env(safe-area-inset-left,0px) + 14px) !important; right:max(14px,env(safe-area-inset-right,0px) + 14px) !important; top:max(14px,env(safe-area-inset-top,0px) + 10px) !important; bottom:var(--music-panel-bottom,124px) !important; width:auto !important; max-width:none !important; max-height:calc(100dvh - var(--music-panel-bottom,124px) - 24px) !important; border-radius:28px !important; }
-}
-@media (max-width: 760px) {
-  .music-shell { left:112px !important; right:104px !important; }
-  .music-mini-bar { min-height:70px !important; padding:9px 10px !important; border-radius:24px !important; }
-  .music-mini-cover { width:50px !important; height:50px !important; border-radius:17px !important; flex-basis:50px !important; }
-  .music-mini-btn { width:50px !important; height:50px !important; border-radius:18px !important; flex-basis:50px !important; }
-  .music-mini-label { font-size:10px !important; }
-  .music-mini-title { font-size:15px !important; line-height:1.1 !important; }
-  .music-mini-sub { font-size:12px !important; line-height:1.15 !important; }
-  .chat-panel { left:12px !important; right:12px !important; width:auto !important; height:min(58vh,calc(100dvh - var(--chat-panel-bottom,124px) - 24px)) !important; }
-}
-@media (max-width: 520px) {
-  .mood-fab,.chat-fab { width:58px !important; height:58px !important; flex-basis:58px !important; }
-  .music-shell { left:88px !important; right:88px !important; }
-  .music-mini-bar { min-height:64px !important; gap:8px !important; padding:8px !important; border-radius:22px !important; }
-  .music-mini-cover { width:46px !important; height:46px !important; border-radius:16px !important; flex-basis:46px !important; }
-  .music-mini-btn { width:46px !important; height:46px !important; border-radius:16px !important; flex-basis:46px !important; }
-  .music-mini-label { font-size:9px !important; }
-  .music-mini-title { font-size:14px !important; }
-  .music-mini-sub { font-size:11px !important; }
-}
-@media (max-width: 380px) { .music-shell { left:82px !important; right:82px !important; } .music-mini-sub { display:none !important; } }
-.love-cursor-particle { position:fixed; left:0; top:0; z-index:999999; pointer-events:none; user-select:none; font-size:22px; line-height:1; transform:translate3d(var(--x,0),var(--y,0),0) scale(.8) rotate(var(--r,0deg)); animation:loveCursorFloat 920ms ease-out forwards; filter:drop-shadow(0 8px 12px rgba(255,47,141,.24)); }
-@keyframes loveCursorFloat { 0%{opacity:0;transform:translate3d(var(--x,0),var(--y,0),0) scale(.72) rotate(var(--r,0deg));} 15%{opacity:1;} 100%{opacity:0;transform:translate3d(calc(var(--x,0) + var(--dx,0px)),calc(var(--y,0) - var(--dy,58px)),0) scale(1.22) rotate(calc(var(--r,0deg) + 18deg));} }
-@media (prefers-reduced-motion: reduce) { .love-cursor-particle { display:none !important; } }
-/* === FINAL RESPONSIVE SPOTIFY + DOCK ALIGNMENT PATCH END === */
-
-
-
-/* === FINAL EXACT INDEX SPOTIFY + DOCK FIX START ===
-   This overrides the old stacked Spotify patches. It keeps the visual system from index.html:
-   search on top, player card inside the panel when a song plays, account controls below,
-   and clean dock spacing on desktop/tablet/mobile. */
-:root {
-  --dock-bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 18px));
-  --dock-chat-size: 64px;
-  --dock-mood-size: 64px;
-  --dock-gap: 18px;
-  --chat-panel-bottom-final: calc(var(--dock-bottom) + var(--dock-chat-size) + 28px);
-  --music-panel-bottom-final: calc(var(--dock-bottom) + 86px + 24px);
-}
-
-/* bottom dock */
-.mood-fab {
-  left: max(18px, calc(env(safe-area-inset-left, 0px) + 18px)) !important;
-  bottom: var(--dock-bottom) !important;
-  width: var(--dock-mood-size) !important;
-  height: var(--dock-mood-size) !important;
-  z-index: 72 !important;
-}
-.chat-fab {
-  right: max(18px, calc(env(safe-area-inset-right, 0px) + 18px)) !important;
-  bottom: var(--dock-bottom) !important;
-  width: var(--dock-chat-size) !important;
-  height: var(--dock-chat-size) !important;
-  z-index: 72 !important;
-}
-.music-shell {
-  position: fixed !important;
-  left: auto !important;
-  right: calc(max(18px, calc(env(safe-area-inset-right, 0px) + 18px)) + var(--dock-chat-size) + var(--dock-gap)) !important;
-  bottom: var(--dock-bottom) !important;
-  width: min(470px, calc(100vw - 220px)) !important;
-  max-width: min(470px, calc(100vw - 220px)) !important;
-  z-index: 42 !important;
-  pointer-events: none !important;
-}
-.music-mini-bar {
-  width: 100% !important;
-  min-height: 76px !important;
-  height: 76px !important;
-  padding: 10px 12px !important;
-  gap: 12px !important;
-  border-radius: 26px !important;
-  overflow: hidden !important;
-  pointer-events: auto !important;
-}
-.music-mini-cover {
-  width: 54px !important;
-  height: 54px !important;
-  flex: 0 0 54px !important;
-  border-radius: 18px !important;
-}
-.music-mini-btn {
-  width: 54px !important;
-  height: 54px !important;
-  flex: 0 0 54px !important;
-  border-radius: 20px !important;
-}
-.music-mini-title {
-  font-size: 18px !important;
-  line-height: 1.12 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-.music-mini-sub {
-  font-size: 14px !important;
-  line-height: 1.16 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-/* Spotify panel size copied to the cleaner index-style proportions */
-.music-panel {
-  position: fixed !important;
-  left: auto !important;
-  right: max(18px, calc(env(safe-area-inset-right, 0px) + 18px)) !important;
-  top: max(18px, calc(env(safe-area-inset-top, 0px) + 18px)) !important;
-  bottom: var(--music-panel-bottom-final) !important;
-  width: min(700px, calc(100vw - 36px)) !important;
-  max-width: min(700px, calc(100vw - 36px)) !important;
-  max-height: calc(100dvh - var(--music-panel-bottom-final) - max(18px, calc(env(safe-area-inset-top, 0px) + 18px))) !important;
-  min-height: 0 !important;
-  padding: 18px !important;
-  gap: 14px !important;
-  border-radius: 30px !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  scroll-padding: 18px !important;
-  transform-origin: bottom right !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.985), rgba(255,247,251,0.965)) !important;
-  box-shadow: 0 28px 78px rgba(255,87,165,0.15), inset 0 1px 0 rgba(255,255,255,0.78) !important;
-}
-.music-panel:not(.open) { display: none !important; }
-.music-panel.open { display: flex !important; flex-direction: column !important; }
-.music-panel-top {
-  order: 0 !important;
-  flex: 0 0 auto !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 8 !important;
-  padding: 0 0 10px !important;
-  border-bottom: 1px solid rgba(255,183,214,0.28) !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(255,255,255,0.93)) !important;
-}
-.music-panel-kicker {
-  font-size: 11px !important;
-  letter-spacing: .16em !important;
-}
-.music-panel-title {
-  font-size: clamp(34px, 4vw, 48px) !important;
-  line-height: .98 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-.music-collapse-btn {
-  width: 56px !important;
-  height: 56px !important;
-  flex: 0 0 56px !important;
-  border-radius: 999px !important;
-  font-size: 22px !important;
-}
-
-/* inside panel order */
-.spotify-search-wrap {
-  order: 1 !important;
-  flex: 0 0 auto !important;
-  display: block !important;
-  padding: 18px !important;
-  border-radius: 26px !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,245,250,0.92)) !important;
-  border: 1px solid rgba(255,183,214,0.35) !important;
-  box-shadow: 0 16px 34px rgba(255,87,165,0.08) !important;
-}
-.spotify-search-wrap[hidden] { display: none !important; }
-.spotify-section-label {
-  margin-bottom: 14px !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  letter-spacing: .16em !important;
-  text-transform: uppercase !important;
-  color: var(--mood-title) !important;
-}
-.spotify-search-row {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 128px !important;
-  gap: 12px !important;
-  align-items: center !important;
-}
-.spotify-search-field { position: relative !important; min-width: 0 !important; }
-.spotify-search-input {
-  width: 100% !important;
-  height: 56px !important;
-  border-radius: 20px !important;
-  padding: 0 50px 0 18px !important;
-  font-size: 15px !important;
-  border: 1px solid rgba(255,183,214,0.38) !important;
-  background: rgba(255,236,245,0.58) !important;
-  color: var(--text-soft) !important;
-  box-shadow: none !important;
-}
-.spotify-search-btn {
-  height: 56px !important;
-  border-radius: 20px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 18px !important;
-  font-size: 14px !important;
-  font-weight: 800 !important;
-  color: white !important;
-  background: linear-gradient(135deg, var(--mood-grad-a) 0%, var(--mood-grad-b) 100%) !important;
-  box-shadow: 0 12px 26px var(--mood-glow) !important;
-}
-.spotify-search-clear,
-.spotify-search-clear-btn {
-  position: absolute !important;
-  right: 10px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 999px !important;
-}
-.spotify-search-clear[hidden],
-.spotify-search-clear-btn[hidden] { display: none !important; }
-.spotify-search-results[hidden],
-.spotify-search-empty[hidden] { display: none !important; }
-.spotify-search-results {
-  max-height: min(34vh, 320px) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-}
-
-.spotify-player-card {
-  order: 2 !important;
-  flex: 0 0 auto !important;
-  display: grid !important;
-  grid-template-rows: auto auto auto auto !important;
-  gap: 16px !important;
-  padding: 18px !important;
-  margin: 0 !important;
-  border-radius: 26px !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(255,242,249,0.94)) !important;
-  border: 1px solid rgba(255,183,214,0.38) !important;
-  box-shadow: 0 18px 38px rgba(255,87,165,0.08) !important;
-  overflow: visible !important;
-}
-.spotify-player-card[hidden] { display: none !important; }
-.spotify-player-top {
-  display: grid !important;
-  grid-template-columns: 104px minmax(0, 1fr) !important;
-  gap: 16px !important;
-  align-items: center !important;
-}
-.spotify-player-cover {
-  width: 104px !important;
-  height: 104px !important;
-  border-radius: 24px !important;
-}
-.spotify-player-track {
-  font-size: clamp(38px, 5vw, 56px) !important;
-  line-height: .95 !important;
-  -webkit-line-clamp: 2 !important;
-}
-.spotify-player-artist {
-  font-size: 18px !important;
-  line-height: 1.25 !important;
-}
-.spotify-player-album {
-  font-size: 15px !important;
-}
-.spotify-player-badge {
-  padding: 7px 14px !important;
-  font-size: 11px !important;
-}
-.music-progress-wrap { gap: 10px !important; }
-.music-controls {
-  display: grid !important;
-  grid-template-columns: 58px minmax(0, 1fr) 58px 58px !important;
-  gap: 10px !important;
-  align-items: center !important;
-}
-.music-icon-btn {
-  width: 58px !important;
-  height: 58px !important;
-  border-radius: 18px !important;
-}
-.music-play-btn {
-  min-height: 58px !important;
-  height: 58px !important;
-  border-radius: 18px !important;
-}
-
-.spotify-account-card {
-  order: 3 !important;
-  flex: 0 0 auto !important;
-  padding: 18px !important;
-  margin: 0 !important;
-  border-radius: 26px !important;
-  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,245,250,0.92)) !important;
-  border: 1px solid rgba(255,183,214,0.26) !important;
-  box-shadow: 0 16px 34px rgba(255,87,165,0.08) !important;
-  min-height: auto !important;
-  overflow: visible !important;
-}
-.spotify-account-card .spotify-card-top {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 14px !important;
-  margin-bottom: 18px !important;
-}
-.spotify-account-card .spotify-title {
-  font-size: clamp(34px, 4.6vw, 50px) !important;
-  line-height: .95 !important;
-}
-.spotify-account-actions {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 12px !important;
-}
-.spotify-account-actions button {
-  min-width: 0 !important;
-  min-height: 56px !important;
-  border-radius: 20px !important;
-  white-space: normal !important;
-}
-
-/* remove legacy sections from the visible layout */
-.spotify-hidden-legacy,
-.spotify-select-wrap,
-.spotify-shared-wrap,
-.spotify-embed-wrap,
-.spotify-library-shell,
-.spotify-browser-primary,
-.spotify-preview-card {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  max-height: 0 !important;
-  overflow: hidden !important;
-  opacity: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-}
-
-/* chat floats above the dock instead of touching it */
-.chat-panel {
-  right: max(18px, calc(env(safe-area-inset-right, 0px) + 18px)) !important;
-  bottom: var(--chat-panel-bottom-final) !important;
-  height: min(560px, calc(100dvh - var(--chat-panel-bottom-final) - 28px)) !important;
-  max-height: calc(100dvh - var(--chat-panel-bottom-final) - 28px) !important;
-  transform-origin: bottom right !important;
-}
-
-@media (max-width: 1180px) {
-  .music-panel {
-    width: min(640px, calc(100vw - 36px)) !important;
-    max-width: min(640px, calc(100vw - 36px)) !important;
-  }
-}
-
-@media (max-width: 900px) {
-  :root {
-    --dock-chat-size: 64px;
-    --dock-mood-size: 64px;
-  }
-  .music-shell {
-    left: clamp(128px, 15vw, 156px) !important;
-    right: clamp(104px, 12vw, 132px) !important;
-    width: auto !important;
-    max-width: none !important;
-  }
-  .music-panel {
-    left: 16px !important;
-    right: 16px !important;
-    width: auto !important;
-    max-width: none !important;
-  }
-}
-
-@media (max-width: 760px) {
-  :root {
-    --dock-bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 16px));
-    --dock-chat-size: 62px;
-    --dock-mood-size: 62px;
-    --chat-panel-bottom-final: calc(var(--dock-bottom) + var(--dock-chat-size) + 26px);
-    --music-panel-bottom-final: calc(var(--dock-bottom) + 76px + 22px);
-  }
-  .music-shell {
-    left: 104px !important;
-    right: 96px !important;
-    width: auto !important;
-    max-width: none !important;
-  }
-  .music-mini-bar {
-    height: 70px !important;
-    min-height: 70px !important;
-    border-radius: 24px !important;
-    padding: 9px 10px !important;
-  }
-  .music-mini-cover,
-  .music-mini-btn {
-    width: 50px !important;
-    height: 50px !important;
-    flex-basis: 50px !important;
-  }
-  .music-panel {
-    left: 12px !important;
-    right: 12px !important;
-    top: 12px !important;
-    width: auto !important;
-    max-width: none !important;
-    padding: 14px !important;
-    border-radius: 26px !important;
-  }
-  .music-panel-title { font-size: clamp(30px, 7vw, 42px) !important; }
-  .music-collapse-btn { width: 50px !important; height: 50px !important; flex-basis: 50px !important; }
-  .spotify-search-wrap,
-  .spotify-player-card,
   .spotify-account-card {
-    padding: 14px !important;
-    border-radius: 22px !important;
+    padding:14px !important;
+    gap:12px !important;
   }
-  .spotify-search-row {
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
+
+  .spotify-account-card .spotify-card-top {
+    grid-template-columns:minmax(0,1fr) auto !important;
   }
-  .spotify-search-btn { width: 100% !important; }
-  .spotify-player-top {
-    grid-template-columns: 76px minmax(0, 1fr) !important;
-    gap: 12px !important;
+
+  .spotify-account-card .spotify-title {
+    font-size:24px !important;
   }
-  .spotify-player-cover {
-    width: 76px !important;
-    height: 76px !important;
-    border-radius: 18px !important;
+
+  .spotify-account-actions {
+    grid-template-columns:1fr !important;
+    grid-template-areas:
+      "disconnect"
+      "refresh"
+      "change" !important;
+    gap:8px !important;
   }
-  .spotify-player-track { font-size: clamp(30px, 9vw, 42px) !important; }
-  .spotify-player-artist { font-size: 15px !important; }
-  .spotify-player-album { font-size: 13px !important; }
-  .music-controls {
-    grid-template-columns: 48px minmax(0,1fr) 48px 48px !important;
-    gap: 8px !important;
+
+  .spotify-account-actions > button,
+  .spotify-account-actions > .spotify-connect-btn,
+  .spotify-account-actions > .spotify-disconnect-btn,
+  .spotify-account-actions > .spotify-switch-btn {
+    min-height:42px !important;
+    padding:10px 14px !important;
+    border-radius:999px !important;
+    white-space:nowrap !important;
   }
-  .music-icon-btn,
-  .music-play-btn {
-    height: 48px !important;
-    min-height: 48px !important;
-    border-radius: 16px !important;
+}
+
+@media (max-width:390px) {
+  .spotify-account-card .spotify-card-top {
+    grid-template-columns:1fr !important;
   }
-  .music-icon-btn { width: 48px !important; }
-  .spotify-account-actions { grid-template-columns: 1fr !important; }
+
+  .spotify-account-card .spotify-status {
+    justify-self:start !important;
+  }
+}
+
+
+/* ── Final chat dock spacing tweak ─────────────────────────
+   Keeps the open chat panel away from the chat bubble and music dock. */
+.chat-panel {
+  bottom: var(--chat-panel-bottom, 112px) !important;
+  height: min(510px, calc(100dvh - var(--chat-panel-bottom, 112px) - 18px)) !important;
+}
+
+@media (max-width: 760px) {
   .chat-panel {
-    left: 12px !important;
-    right: 12px !important;
-    width: auto !important;
-    height: min(58vh, calc(100dvh - var(--chat-panel-bottom-final) - 20px)) !important;
-    max-height: calc(100dvh - var(--chat-panel-bottom-final) - 20px) !important;
+    bottom: var(--chat-panel-bottom, 116px) !important;
+    height: min(65vh, 520px) !important;
   }
 }
-
-@media (max-width: 520px) {
-  :root {
-    --dock-chat-size: 58px;
-    --dock-mood-size: 58px;
-    --dock-gap: 12px;
-  }
-  .music-shell {
-    left: 84px !important;
-    right: 84px !important;
-  }
-  .music-mini-bar {
-    height: 64px !important;
-    min-height: 64px !important;
-    gap: 8px !important;
-    padding: 8px !important;
-    border-radius: 22px !important;
-  }
-  .music-mini-cover,
-  .music-mini-btn {
-    width: 46px !important;
-    height: 46px !important;
-    flex-basis: 46px !important;
-    border-radius: 16px !important;
-  }
-  .music-mini-label { font-size: 9px !important; }
-  .music-mini-title { font-size: 14px !important; }
-  .music-mini-sub { font-size: 11px !important; }
-}
-
-@media (max-width: 390px) {
-  .music-shell { left: 80px !important; right: 80px !important; }
-  .music-mini-cover { display: none !important; }
-  .music-mini-sub { display: none !important; }
-}
-/* === FINAL EXACT INDEX SPOTIFY + DOCK FIX END === */
 
 </style>
 </head>
@@ -4623,12 +4026,12 @@ body.chat-open .music-shell { right:96px !important; }
       <!-- Legacy Spotify playlist nodes kept hidden so older Firebase/listener code cannot break. -->
       <div class="spotify-select-wrap spotify-hidden-legacy" id="spotifySelectWrap" hidden>
         <select id="spotifyPlaylistSelect" class="music-select"></select>
-        <button class="spotify-set-btn" id="spotifySetPlaylistBtn" type="button">Set Spotify</button>
+        <button class="spotify-set-btn" id="spotifySetPlaylistBtn" type="button">Set as shared playlist</button>
       </div>
 
       <div class="spotify-shared-wrap spotify-hidden-legacy" id="spotifySharedWrap" hidden>
-        <div class="spotify-shared-label">Current music</div>
-        <div class="spotify-shared-name" id="spotifySharedName">No music yet.</div>
+        <div class="spotify-shared-label">Current shared playlist</div>
+        <div class="spotify-shared-name" id="spotifySharedName">No shared playlist yet.</div>
         <a class="spotify-open-link" id="spotifyOpenLink" href="#" target="_blank" rel="noopener noreferrer" hidden>Open in Spotify</a>
       </div>
 
@@ -4907,7 +4310,6 @@ let spotifyActiveContext = null;
 let spotifyPlaybackEnabled = false;
 let spotifyPendingTrackSelection = null;
 let spotifyLastHighlightedTrackKey = "";
-let spotifySharedPlaylistTracks = [];
 const spotifyPlaylistTracksCache = new Map();
 
 function randomSpotifyString(length = 64) {
@@ -4978,21 +4380,26 @@ function getSpotifyTrackArtistLabel(track = {}) {
   const names = artists.map(artist => typeof artist === "string" ? artist : artist?.name).filter(Boolean);
   return names.join(" • ") || track?.artist || "Spotify";
 }
+
 function getSpotifyTrackCoverUrl(track = {}) {
   return track?.cover || track?.album?.images?.[0]?.url || "";
 }
+
 function getSpotifyTrackDurationMs(track = {}) {
   return Number(track?.durationMs || track?.duration_ms || 0);
 }
+
 function syncSpotifyPlayerVisibility(forceShow = false) {
   if (!spotifyPlayerCard) return;
   const hasTrack = !!getCurrentSpotifyTrack() || !!spotifyPendingTrackSelection;
   spotifyPlayerCard.hidden = !(forceShow || hasTrack);
 }
+
 function syncSpotifySearchClearButton() {
   if (!spotifySearchClearBtn || !spotifySearchInput) return;
   spotifySearchClearBtn.hidden = !spotifySearchInput.value.trim();
 }
+
 function collapseSpotifySearchState(options = {}) {
   const { keepFocus = false } = options || {};
   spotifyTrackResults = [];
@@ -5008,6 +4415,7 @@ function collapseSpotifySearchState(options = {}) {
   syncSpotifySearchClearButton();
   if (keepFocus && spotifySearchInput) spotifySearchInput.focus();
 }
+
 function showSpotifyTrackInPlayer(track = {}, badge = "Selected") {
   if (!track) return;
   setSpotifyCover(spotifyNowPlayingCover, getSpotifyTrackCoverUrl(track), "♫");
@@ -5065,10 +4473,15 @@ function setPendingSpotifySelection(track, options = {}) {
       id: track.id || "",
       uri: track.uri || "",
       name: track.name || "",
-      artists: track.artists || []
+      artists: Array.isArray(track.artists) ? track.artists : [],
+      album: track.album || null,
+      cover: getSpotifyTrackCoverUrl(track),
+      durationMs: getSpotifyTrackDurationMs(track)
     };
+    showSpotifyTrackInPlayer(track, "Starting");
   } else if (!keepIfMissing) {
     spotifyPendingTrackSelection = null;
+    syncSpotifyPlayerVisibility(false);
   }
   syncPlaylistTrackHighlights({ forceScroll: !!options.forceScroll });
 }
@@ -5215,15 +4628,15 @@ function syncSpotifyUiFromState(state) {
 
   spotifyPlaybackEnabled = true;
   setSpotifyCover(spotifyNowPlayingCover, currentTrack.cover, "♫");
-  setSpotifyCover(musicMiniCover, currentTrack.cover, "♫");
+  setSpotifyCover(musicMiniCover, currentTrack.cover, "🌹");
   if (spotifyNowPlayingTitle) spotifyNowPlayingTitle.textContent = currentTrack.name;
   if (spotifyNowPlayingArtist) spotifyNowPlayingArtist.textContent = currentTrack.artists || "Spotify";
   if (spotifyNowPlayingAlbum) spotifyNowPlayingAlbum.textContent = currentTrack.album || "Spotify";
   setSpotifyBadge(isPlaying ? "Playing" : "Paused");
-  setSpotifyHint(spotifySharedPlaylist?.name ? `Spotify: ${spotifySharedPlaylist.name}` : "Spotify browser playback is active.");
+  setSpotifyHint("Spotify browser playback is active.");
   updateMusicSurfaceCopy(currentTrack.name, "Now playing", currentTrack.artists || "Spotify");
-  setSpotifyProgressBase(Number(state?.position || 0), currentTrack.durationMs, !isPlaying);
   syncSpotifyPlayerVisibility(true);
+  setSpotifyProgressBase(Number(state?.position || 0), currentTrack.durationMs, !isPlaying);
   updateSpotifyPlaybackButtons();
   syncPlaylistTrackHighlights({ forceScroll: true });
 }
@@ -5344,10 +4757,7 @@ async function spotifyApi(path, options = {}) {
         message = err?.error?.message || message;
       }
     } catch (_) {}
-    const apiError = new Error(message);
-    apiError.status = res.status;
-    apiError.spotifyMessage = message;
-    throw apiError;
+    throw new Error(message);
   }
   if (res.status === 204) return null;
   const text = await res.text();
@@ -5590,28 +5000,8 @@ async function toggleSpotifyPlayback() {
 }
 
 async function playSharedSpotifyPlaylist() {
-  const sharedPlaylistId = getSharedPlaylistId();
-  spotifyPendingTrackSelection = null;
-  if (!sharedPlaylistId) {
-    openMusicPanel();
-    setSpotifyHint("There is no music yet.");
-    return;
-  }
-
-  spotifyActiveContext = {
-    type: "playlist",
-    id: sharedPlaylistId,
-    uri: buildSpotifyPlaylistUri(sharedPlaylistId)
-  };
-
-  try {
-    await startSpotifyPlayback({
-      contextUri: spotifyActiveContext.uri
-    });
-  } catch (err) {
-    setSpotifyStatus("Playback failed");
-    setSpotifyHint(err?.message || "Spotify playback could not start.");
-  }
+  openMusicPanel();
+  setSpotifyHint("Search for a song first, then press play.");
 }
 
 async function playSpotifyTrack(track) {
@@ -5659,7 +5049,8 @@ async function seekSpotifyPlayback(positionMs) {
 async function restartSpotifyTrack() {
   const currentTrack = getCurrentSpotifyTrack();
   if (!currentTrack) {
-    await playSharedSpotifyPlaylist();
+    openMusicPanel();
+    setSpotifyHint("Search and play a song first.");
     return;
   }
 
@@ -5681,7 +5072,8 @@ async function playNextSpotifyTrack() {
   try {
     const currentTrack = getCurrentSpotifyTrack();
     if (!currentTrack) {
-      await playSharedSpotifyPlaylist();
+      openMusicPanel();
+      setSpotifyHint("Search and play a song first.");
       return;
     }
     await initSpotifyWebPlayer();
@@ -5704,7 +5096,8 @@ async function playPrevSpotifyTrack() {
   try {
     const currentTrack = getCurrentSpotifyTrack();
     if (!currentTrack) {
-      await playSharedSpotifyPlaylist();
+      openMusicPanel();
+      setSpotifyHint("Search and play a song first.");
       return;
     }
     await initSpotifyWebPlayer();
@@ -5741,13 +5134,13 @@ function buildSpotifyPreviewTracks(tracks = []) {
 }
 
 async function getSpotifyPlaylistPreview(playlistId) {
-  const tracks = await getSpotifyPlaylistTracks(playlistId, 8, false);
-  return tracks.slice(0, 8).map(track => ({
-    id: track.id || "",
-    uri: track.uri || "",
-    name: track.name || "",
-    artists: Array.isArray(track.artists) ? track.artists : []
-  })).filter(item => item.name && item.uri);
+  const data = await spotifyApi(`/playlists/${playlistId}/tracks?limit=6&fields=items(track(id,uri,name,artists(name)))`);
+  return (Array.isArray(data?.items) ? data.items : []).map(item => ({
+    id: item?.track?.id || "",
+    uri: item?.track?.uri || "",
+    name: item?.track?.name || "",
+    artists: Array.isArray(item?.track?.artists) ? item.track.artists.map(artist => artist?.name).filter(Boolean) : []
+  })).filter(item => item.name);
 }
 
 async function getSpotifyPlaylistTracks(playlistId, limit = Infinity, forceRefresh = false) {
@@ -5806,7 +5199,7 @@ function buildSpotifyLibraryTrackMarkup(track = {}, index = 0) {
   const durationLabel = escapeSpotifyHtml(formatTime(durationMs / 1000));
   const uri = escapeSpotifyHtml(track?.uri || "");
   const id = escapeSpotifyHtml(track?.id || "");
-  const coverUrl = track?.album?.images?.[0]?.url || spotifySharedPlaylist?.cover || "";
+  const coverUrl = track?.album?.images?.[0]?.url || "";
   const coverStyle = coverUrl ? ` style="background-image:url('${escapeSpotifyHtml(coverUrl)}')"` : "";
   const coverClass = `spotify-library-track-cover${coverUrl ? " has-image" : ""}`;
   return `
@@ -5825,6 +5218,7 @@ function buildSpotifyLibraryTrackMarkup(track = {}, index = 0) {
       <div class="spotify-library-track-added-by">${addedBy}</div>
       <div class="spotify-library-track-date">${addedDate}</div>
       <div class="spotify-library-track-time">${durationLabel}</div>
+      <button class="spotify-library-play" type="button" data-track-uri="${uri}" data-track-id="${id}" aria-label="Play ${name}">Play</button>
     </div>`;
 }
 
@@ -5840,66 +5234,96 @@ function renderSpotifyLibraryTracks(listEl, tracks = [], emptyMessage = "No song
 
   if (headerEl) headerEl.hidden = false;
   listEl.innerHTML = tracks.map((track, index) => buildSpotifyLibraryTrackMarkup(track, index)).join("");
+  listEl.querySelectorAll(".spotify-library-play[data-track-uri]").forEach(btn => {
+    btn.addEventListener("click", event => {
+      event.stopPropagation();
+      playSpotifyTrack({
+        id: btn.getAttribute("data-track-id") || "",
+        uri: btn.getAttribute("data-track-uri") || "",
+        name: btn.closest(".spotify-library-track")?.getAttribute("data-track-name") || "",
+        artists: (btn.closest(".spotify-library-track")?.getAttribute("data-track-artists") || "").split(" • ").filter(Boolean)
+      });
+    });
+  });
+
   bindTrackRowInteractions(listEl, ".spotify-library-track[data-track-uri]", playSpotifyTrack);
   syncPlaylistTrackHighlights();
 }
 
 function bindSpotifyPlaylistBrowser(playlistId, initialTracks = []) {
+  const searchInput = document.getElementById("spotifyLibrarySearch");
   const listEl = document.getElementById("spotifyLibraryList");
   const countEl = document.getElementById("spotifyLibraryCount");
   const statusEl = document.getElementById("spotifyLibraryStatus");
-  const refreshBtn = document.getElementById("spotifyPreviewRefreshBtn");
 
-  if (!listEl || !countEl || !statusEl) return;
+  if (!searchInput || !listEl || !countEl || !statusEl) return;
 
   let allTracks = Array.isArray(initialTracks) ? [...initialTracks] : [];
-  spotifySharedPlaylistTracks = allTracks;
 
-  const updateCount = () => {
+  const updateCount = shown => {
     const total = allTracks.length;
+    const shownCount = Math.max(0, Number(shown) || 0);
     const totalDurationMs = allTracks.reduce((sum, track) => sum + Number(track?.durationMs || 0), 0);
     const durationLabel = total ? formatPlaylistDuration(totalDurationMs) : "0 min";
-    countEl.textContent = total ? `${total} songs • ${durationLabel}` : "0 songs";
+    countEl.textContent = total ? `${shownCount}/${total} songs • ${durationLabel}` : "0 songs";
   };
 
-  const renderAll = (message = "Tap any song row to play it.") => {
-    spotifySharedPlaylistTracks = allTracks;
-    statusEl.textContent = message;
-    renderSpotifyLibraryTracks(listEl, allTracks, message);
-    updateCount();
-    syncPlaylistTrackHighlights();
+  const applyFilter = (term = "") => {
+    const query = String(term || "").trim().toLowerCase();
+    const filtered = !query
+      ? allTracks
+      : allTracks.filter(track => {
+          const haystack = [
+            track?.name || "",
+            Array.isArray(track?.artists) ? track.artists.join(" ") : "",
+            track?.album?.name || ""
+          ].join(" ").toLowerCase();
+          return haystack.includes(query);
+        });
+
+    renderSpotifyLibraryTracks(
+      listEl,
+      filtered,
+      query ? `No songs matched "${term}" in this playlist.` : "No songs found in this playlist."
+    );
+    updateCount(filtered.length);
+    syncPlaylistTrackHighlights({ forceScroll: !!query });
   };
 
   const loadFullPlaylist = async (forceRefresh = false) => {
     if (!getStoredSpotifyAccessToken()) {
-      renderAll(allTracks.length ? "Saved songs are shown below. Connect Spotify to play and refresh them." : "Connect Spotify to load the playlist songs inside this site.");
+      statusEl.textContent = "Connect Spotify to load the full playlist here.";
+      if (!allTracks.length) renderSpotifyLibraryTracks(listEl, [], "Connect Spotify to load this playlist inside the site.");
+      updateCount(allTracks.length);
       return;
     }
 
-    statusEl.textContent = forceRefresh ? "Refreshing songs..." : "Loading songs...";
-    if (refreshBtn) refreshBtn.disabled = true;
+    statusEl.textContent = forceRefresh ? "Refreshing playlist songs..." : "Loading playlist songs...";
 
     try {
       allTracks = await getSpotifyPlaylistTracks(playlistId, Infinity, forceRefresh);
-      spotifySharedPlaylistTracks = allTracks;
-      renderAll(allTracks.length ? "Tap any song row to play it." : "This playlist has no playable songs yet.");
+      statusEl.textContent = allTracks.length
+        ? "All songs in this playlist are listed below. Tap any row to play it."
+        : "This playlist has no playable songs yet.";
+      applyFilter(searchInput.value);
     } catch (err) {
-      const needsPermission = err?.status === 403 || /forbidden/i.test(err?.message || "");
-      const message = needsPermission
-        ? "Spotify blocked playlist access for this saved session. Use Change account once, approve the playlist permission, then tap Refresh songs."
-        : (err?.message || "Playlist songs could not be loaded right now.");
-      renderAll(allTracks.length ? "Showing saved songs. Refresh after reconnecting Spotify to update the full list." : message);
-      setSpotifyStatus(needsPermission ? "Reconnect needed" : "Playlist error");
-      setSpotifyHint(message);
-    } finally {
-      if (refreshBtn) refreshBtn.disabled = false;
+      statusEl.textContent = err?.message || "Playlist songs could not be loaded right now.";
+      if (!allTracks.length) renderSpotifyLibraryTracks(listEl, [], statusEl.textContent);
+      updateCount(allTracks.length);
     }
   };
 
-  renderAll(allTracks.length ? "Tap any song row to play it." : "Loading songs...");
+  statusEl.textContent = allTracks.length
+    ? "All songs in this playlist are listed below. Tap any row to play it."
+    : "Loading playlist songs...";
+  renderSpotifyLibraryTracks(listEl, allTracks, "Loading playlist songs...");
+  updateCount(allTracks.length);
+  syncPlaylistTrackHighlights();
   loadFullPlaylist(false);
 
-  refreshBtn?.addEventListener("click", async () => {
+  searchInput.addEventListener("input", () => applyFilter(searchInput.value));
+
+  document.getElementById("spotifyPreviewRefreshBtn")?.addEventListener("click", async () => {
     spotifyPlaylistTracksCache.delete(playlistId);
     await loadFullPlaylist(true);
   });
@@ -5914,8 +5338,7 @@ function populateSpotifyPlaylistSelect() {
     opt.value = "";
     opt.textContent = "No playlists found";
     spotifyPlaylistSelect.appendChild(opt);
-    spotifySelectWrap.hidden = false;
-    updateMusicSurfaceCopy("No Spotify playlists found", "Spotify", "Try another account or refresh your playlists");
+    spotifySelectWrap.hidden = true;
     return;
   }
 
@@ -5928,37 +5351,7 @@ function populateSpotifyPlaylistSelect() {
     spotifyPlaylistSelect.appendChild(opt);
   });
 
-  spotifySelectWrap.hidden = false;
-}
-
-function collapseSpotifySearchResults({ clearInput = false, clearButton = false, keepFocus = false } = {}) {
-  spotifyTrackResults = [];
-
-  if (clearInput && spotifySearchInput) {
-    spotifySearchInput.value = "";
-  }
-
-  if (spotifySearchResults) {
-    spotifySearchResults.innerHTML = "";
-    spotifySearchResults.hidden = true;
-    spotifySearchResults.classList.add("is-collapsed");
-    spotifySearchResults.setAttribute("aria-hidden", "true");
-  }
-
-  if (spotifySearchEmpty) {
-    spotifySearchEmpty.textContent = "";
-    spotifySearchEmpty.hidden = true;
-    spotifySearchEmpty.setAttribute("aria-hidden", "true");
-  }
-
-  if (spotifySearchClearBtn) {
-    const hasValue = !!spotifySearchInput?.value?.trim();
-    spotifySearchClearBtn.hidden = clearButton ? true : !hasValue;
-  }
-
-  if (!keepFocus && document.activeElement === spotifySearchInput) {
-    spotifySearchInput.blur();
-  }
+  spotifySelectWrap.hidden = true;
 }
 
 function renderSpotifySearchResults(results = []) {
@@ -6024,7 +5417,8 @@ function renderSpotifySearchResults(results = []) {
 }
 
 function renderSharedSpotifyPlaylist(shared) {
-  // Index-matched Spotify system: music browser is intentionally disabled on this page.
+  // The shared playlist browser was intentionally removed from the UI.
+  // Keep this listener safe so older Firebase data cannot recreate the black playlist box.
   spotifySharedPlaylist = null;
   if (spotifySharedWrap) spotifySharedWrap.hidden = true;
   if (spotifyEmbedWrap) {
@@ -6035,9 +5429,15 @@ function renderSharedSpotifyPlaylist(shared) {
     delete spotifyPreviewCard.dataset.playlistId;
     spotifyPreviewCard.innerHTML = "";
   }
+  if (spotifyOpenLink) {
+    spotifyOpenLink.hidden = true;
+    spotifyOpenLink.removeAttribute("href");
+  }
   if (!getCurrentSpotifyTrack() && !spotifyPendingTrackSelection) {
-    updateMusicSurfaceCopy(getStoredSpotifyAccessToken() ? "Search music" : "Connect Spotify", "Spotify", getStoredSpotifyAccessToken() ? "Tap to pick a song" : "Connect to play music");
-    syncSpotifyPlayerVisibility(false);
+    clearSpotifyPlaybackUi();
+    if (getStoredSpotifyAccessToken()) {
+      setSpotifyHint("Search for a song or artist to start listening here.");
+    }
   }
 }
 
@@ -6112,10 +5512,10 @@ async function fetchSpotifyPlaylists() {
 async function searchSpotifyTracks(query) {
   const safeQuery = (query || "").trim();
   if (!safeQuery) {
-    if (spotifySearchClearBtn) spotifySearchClearBtn.hidden = true;
-    collapseSpotifySearchResults();
+    collapseSpotifySearchState({ keepFocus: true });
     return;
   }
+  syncSpotifySearchClearButton();
   setSpotifyStatus("Searching");
   const data = await spotifyApi(`/search?type=track&limit=8&q=${encodeURIComponent(safeQuery)}`);
   const items = Array.isArray(data?.tracks?.items) ? data.tracks.items : [];
@@ -6198,7 +5598,7 @@ async function handleSpotifyCallback() {
   const cleanUrl = window.location.pathname + window.location.hash;
   window.history.replaceState({}, document.title, cleanUrl);
   setSpotifyStatus("Connected");
-  setSpotifyHint("Spotify connected. The browser player will be ready the first time you press play.");
+  setSpotifyHint("Spotify connected. Search for a song or artist to start listening.");
 }
 
 async function setSharedSpotifyPlaylist() {
@@ -6207,30 +5607,22 @@ async function setSharedSpotifyPlaylist() {
   const selected = spotifyPlaylists.find(item => item.id === selectedId);
   if (!selected) return;
 
-  const fullTracks = await getSpotifyPlaylistTracks(selected.id, Infinity, true).catch(() => []);
-  const previewTracks = fullTracks.slice(0, 8).map(track => ({
-    id: track.id || "",
-    uri: track.uri || "",
-    name: track.name || "",
-    artists: Array.isArray(track.artists) ? track.artists : []
-  }));
+  const previewTracks = await getSpotifyPlaylistPreview(selected.id).catch(() => []);
   const payload = {
     id: selected.id,
     name: selected.name || "Spotify playlist",
     externalUrl: selected.external_urls?.spotify || "",
     owner: selected.owner?.display_name || selected.owner?.id || "Spotify",
     cover: selected.images?.[0]?.url || "",
-    tracks: fullTracks,
     tracksPreview: previewTracks,
-    trackTotal: Number(selected.tracks?.total || fullTracks.length || 0),
     updatedAt: Date.now(),
     setBy: spotifyProfile?.display_name || spotifyProfile?.id || "Spotify user"
   };
 
   await set(SPOTIFY_SHARED_REF, payload);
-  setSpotifyStatus("Spotify updated");
-  setSpotifyHint(fullTracks.length ? "Spotify saved with its songs. Tap any row to play." : "Spotify saved. Tap Refresh songs after reconnecting if songs do not appear.");
-  if (spotifyUser) spotifyUser.textContent = fullTracks.length ? `Spotify updated with ${fullTracks.length} songs.` : `Spotify updated. Reconnect may be needed to load songs.`;
+  setSpotifyStatus("Shared playlist updated");
+  setSpotifyHint("Shared playlist saved. You can play it inside the page now.");
+  if (spotifyUser) spotifyUser.textContent = `Shared playlist updated.`;
 }
 
 async function initSpotifyIntegration() {
@@ -6254,13 +5646,6 @@ async function initSpotifyIntegration() {
     }
   }
 }
-
-        let previewObjectUrl = null;
-    let hasAnyMemory     = false;
-    let currentModalMemory = null;
-
-    const memoryMap = new Map();
-    const cardMap   = new Map();
 
     /* ── helpers ──────────────────────────────────────────── */
     /* ── music helpers ────────────────────────────────────────── */
@@ -7618,7 +7003,7 @@ updateProgressUI();
 (function () {
   const root = document.documentElement;
   const cleanPx = value => Math.max(0, Math.round(value)) + 'px';
-  const panelGap = () => window.innerWidth <= 760 ? 28 : 22;
+  const panelGap = () => window.innerWidth <= 760 ? 34 : 34;
 
   function dockBottomFor(element) {
     if (!element) return null;
