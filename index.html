@@ -115,6 +115,161 @@
 
     .subtitle { max-width:630px; font-size:clamp(15px,1.8vw,19px); line-height:1.8; color:var(--text-main); margin-bottom:36px; font-weight:400; animation:fadeSlideUp 0.9s var(--ease-out-expo) 0.45s both; }
 
+
+    /* ── DAILY BIBLE VERSE CARD ────────────────────────────── */
+    .subtitle.daily-verse-card {
+      position:relative;
+      width:min(100%,680px);
+      max-width:680px;
+      margin:0 auto 26px;
+      padding:clamp(16px,2vw,22px) clamp(18px,2.8vw,28px);
+      border-radius:24px;
+      text-align:center;
+      color:#7d425f;
+      font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing:-0.035em;
+      background:
+        radial-gradient(circle at 12% 14%,rgba(255,255,255,0.96) 0%,rgba(255,255,255,0.32) 28%,transparent 48%),
+        radial-gradient(circle at 100% 0%,rgba(255,205,232,0.38) 0%,transparent 46%),
+        linear-gradient(145deg,rgba(255,255,255,0.88),rgba(255,244,250,0.72));
+      border:1px solid rgba(255,255,255,0.78);
+      box-shadow:0 18px 42px rgba(255,87,165,0.13),0 0 0 1px rgba(255,188,222,0.22),inset 0 1px 0 rgba(255,255,255,0.72);
+      backdrop-filter:blur(14px);
+      overflow:hidden;
+      isolation:isolate;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      animation:dailyVerseIn 0.75s var(--ease-out-expo) 0.45s both,dailyVerseGlow 5.5s ease-in-out 1.2s infinite;
+    }
+
+    .subtitle.daily-verse-card::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:linear-gradient(120deg,transparent 12%,rgba(255,255,255,0.38) 48%,transparent 86%);
+      transform:translateX(-130%);
+      animation:dailyVerseShine 7s ease-in-out 1.4s infinite;
+    }
+
+    .daily-verse-orb {
+      position:absolute;
+      border-radius:999px;
+      pointer-events:none;
+      z-index:0;
+      opacity:0.5;
+      filter:blur(2px);
+    }
+
+    .daily-verse-orb-one {
+      width:104px;
+      height:104px;
+      right:-44px;
+      top:-50px;
+      background:radial-gradient(circle,rgba(255,111,183,0.22),transparent 68%);
+      animation:dailyVerseOrb 7s ease-in-out infinite;
+    }
+
+    .daily-verse-orb-two {
+      width:84px;
+      height:84px;
+      left:-38px;
+      bottom:-46px;
+      background:radial-gradient(circle,rgba(255,255,255,0.72),rgba(255,190,222,0.16) 54%,transparent 72%);
+      animation:dailyVerseOrb 8.5s ease-in-out 0.8s infinite reverse;
+    }
+
+    .daily-verse-content,
+    .daily-verse-reference {
+      position:relative;
+      z-index:1;
+    }
+
+    .daily-verse-content {
+      display:flex;
+      justify-content:center;
+      width:100%;
+      margin:0;
+    }
+
+    .daily-verse-text {
+      max-height:min(18svh,142px);
+      overflow:auto;
+      width:100%;
+      max-width:100%;
+      margin:0 auto;
+      padding-right:0;
+      text-align:center;
+      font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size:clamp(15.5px,1.35vw,18px);
+      font-weight:500;
+      letter-spacing:-0.035em;
+      line-height:1.48;
+      color:#79425e;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(255,110,178,0.26) transparent;
+    }
+
+    .daily-verse-text::before {
+      content:"\201C";
+      color:rgba(255,47,141,0.38);
+      font-family:Georgia,serif;
+      font-size:1.1em;
+      line-height:0;
+      margin-right:3px;
+      vertical-align:-0.04em;
+    }
+
+    .daily-verse-text::after {
+      content:"\201D";
+      color:rgba(255,47,141,0.32);
+      font-family:Georgia,serif;
+      font-size:1.1em;
+      line-height:0;
+      margin-left:2px;
+      vertical-align:-0.04em;
+    }
+
+    .daily-verse-text::-webkit-scrollbar { width:4px; }
+    .daily-verse-text::-webkit-scrollbar-thumb { background:rgba(255,110,178,0.26); border-radius:999px; }
+
+    .daily-verse-reference {
+      display:block;
+      margin-top:10px;
+      color:#b46a8e;
+      font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size:13px;
+      font-weight:600;
+      letter-spacing:-0.025em;
+      text-align:center;
+      width:100%;
+      line-height:1.25;
+    }
+
+    @keyframes dailyVerseIn {
+      from { opacity:0; transform:translateY(16px) scale(0.98); filter:blur(3px); }
+      to { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+    }
+
+    @keyframes dailyVerseGlow {
+      0%,100% { box-shadow:0 18px 42px rgba(255,87,165,0.13),0 0 0 1px rgba(255,188,222,0.22),inset 0 1px 0 rgba(255,255,255,0.72); }
+      50% { box-shadow:0 22px 48px rgba(255,87,165,0.18),0 0 0 1px rgba(255,188,222,0.31),inset 0 1px 0 rgba(255,255,255,0.82); }
+    }
+
+    @keyframes dailyVerseShine {
+      0%,62%,100% { transform:translateX(-130%); opacity:0; }
+      68% { opacity:0.85; }
+      82% { transform:translateX(130%); opacity:0; }
+    }
+
+    @keyframes dailyVerseOrb {
+      0%,100% { transform:translate3d(0,0,0) scale(1); }
+      50% { transform:translate3d(-8px,6px,0) scale(1.1); }
+    }
+
     /* ── KISS BUTTON ───────────────────────────────────────── */
     .button-wrap { position:relative; display:flex; justify-content:center; margin-bottom:44px; z-index:12; animation:fadeSlideUp 0.9s var(--ease-out-expo) 0.6s both; }
     .kiss-button {
@@ -1816,6 +1971,26 @@ body.music-open .music-shell { z-index:43; }
       h1 { margin-bottom:10px !important; }
       p  { margin-bottom:18px !important; }
       .subtitle { margin-bottom:30px; }
+      .subtitle.daily-verse-card {
+        width:100%;
+        max-width:560px;
+        margin-bottom:22px;
+        padding:15px 16px 14px;
+        border-radius:20px;
+      }
+      .daily-verse-text {
+        max-height:112px;
+        font-size:clamp(14px,3.9vw,16px);
+        line-height:1.45;
+        padding-right:0;
+        letter-spacing:-0.03em;
+      }
+      .daily-verse-reference {
+        margin-top:8px;
+        font-size:12px;
+        line-height:1.25;
+      }
+
       .button-wrap { margin-bottom:36px; }
       .kiss-button { padding:16px 30px; font-size:16px; margin-bottom:20px !important; }
       .envelope { width:min(250px,72vw); height:164px; margin-top:0 !important; }
@@ -2959,6 +3134,13 @@ body.music-open .music-shell { z-index:43; }
   }
 }
 
+
+@media (max-width:420px) {
+  .subtitle.daily-verse-card { padding:14px 14px 13px; margin-bottom:18px; }
+  .daily-verse-text { max-height:104px; font-size:14px; line-height:1.43; }
+  .daily-verse-reference { font-size:11.5px; }
+}
+
 @media (max-width:390px) {
   .spotify-account-card .spotify-card-top {
     grid-template-columns:1fr !important;
@@ -2999,7 +3181,14 @@ body.music-open .music-shell { z-index:43; }
       </a>
     </div>
     <h1 class="title">Hi baby 💋</h1>
-    <p class="subtitle">I made this for you because i wanted you to have something soft, sweet, and full of love, something you can open anytime and remember just how much you mean to me every single day.</p>
+    <section class="subtitle daily-verse-card" aria-label="Daily Bible verse" aria-live="polite">
+      <div class="daily-verse-orb daily-verse-orb-one" aria-hidden="true"></div>
+      <div class="daily-verse-orb daily-verse-orb-two" aria-hidden="true"></div>
+      <div class="daily-verse-content">
+        <div class="daily-verse-text" id="dailyVerseText">Loading verse...</div>
+      </div>
+      <span class="daily-verse-reference" id="dailyVerseReference"></span>
+    </section>
     <div class="button-wrap">
       <button class="kiss-button" id="kissButton">click to kiss me 💋</button>
     </div>
@@ -5854,6 +6043,489 @@ if (musicSeekBar) musicSeekBar.addEventListener("change", async () => {
 });
 document.addEventListener("mouseup", () => { isDraggingSeek = false; });
 document.addEventListener("touchend", () => { isDraggingSeek = false; }, { passive: true });
+
+
+/* ── daily Bible verse at 6 AM Philippine time ────────────── */
+(() => {
+  const DAILY_VERSE_START_DATE_PHT = "2026-04-30";
+  const DAILY_BIBLE_VERSES = Object.freeze([
+  {
+    "reference": "John 3:16",
+    "text": "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."
+  },
+  {
+    "reference": "Romans 8:39",
+    "text": "Nor height, nor depth, nor any other creature, shall be able to separate us from the love of God, which is in Christ Jesus our Lord."
+  },
+  {
+    "reference": "Psalm 23:1",
+    "text": "The LORD is my shepherd; I shall not want."
+  },
+  {
+    "reference": "Psalm 23:4",
+    "text": "Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me."
+  },
+  {
+    "reference": "Isaiah 41:10",
+    "text": "Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."
+  },
+  {
+    "reference": "Philippians 4:13",
+    "text": "I can do all things through Christ which strengtheneth me."
+  },
+  {
+    "reference": "Matthew 11:28",
+    "text": "Come unto me, all ye that labour and are heavy laden, and I will give you rest."
+  },
+  {
+    "reference": "John 14:27",
+    "text": "Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid."
+  },
+  {
+    "reference": "Jeremiah 29:11",
+    "text": "For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end."
+  },
+  {
+    "reference": "Psalm 46:1",
+    "text": "God is our refuge and strength, a very present help in trouble."
+  },
+  {
+    "reference": "Romans 15:13",
+    "text": "Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost."
+  },
+  {
+    "reference": "1 Peter 5:7",
+    "text": "Casting all your care upon him; for he careth for you."
+  },
+  {
+    "reference": "Psalm 34:18",
+    "text": "The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit."
+  },
+  {
+    "reference": "Deuteronomy 31:8",
+    "text": "And the LORD, he it is that doth go before thee; he will be with thee, he will not fail thee, neither forsake thee: fear not, neither be dismayed."
+  },
+  {
+    "reference": "Joshua 1:9",
+    "text": "Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest."
+  },
+  {
+    "reference": "Psalm 55:22",
+    "text": "Cast thy burden upon the LORD, and he shall sustain thee: he shall never suffer the righteous to be moved."
+  },
+  {
+    "reference": "2 Corinthians 12:9",
+    "text": "And he said unto me, My grace is sufficient for thee: for my strength is made perfect in weakness. Most gladly therefore will I rather glory in my infirmities, that the power of Christ may rest upon me."
+  },
+  {
+    "reference": "Psalm 121:2",
+    "text": "My help cometh from the LORD, which made heaven and earth."
+  },
+  {
+    "reference": "John 16:33",
+    "text": "These things I have spoken unto you, that in me ye might have peace. In the world ye shall have tribulation: but be of good cheer; I have overcome the world."
+  },
+  {
+    "reference": "Lamentations 3:22",
+    "text": "It is of the LORD'S mercies that we are not consumed, because his compassions fail not."
+  },
+  {
+    "reference": "Lamentations 3:23",
+    "text": "They are new every morning: great is thy faithfulness."
+  },
+  {
+    "reference": "Psalm 27:1",
+    "text": "The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?"
+  },
+  {
+    "reference": "Psalm 27:14",
+    "text": "Wait on the LORD: be of good courage, and he shall strengthen thine heart: wait, I say, on the LORD."
+  },
+  {
+    "reference": "Proverbs 3:5",
+    "text": "Trust in the LORD with all thine heart; and lean not unto thine own understanding."
+  },
+  {
+    "reference": "Proverbs 3:6",
+    "text": "In all thy ways acknowledge him, and he shall direct thy paths."
+  },
+  {
+    "reference": "Isaiah 40:31",
+    "text": "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint."
+  },
+  {
+    "reference": "Psalm 91:1",
+    "text": "He that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty."
+  },
+  {
+    "reference": "Psalm 91:2",
+    "text": "I will say of the LORD, He is my refuge and my fortress: my God; in him will I trust."
+  },
+  {
+    "reference": "Psalm 94:19",
+    "text": "In the multitude of my thoughts within me thy comforts delight my soul."
+  },
+  {
+    "reference": "Matthew 6:34",
+    "text": "Take therefore no thought for the morrow: for the morrow shall take thought for the things of itself. Sufficient unto the day is the evil thereof."
+  },
+  {
+    "reference": "Matthew 6:33",
+    "text": "But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you."
+  },
+  {
+    "reference": "Romans 8:28",
+    "text": "And we know that all things work together for good to them that love God, to them who are the called according to his purpose."
+  },
+  {
+    "reference": "Romans 8:31",
+    "text": "What shall we then say to these things? If God be for us, who can be against us?"
+  },
+  {
+    "reference": "Romans 5:8",
+    "text": "But God commendeth his love toward us, in that, while we were yet sinners, Christ died for us."
+  },
+  {
+    "reference": "Ephesians 3:17",
+    "text": "That Christ may dwell in your hearts by faith; that ye, being rooted and grounded in love,"
+  },
+  {
+    "reference": "Ephesians 3:18",
+    "text": "May be able to comprehend with all saints what is the breadth, and length, and depth, and height;"
+  },
+  {
+    "reference": "Ephesians 3:19",
+    "text": "And to know the love of Christ, which passeth knowledge, that ye might be filled with all the fulness of God."
+  },
+  {
+    "reference": "1 John 4:9",
+    "text": "In this was manifested the love of God toward us, because that God sent his only begotten Son into the world, that we might live through him."
+  },
+  {
+    "reference": "1 John 4:10",
+    "text": "Herein is love, not that we loved God, but that he loved us, and sent his Son to be the propitiation for our sins."
+  },
+  {
+    "reference": "1 John 4:19",
+    "text": "We love him, because he first loved us."
+  },
+  {
+    "reference": "Zephaniah 3:17",
+    "text": "The LORD thy God in the midst of thee is mighty; he will save, he will rejoice over thee with joy; he will rest in his love, he will joy over thee with singing."
+  },
+  {
+    "reference": "Psalm 139:14",
+    "text": "I will praise thee; for I am fearfully and wonderfully made: marvellous are thy works; and that my soul knoweth right well."
+  },
+  {
+    "reference": "Psalm 139:17",
+    "text": "How precious also are thy thoughts unto me, O God! how great is the sum of them!"
+  },
+  {
+    "reference": "Isaiah 43:1",
+    "text": "But now thus saith the LORD that created thee, O Jacob, and he that formed thee, O Israel, Fear not: for I have redeemed thee, I have called thee by thy name; thou art mine."
+  },
+  {
+    "reference": "Isaiah 43:2",
+    "text": "When thou passest through the waters, I will be with thee; and through the rivers, they shall not overflow thee: when thou walkest through the fire, thou shalt not be burned; neither shall the flame kindle upon thee."
+  },
+  {
+    "reference": "Isaiah 49:16",
+    "text": "Behold, I have graven thee upon the palms of my hands; thy walls are continually before me."
+  },
+  {
+    "reference": "Isaiah 26:3",
+    "text": "Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee."
+  },
+  {
+    "reference": "Numbers 6:24",
+    "text": "The LORD bless thee, and keep thee:"
+  },
+  {
+    "reference": "Numbers 6:26",
+    "text": "The LORD lift up his countenance upon thee, and give thee peace."
+  },
+  {
+    "reference": "Psalm 4:8",
+    "text": "I will both lay me down in peace, and sleep: for thou, LORD, only makest me dwell in safety."
+  },
+  {
+    "reference": "Psalm 29:11",
+    "text": "The LORD will give strength unto his people; the LORD will bless his people with peace."
+  },
+  {
+    "reference": "Psalm 37:4",
+    "text": "Delight thyself also in the LORD; and he shall give thee the desires of thine heart."
+  },
+  {
+    "reference": "Psalm 37:5",
+    "text": "Commit thy way unto the LORD; trust also in him; and he shall bring it to pass."
+  },
+  {
+    "reference": "Psalm 56:3",
+    "text": "What time I am afraid, I will trust in thee."
+  },
+  {
+    "reference": "Psalm 62:1",
+    "text": "Truly my soul waiteth upon God: from him cometh my salvation."
+  },
+  {
+    "reference": "Psalm 62:6",
+    "text": "He only is my rock and my salvation: he is my defence; I shall not be moved."
+  },
+  {
+    "reference": "Psalm 73:26",
+    "text": "My flesh and my heart faileth: but God is the strength of my heart, and my portion for ever."
+  },
+  {
+    "reference": "Psalm 84:11",
+    "text": "For the LORD God is a sun and shield: the LORD will give grace and glory: no good thing will he withhold from them that walk uprightly."
+  },
+  {
+    "reference": "Psalm 103:8",
+    "text": "The LORD is merciful and gracious, slow to anger, and plenteous in mercy."
+  },
+  {
+    "reference": "Psalm 118:6",
+    "text": "The LORD is on my side; I will not fear: what can man do unto me?"
+  },
+  {
+    "reference": "Psalm 118:14",
+    "text": "The LORD is my strength and song, and is become my salvation."
+  },
+  {
+    "reference": "Psalm 119:50",
+    "text": "This is my comfort in my affliction: for thy word hath quickened me."
+  },
+  {
+    "reference": "Psalm 147:3",
+    "text": "He healeth the broken in heart, and bindeth up their wounds."
+  },
+  {
+    "reference": "Nahum 1:7",
+    "text": "The LORD is good, a strong hold in the day of trouble; and he knoweth them that trust in him."
+  },
+  {
+    "reference": "Habakkuk 3:19",
+    "text": "The LORD God is my strength, and he will make my feet like hinds' feet, and he will make me to walk upon mine high places. To the chief singer on my stringed instruments."
+  },
+  {
+    "reference": "2 Thessalonians 3:16",
+    "text": "Now the Lord of peace himself give you peace always by all means. The Lord be with you all."
+  },
+  {
+    "reference": "2 Timothy 1:7",
+    "text": "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind."
+  },
+  {
+    "reference": "Hebrews 13:5",
+    "text": "Let your conversation be without covetousness; and be content with such things as ye have: for he hath said, I will never leave thee, nor forsake thee."
+  },
+  {
+    "reference": "Hebrews 13:6",
+    "text": "So that we may boldly say, The Lord is my helper, and I will not fear what man shall do unto me."
+  },
+  {
+    "reference": "James 1:5",
+    "text": "If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him."
+  },
+  {
+    "reference": "James 4:8",
+    "text": "Draw nigh to God, and he will draw nigh to you. Cleanse your hands, ye sinners; and purify your hearts, ye double minded."
+  },
+  {
+    "reference": "1 Peter 1:3",
+    "text": "Blessed be the God and Father of our Lord Jesus Christ, which according to his abundant mercy hath begotten us again unto a lively hope by the resurrection of Jesus Christ from the dead,"
+  },
+  {
+    "reference": "1 Peter 2:24",
+    "text": "Who his own self bare our sins in his own body on the tree, that we, being dead to sins, should live unto righteousness: by whose stripes ye were healed."
+  },
+  {
+    "reference": "1 Peter 5:10",
+    "text": "But the God of all grace, who hath called us unto his eternal glory by Christ Jesus, after that ye have suffered a while, make you perfect, stablish, strengthen, settle you."
+  },
+  {
+    "reference": "Revelation 21:4",
+    "text": "And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain: for the former things are passed away."
+  },
+  {
+    "reference": "John 10:10",
+    "text": "The thief cometh not, but for to steal, and to kill, and to destroy: I am come that they might have life, and that they might have it more abundantly."
+  },
+  {
+    "reference": "John 10:11",
+    "text": "I am the good shepherd: the good shepherd giveth his life for the sheep."
+  },
+  {
+    "reference": "John 15:9",
+    "text": "As the Father hath loved me, so have I loved you: continue ye in my love."
+  },
+  {
+    "reference": "John 15:13",
+    "text": "Greater love hath no man than this, that a man lay down his life for his friends."
+  },
+  {
+    "reference": "John 6:35",
+    "text": "And Jesus said unto them, I am the bread of life: he that cometh to me shall never hunger; and he that believeth on me shall never thirst."
+  },
+  {
+    "reference": "John 8:12",
+    "text": "Then spake Jesus again unto them, saying, I am the light of the world: he that followeth me shall not walk in darkness, but shall have the light of life."
+  },
+  {
+    "reference": "John 11:25",
+    "text": "Jesus said unto her, I am the resurrection, and the life: he that believeth in me, though he were dead, yet shall he live:"
+  },
+  {
+    "reference": "John 14:1",
+    "text": "Let not your heart be troubled: ye believe in God, believe also in me."
+  },
+  {
+    "reference": "John 14:6",
+    "text": "Jesus saith unto him, I am the way, the truth, and the life: no man cometh unto the Father, but by me."
+  },
+  {
+    "reference": "John 15:5",
+    "text": "I am the vine, ye are the branches: He that abideth in me, and I in him, the same bringeth forth much fruit: for without me ye can do nothing."
+  },
+  {
+    "reference": "Matthew 5:4",
+    "text": "Blessed are they that mourn: for they shall be comforted."
+  },
+  {
+    "reference": "Matthew 5:9",
+    "text": "Blessed are the peacemakers: for they shall be called the children of God."
+  },
+  {
+    "reference": "Matthew 28:20",
+    "text": "Teaching them to observe all things whatsoever I have commanded you: and, lo, I am with you alway, even unto the end of the world. Amen."
+  },
+  {
+    "reference": "Luke 1:37",
+    "text": "For with God nothing shall be impossible."
+  },
+  {
+    "reference": "Luke 12:32",
+    "text": "Fear not, little flock; for it is your Father's good pleasure to give you the kingdom."
+  },
+  {
+    "reference": "2 Corinthians 1:3",
+    "text": "Blessed be God, even the Father of our Lord Jesus Christ, the Father of mercies, and the God of all comfort;"
+  },
+  {
+    "reference": "2 Corinthians 1:4",
+    "text": "Who comforteth us in all our tribulation, that we may be able to comfort them which are in any trouble, by the comfort wherewith we ourselves are comforted of God."
+  },
+  {
+    "reference": "Galatians 2:20",
+    "text": "I am crucified with Christ: nevertheless I live; yet not I, but Christ liveth in me: and the life which I now live in the flesh I live by the faith of the Son of God, who loved me, and gave himself for me."
+  },
+  {
+    "reference": "Galatians 6:9",
+    "text": "And let us not be weary in well doing: for in due season we shall reap, if we faint not."
+  },
+  {
+    "reference": "Philippians 1:6",
+    "text": "Being confident of this very thing, that he which hath begun a good work in you will perform it until the day of Jesus Christ:"
+  },
+  {
+    "reference": "Philippians 4:6",
+    "text": "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God."
+  },
+  {
+    "reference": "Philippians 4:7",
+    "text": "And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus."
+  },
+  {
+    "reference": "Colossians 3:15",
+    "text": "And let the peace of God rule in your hearts, to the which also ye are called in one body; and be ye thankful."
+  },
+  {
+    "reference": "1 Thessalonians 5:11",
+    "text": "Wherefore comfort yourselves together, and edify one another, even as also ye do."
+  },
+  {
+    "reference": "Jude 1:24",
+    "text": "Now unto him that is able to keep you from falling, and to present you faultless before the presence of his glory with exceeding joy,"
+  }
+]);
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+  const verseTextEl = document.getElementById("dailyVerseText");
+  const verseReferenceEl = document.getElementById("dailyVerseReference");
+
+  if (!verseTextEl || !verseReferenceEl || !DAILY_BIBLE_VERSES.length) return;
+
+  const getManilaParts = (date = new Date()) => {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone:"Asia/Manila",
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit",
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit",
+      hourCycle:"h23"
+    });
+
+    return formatter.formatToParts(date).reduce((parts, part) => {
+      if (part.type !== "literal") parts[part.type] = Number(part.value);
+      return parts;
+    }, {});
+  };
+
+  const parseStartDate = () => {
+    const [year, month, day] = DAILY_VERSE_START_DATE_PHT.split("-").map(Number);
+    return Date.UTC(year, month - 1, day);
+  };
+
+  const getVerseDatePht = (date = new Date()) => {
+    const parts = getManilaParts(date);
+    const verseDate = new Date(Date.UTC(parts.year, parts.month - 1, parts.day));
+
+    if (parts.hour < 6) verseDate.setUTCDate(verseDate.getUTCDate() - 1);
+    return Date.UTC(verseDate.getUTCFullYear(), verseDate.getUTCMonth(), verseDate.getUTCDate());
+  };
+
+  const getCurrentVerseIndex = () => {
+    const startDate = parseStartDate();
+    const verseDate = getVerseDatePht();
+    const daysPassed = Math.max(0, Math.floor((verseDate - startDate) / ONE_DAY_MS));
+    return daysPassed % DAILY_BIBLE_VERSES.length;
+  };
+
+  const renderDailyVerse = () => {
+    const index = getCurrentVerseIndex();
+    const verse = DAILY_BIBLE_VERSES[index];
+
+    verseTextEl.textContent = verse.text;
+    verseReferenceEl.textContent = verse.reference;
+  };
+
+  const getMsUntilNextSixAmPht = () => {
+    const parts = getManilaParts();
+    const nowPht = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+    let nextSixAmPht = Date.UTC(parts.year, parts.month - 1, parts.day, 6, 0, 0);
+
+    if (nowPht >= nextSixAmPht) nextSixAmPht += ONE_DAY_MS;
+    return Math.max(1000, nextSixAmPht - nowPht);
+  };
+
+  const scheduleVerseUpdate = () => {
+    window.setTimeout(() => {
+      renderDailyVerse();
+      scheduleVerseUpdate();
+    }, getMsUntilNextSixAmPht());
+  };
+
+  renderDailyVerse();
+  scheduleVerseUpdate();
+  window.addEventListener("focus", renderDailyVerse);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) renderDailyVerse();
+  });
+})();
 
 /* ── init ─────────────────────────────────────────────────── */
 elevateSpotifyBrowser();
