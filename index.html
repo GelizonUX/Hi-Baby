@@ -3744,6 +3744,55 @@ body.music-open .music-shell { z-index:43; }
   .vince-ai-fab,.vince-ai-panel,.vince-ai-tooltip { transition:none !important; }
 }
 
+
+/* ── CHAT / TALK TO VINCE LAYER GUARD ──────────────────────
+   Keeps the main chat panel above the Talk to Vince bubble on every screen size. */
+.chat-panel { z-index:78; }
+.chat-fab { z-index:82; }
+.vince-ai-fab-wrap {
+  z-index:60;
+  transition:opacity 0.28s ease, visibility 0.28s ease, transform 0.35s var(--ease-spring);
+}
+.vince-ai-panel { z-index:84; }
+
+body.chat-open .chat-panel {
+  z-index:92;
+}
+
+body.chat-open .chat-fab {
+  z-index:93;
+}
+
+body.chat-open .vince-ai-fab-wrap {
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(10px) scale(0.86);
+  animation-play-state:paused;
+}
+
+body.vince-ai-open .vince-ai-panel {
+  z-index:94;
+}
+
+body.vince-ai-open .vince-ai-fab-wrap {
+  z-index:95;
+  opacity:1;
+  visibility:visible;
+}
+
+body.vince-ai-open.chat-open .vince-ai-fab-wrap {
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+@media (max-width:680px) {
+  body.chat-open .vince-ai-fab-wrap {
+    transform:translateY(12px) scale(0.82);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -7398,6 +7447,7 @@ updateProgressUI();
     fab.classList.toggle('open', isOpen);
     panel.setAttribute('aria-hidden', String(!isOpen));
     fab.setAttribute('aria-expanded', String(isOpen));
+    document.body.classList.toggle('vince-ai-open', !!isOpen);
     if (isOpen && chatPanel) { chatPanel.classList.remove('open'); document.body.classList.remove('chat-open'); }
     if (isOpen && input) window.setTimeout(() => input.focus({ preventScroll:true }), 120);
   }
