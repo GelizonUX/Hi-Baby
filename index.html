@@ -4882,6 +4882,391 @@ body.mobile-menu-open .mobile-menu-icon::after {
 }
 
 </style>
+
+
+  <style id="mobile-polish-fixes">
+    /* Final mobile polish: keep the two floating chat actions separated and away from the music bar. */
+    @media (max-width:680px) {
+      .chat-fab {
+        right:max(14px, env(safe-area-inset-right)) !important;
+        bottom:calc(max(14px, env(safe-area-inset-bottom)) + 104px) !important;
+        width:56px !important;
+        height:56px !important;
+        z-index:155 !important;
+      }
+
+      .vince-ai-fab-wrap {
+        right:max(14px, env(safe-area-inset-right)) !important;
+        bottom:calc(max(14px, env(safe-area-inset-bottom)) + 176px) !important;
+        z-index:154 !important;
+      }
+
+      .chat-panel {
+        right:10px !important;
+        bottom:calc(max(14px, env(safe-area-inset-bottom)) + 168px) !important;
+        width:calc(100vw - 20px) !important;
+        max-width:360px !important;
+        height:min(54vh, 440px) !important;
+      }
+
+      .vince-ai-panel {
+        left:10px !important;
+        right:10px !important;
+        bottom:calc(max(14px, env(safe-area-inset-bottom)) + 240px) !important;
+        width:auto !important;
+        height:min(52vh, 420px) !important;
+        min-height:300px !important;
+      }
+
+      .music-panel {
+        max-height:calc(100dvh - 104px) !important;
+      }
+    }
+
+    @media (max-width:420px) {
+      .chat-fab {
+        bottom:calc(max(12px, env(safe-area-inset-bottom)) + 102px) !important;
+      }
+
+      .vince-ai-fab-wrap {
+        bottom:calc(max(12px, env(safe-area-inset-bottom)) + 174px) !important;
+      }
+    }
+  </style>
+
+
+  <style id="mobile-float-alignment-final-fix">
+    /* Final mobile float alignment fix: keep both chat actions lower and aligned with the music bar. */
+    @media (max-width: 680px) {
+      .chat-fab {
+        right: max(14px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 2px) !important;
+        width: 56px !important;
+        height: 56px !important;
+        z-index: 156 !important;
+      }
+
+      .vince-ai-fab-wrap {
+        right: max(14px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 74px) !important;
+        z-index: 155 !important;
+      }
+
+      .vince-ai-fab {
+        width: 56px !important;
+        height: 56px !important;
+      }
+
+      .vince-ai-avatar {
+        width: 44px !important;
+        height: 44px !important;
+      }
+
+      .chat-panel {
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 76px) !important;
+      }
+
+      .vince-ai-panel {
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 146px) !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .chat-fab {
+        right: max(12px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 2px) !important;
+      }
+
+      .vince-ai-fab-wrap {
+        right: max(12px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 72px) !important;
+      }
+
+      .chat-panel {
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 74px) !important;
+      }
+
+      .vince-ai-panel {
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 142px) !important;
+      }
+    }
+  </style>
+
+
+  <style id="mobile-chatbox-centering-stability-patch">
+    /* Mobile stability patch: centers the chat panel and prevents edge overflow without changing app logic. */
+    @media (max-width: 680px) {
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden !important;
+      }
+
+      .container {
+        width: min(94vw, 100%) !important;
+        padding-left: max(16px, env(safe-area-inset-left)) !important;
+        padding-right: max(16px, env(safe-area-inset-right)) !important;
+      }
+
+      .title {
+        margin-top: -16px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .chat-panel {
+        left: 50% !important;
+        right: auto !important;
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 88px) !important;
+        width: min(calc(100vw - 24px), 390px) !important;
+        max-width: calc(100vw - 24px) !important;
+        min-width: 0 !important;
+        height: min(58svh, 470px) !important;
+        max-height: calc(100svh - 122px) !important;
+        border-radius: 22px !important;
+        transform: translateX(-50%);
+        transform-origin: bottom center !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+
+      .chat-panel.open {
+        display: flex !important;
+        animation: mobileChatPanelPopIn 0.36s var(--ease-spring) !important;
+      }
+
+      .chat-header,
+      .chat-composer {
+        flex-shrink: 0;
+      }
+
+      .chat-feed,
+      .chat-input-row,
+      .chat-message-input {
+        min-width: 0;
+      }
+
+      .chat-bubble-wrap {
+        max-width: 86% !important;
+      }
+
+      .chat-reply-preview-text {
+        max-width: min(46vw, 180px) !important;
+      }
+
+      .chat-fab {
+        right: max(14px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 2px) !important;
+        width: 56px !important;
+        height: 56px !important;
+      }
+
+      .vince-ai-fab-wrap {
+        right: max(14px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 74px) !important;
+      }
+
+      .vince-ai-panel {
+        left: 50% !important;
+        right: auto !important;
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 158px) !important;
+        width: min(calc(100vw - 24px), 390px) !important;
+        max-width: calc(100vw - 24px) !important;
+        min-width: 0 !important;
+        transform: translateX(-50%);
+        transform-origin: bottom center !important;
+      }
+
+      .vince-ai-panel.open {
+        animation: mobileVincePanelPopIn 0.36s var(--ease-spring) !important;
+      }
+
+      .music-shell {
+        bottom: max(12px, env(safe-area-inset-bottom)) !important;
+        min-width: 0 !important;
+        overflow: visible !important;
+      }
+
+      .music-panel {
+        left: max(10px, env(safe-area-inset-left)) !important;
+        right: max(10px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 84px) !important;
+        width: auto !important;
+        max-width: none !important;
+        min-width: 0 !important;
+      }
+    }
+
+    @supports (height: 100dvh) {
+      @media (max-width: 680px) {
+        .chat-panel {
+          height: min(58dvh, 470px) !important;
+          max-height: calc(100dvh - 122px) !important;
+        }
+
+        .vince-ai-panel {
+          max-height: calc(100dvh - 184px) !important;
+        }
+      }
+    }
+
+    @media (max-width: 420px) {
+      .title {
+        margin-top: -20px !important;
+      }
+
+      .chat-panel {
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 86px) !important;
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+        height: min(57svh, 440px) !important;
+        max-height: calc(100svh - 116px) !important;
+      }
+
+      .vince-ai-panel {
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 154px) !important;
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+      }
+
+      .chat-fab {
+        right: max(12px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 2px) !important;
+      }
+
+      .vince-ai-fab-wrap {
+        right: max(12px, env(safe-area-inset-right)) !important;
+        bottom: calc(max(10px, env(safe-area-inset-bottom)) + 72px) !important;
+      }
+    }
+
+    @supports (height: 100dvh) {
+      @media (max-width: 420px) {
+        .chat-panel {
+          height: min(57dvh, 440px) !important;
+          max-height: calc(100dvh - 116px) !important;
+        }
+      }
+    }
+
+    @media (max-width: 360px) {
+      .chat-panel {
+        bottom: calc(max(8px, env(safe-area-inset-bottom)) + 82px) !important;
+        width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px) !important;
+        border-radius: 20px !important;
+      }
+
+      .chat-composer {
+        padding: 9px 10px 10px !important;
+      }
+
+      .chat-bubble-wrap {
+        max-width: 90% !important;
+      }
+
+      .music-shell {
+        left: max(64px, env(safe-area-inset-left) + 64px) !important;
+        right: max(64px, env(safe-area-inset-right) + 64px) !important;
+      }
+    }
+
+    @keyframes mobileChatPanelPopIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.9) translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) translateY(0);
+      }
+    }
+
+    @keyframes mobileVincePanelPopIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.9) translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1) translateY(0);
+      }
+    }
+  </style>
+
+
+  <style id="vince-ai-mobile-open-centering-hard-fix">
+    /* Final hard fix for the Talk to Vince panel on mobile.
+       The open state was overriding translateX(-50%), so the panel started at the center line instead of being centered. */
+    @media (max-width: 680px) {
+      .vince-ai-panel {
+        left: 50% !important;
+        right: auto !important;
+        width: min(calc(100vw - 24px), 390px) !important;
+        max-width: calc(100vw - 24px) !important;
+        min-width: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+        transform: translateX(-50%) translateY(18px) scale(0.92) !important;
+        transform-origin: bottom center !important;
+        overflow: hidden !important;
+      }
+
+      .vince-ai-panel.open,
+      body.vince-ai-open .vince-ai-panel {
+        transform: translateX(-50%) translateY(0) scale(1) !important;
+        animation: mobileVincePanelPopInCentered 0.36s var(--ease-spring) !important;
+      }
+
+      .vince-ai-header,
+      .vince-ai-feed,
+      .vince-ai-composer,
+      .vince-ai-input-row,
+      .vince-ai-input {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .vince-ai-title-row {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+      }
+
+      .vince-ai-suggestions {
+        max-width: 100% !important;
+        overflow: visible !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .vince-ai-panel {
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+        left: 50% !important;
+        right: auto !important;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .vince-ai-panel {
+        width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px) !important;
+      }
+    }
+
+    @keyframes mobileVincePanelPopInCentered {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(18px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div class="site-photo-bg"></div>
@@ -4905,9 +5290,9 @@ body.mobile-menu-open .mobile-menu-icon::after {
 
   <!-- ── MAIN ──────────────────────────────────────────────── -->
   <main class="container">
-    <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" aria-hidden="true"></div>
+    <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" aria-hidden="true" onclick="document.body.classList.remove('mobile-menu-open');this.setAttribute('aria-hidden','true');const btn=document.getElementById('mobileMenuBtn');if(btn)btn.setAttribute('aria-expanded','false');const panel=document.getElementById('mobileMenuPanel');if(panel)panel.setAttribute('aria-hidden','true');"></div>
     <div class="mobile-top-nav" id="mobileTopNav">
-      <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-controls="mobileMenuPanel" aria-expanded="false">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-controls="mobileMenuPanel" aria-expanded="false" onclick="event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();(function(btn){const open=!document.body.classList.contains('mobile-menu-open');document.body.classList.toggle('mobile-menu-open',open);btn.setAttribute('aria-expanded',String(open));const panel=document.getElementById('mobileMenuPanel');if(panel)panel.setAttribute('aria-hidden',String(!open));const backdrop=document.getElementById('mobileMenuBackdrop');if(backdrop)backdrop.setAttribute('aria-hidden',String(!open));})(this)">
         <span class="mobile-menu-icon" aria-hidden="true"><span></span></span>
       </button>
       <nav class="mobile-menu-panel" id="mobileMenuPanel" aria-label="Mobile menu" aria-hidden="true">
@@ -4921,7 +5306,7 @@ body.mobile-menu-open .mobile-menu-icon::after {
             </span>
             <span class="mobile-menu-arrow">→</span>
           </a>
-          <button class="mobile-menu-item" id="mobileDevotionBtn" type="button" style="--item-delay:0.11s">
+          <button class="mobile-menu-item" id="mobileDevotionBtn" type="button" style="--item-delay:0.11s" onclick="event.preventDefault();event.stopPropagation();document.body.classList.remove('mobile-menu-open');const menuBtn=document.getElementById('mobileMenuBtn');if(menuBtn)menuBtn.setAttribute('aria-expanded','false');const panel=document.getElementById('mobileMenuPanel');if(panel)panel.setAttribute('aria-hidden','true');const backdrop=document.getElementById('mobileMenuBackdrop');if(backdrop)backdrop.setAttribute('aria-hidden','true');setTimeout(()=>document.getElementById('devotionOpenBtn')?.click(),120);">
             <span class="mobile-menu-left">
               <span class="mobile-menu-emoji">📖</span>
               <span class="mobile-menu-copy"><strong>Our Devotions</strong><span>verses, reflections, and prayers</span></span>
@@ -5953,7 +6338,7 @@ async function refreshSpotifyAccessToken() {
     refresh_token: refreshToken
   });
 
-  const res = await fetch("https://accounts.spotify.com//token", {
+  const res = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body
@@ -5987,7 +6372,7 @@ async function spotify(path, options = {}) {
   let token = await ensureSpotifyAccessToken();
   if (!token) throw new Error("Spotify login required.");
 
-  const request = async accessToken => fetch(`https://.spotify.com/v1${path}`, {
+  const request = async accessToken => fetch(`https://api.spotify.com/v1${path}`, {
     ...options,
     headers: {
       ...(options.headers || {}),
@@ -6021,6 +6406,9 @@ async function spotify(path, options = {}) {
     return text;
   }
 }
+
+// Keep the existing Spotify request wrapper compatible with the rest of the music code.
+const spotifyApi = spotify;
 
 function escapeSpotifyHtml(value = "") {
   return String(value)
@@ -9260,6 +9648,77 @@ updateProgressUI();
   } else {
     start();
   }
+})();
+</script>
+
+
+<script id="mobile-menu-safety-script">
+(function mobileMenuSafetyNet() {
+  function setMobileMenuOpen(open) {
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const panel = document.getElementById('mobileMenuPanel');
+    const backdrop = document.getElementById('mobileMenuBackdrop');
+    document.body.classList.toggle('mobile-menu-open', !!open);
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(!!open));
+    if (panel) panel.setAttribute('aria-hidden', String(!open));
+    if (backdrop) backdrop.setAttribute('aria-hidden', String(!open));
+  }
+
+  function bindMobileMenu() {
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const panel = document.getElementById('mobileMenuPanel');
+    const backdrop = document.getElementById('mobileMenuBackdrop');
+    const devotionMenuBtn = document.getElementById('mobileDevotionBtn');
+    const desktopDevotionBtn = document.getElementById('devotionOpenBtn');
+    const memoriesLink = document.getElementById('mobileMemoriesLink');
+
+    window.setMobileLoveMenuOpen = setMobileMenuOpen;
+
+    if (menuBtn && !menuBtn.dataset.mobileMenuSafetyBound) {
+      menuBtn.dataset.mobileMenuSafetyBound = 'true';
+      menuBtn.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        setMobileMenuOpen(!document.body.classList.contains('mobile-menu-open'));
+      }, true);
+    }
+
+    if (panel && !panel.dataset.mobileMenuSafetyBound) {
+      panel.dataset.mobileMenuSafetyBound = 'true';
+      panel.addEventListener('click', event => event.stopPropagation(), true);
+    }
+
+    if (backdrop && !backdrop.dataset.mobileMenuSafetyBound) {
+      backdrop.dataset.mobileMenuSafetyBound = 'true';
+      backdrop.addEventListener('click', () => setMobileMenuOpen(false), true);
+    }
+
+    if (devotionMenuBtn && !devotionMenuBtn.dataset.mobileMenuSafetyBound) {
+      devotionMenuBtn.dataset.mobileMenuSafetyBound = 'true';
+      devotionMenuBtn.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        setMobileMenuOpen(false);
+        window.setTimeout(() => desktopDevotionBtn?.click(), 120);
+      }, true);
+    }
+
+    if (memoriesLink && !memoriesLink.dataset.mobileMenuSafetyBound) {
+      memoriesLink.dataset.mobileMenuSafetyBound = 'true';
+      memoriesLink.addEventListener('click', () => setMobileMenuOpen(false), true);
+    }
+  }
+
+  bindMobileMenu();
+  document.addEventListener('DOMContentLoaded', bindMobileMenu);
+  window.addEventListener('load', bindMobileMenu);
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 680) setMobileMenuOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setMobileMenuOpen(false);
+  });
 })();
 </script>
 
