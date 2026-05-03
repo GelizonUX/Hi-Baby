@@ -5298,6 +5298,35 @@ body.mobile-menu-open .mobile-menu-icon::after {
     }
   </style>
 
+
+
+  <style id="final-mobile-devotion-navigation-style">
+    /* Final mobile menu to devotion patch: devotion must sit above the menu/backdrop after tap. */
+    @media (max-width: 680px) {
+      .devotion-overlay.open {
+        display: flex !important;
+        z-index: 30000 !important;
+      }
+
+      .devotion-shell {
+        position: relative !important;
+        z-index: 30001 !important;
+      }
+
+      body.devotion-open .mobile-menu-backdrop,
+      body.devotion-open .mobile-menu-panel {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+
+      body.devotion-open .mobile-top-nav,
+      body.devotion-open .mobile-menu-btn {
+        pointer-events: none !important;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div class="site-photo-bg"></div>
@@ -9813,6 +9842,209 @@ updateProgressUI();
   bindMobileDevotionButton();
   document.addEventListener('DOMContentLoaded', bindMobileDevotionButton);
   window.addEventListener('load', bindMobileDevotionButton);
+})();
+</script>
+
+
+
+<script id="final-mobile-devotion-navigation-patch">
+(function finalMobileDevotionNavigationPatch() {
+  const MOBILE_QUERY = '(max-width: 680px)';
+  let lastMenuAction = 0;
+  let lastDevotionAction = 0;
+
+  const isMobile = () => window.matchMedia && window.matchMedia(MOBILE_QUERY).matches;
+
+  function getRefs() {
+    return {
+      topNav: document.getElementById('mobileTopNav'),
+      backdrop: document.getElementById('mobileMenuBackdrop'),
+      menuBtn: document.getElementById('mobileMenuBtn'),
+      panel: document.getElementById('mobileMenuPanel'),
+      devotionBtn: document.getElementById('mobileDevotionBtn'),
+      memoriesLink: document.getElementById('mobileMemoriesLink'),
+      devotionOverlay: document.getElementById('devotionOverlay'),
+      devotionCloseBtn: document.getElementById('devotionCloseBtn')
+    };
+  }
+
+  function setMobileMenuOpen(open) {
+    const { menuBtn, panel, backdrop } = getRefs();
+    document.body.classList.toggle('mobile-menu-open', !!open);
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(!!open));
+    if (panel) panel.setAttribute('aria-hidden', String(!open));
+    if (backdrop) backdrop.setAttribute('aria-hidden', String(!open));
+  }
+
+  function closeMobileMenu() {
+    setMobileMenuOpen(false);
+  }
+
+  function hardOpenDevotionOverlay() {
+    const { devotionOverlay } = getRefs();
+    if (!devotionOverlay) return;
+
+    devotionOverlay.classList.add('open');
+    devotionOverlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('devotion-open');
+    document.body.classList.remove('mobile-menu-open');
+
+    const chatPanel = document.getElementById('chatPanel');
+    const musicPanel = document.getElementById('musicPanel');
+    const moodPanel = document.getElementById('moodPanel');
+    const vinceAiPanel = document.getElementById('vinceAiPanel');
+
+    if (chatPanel) chatPanel.classList.remove('open');
+    if (musicPanel) musicPanel.classList.remove('open');
+    if (moodPanel) moodPanel.classList.remove('open');
+    if (vinceAiPanel) vinceAiPanel.classList.remove('open');
+
+    document.body.classList.remove('chat-open', 'music-open', 'vince-ai-open');
+  }
+
+  function openDevotionsFromMobile(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    }
+
+    const now = Date.now();
+    if (now - lastDevotionAction < 450) return;
+    lastDevotionAction = now;
+
+    closeMobileMenu();
+
+    window.requestAnimationFrame(() => {
+      window.setTimeout(() => {
+        try {
+          if (typeof window.openDevotionsPanel === 'function') {
+            window.openDevotionsPanel();
+          } else {
+            const desktopDevotionBtn = document.getElementById('devotionOpenBtn');
+            if (desktopDevotionBtn) {
+              desktopDevotionBtn.dispatchEvent(new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+              }));
+            }
+          }
+        } catch (error) {
+          console.error('Mobile devotion open failed. Using direct overlay fallback:', error);
+        }
+
+        const overlay = document.getElementById('devotionOverlay');
+        if (!overlay || !overlay.classList.contains('open')) {
+          hardOpenDevotionOverlay();
+        }
+      }, 40);
+    });
+  }
+
+  function closeDevotionOverlayFallback(event) {
+    if (event) event.stopPropagation();
+    const overlay = document.getElementById('devotionOverlay');
+    if (overlay) {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+    document.body.classList.remove('devotion-open');
+  }
+
+  function resetMobileMenuDom() {
+    const refs = getRefs();
+
+    if (refs.backdrop && refs.backdrop.dataset.finalClean !== 'true') {
+      const cleanBackdrop = refs.backdrop.cloneNode(true);
+      cleanBackdrop.dataset.finalClean = 'true';
+      cleanBackdrop.removeAttribute('onclick');
+      refs.backdrop.replaceWith(cleanBackdrop);
+    }
+
+    const freshRefs = getRefs();
+    if (freshRefs.topNav && freshRefs.topNav.dataset.finalClean !== 'true') {
+      const cleanTopNav = freshRefs.topNav.cloneNode(true);
+      cleanTopNav.dataset.finalClean = 'true';
+
+      const cleanMenuBtn = cleanTopNav.querySelector('#mobileMenuBtn');
+      const cleanDevotionBtn = cleanTopNav.querySelector('#mobileDevotionBtn');
+      if (cleanMenuBtn) cleanMenuBtn.removeAttribute('onclick');
+      if (cleanDevotionBtn) cleanDevotionBtn.removeAttribute('onclick');
+
+      freshRefs.topNav.replaceWith(cleanTopNav);
+    }
+  }
+
+  function bindCleanMobileMenu() {
+    resetMobileMenuDom();
+
+    const { backdrop, menuBtn, panel, devotionBtn, memoriesLink, devotionOverlay, devotionCloseBtn } = getRefs();
+    if (!menuBtn || !panel) return;
+
+    if (menuBtn.dataset.finalMobileMenuBound !== 'true') {
+      menuBtn.dataset.finalMobileMenuBound = 'true';
+      const toggleMenu = event => {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+        }
+        const now = Date.now();
+        if (now - lastMenuAction < 250) return;
+        lastMenuAction = now;
+        setMobileMenuOpen(!document.body.classList.contains('mobile-menu-open'));
+      };
+      menuBtn.addEventListener('pointerup', toggleMenu);
+      menuBtn.addEventListener('click', toggleMenu);
+    }
+
+    if (panel.dataset.finalMobileMenuBound !== 'true') {
+      panel.dataset.finalMobileMenuBound = 'true';
+      panel.addEventListener('click', event => event.stopPropagation());
+      panel.addEventListener('pointerup', event => event.stopPropagation());
+    }
+
+    if (backdrop && backdrop.dataset.finalMobileMenuBound !== 'true') {
+      backdrop.dataset.finalMobileMenuBound = 'true';
+      backdrop.addEventListener('click', closeMobileMenu);
+      backdrop.addEventListener('pointerup', closeMobileMenu);
+    }
+
+    if (devotionBtn && devotionBtn.dataset.finalDevotionBound !== 'true') {
+      devotionBtn.dataset.finalDevotionBound = 'true';
+      devotionBtn.addEventListener('pointerup', openDevotionsFromMobile);
+      devotionBtn.addEventListener('click', openDevotionsFromMobile);
+      devotionBtn.addEventListener('touchend', openDevotionsFromMobile, { passive: false });
+    }
+
+    if (memoriesLink && memoriesLink.dataset.finalMemoriesBound !== 'true') {
+      memoriesLink.dataset.finalMemoriesBound = 'true';
+      memoriesLink.addEventListener('click', closeMobileMenu);
+    }
+
+    if (devotionCloseBtn && devotionCloseBtn.dataset.finalDevotionCloseBound !== 'true') {
+      devotionCloseBtn.dataset.finalDevotionCloseBound = 'true';
+      devotionCloseBtn.addEventListener('click', closeDevotionOverlayFallback);
+    }
+
+    if (devotionOverlay && devotionOverlay.dataset.finalDevotionOverlayBound !== 'true') {
+      devotionOverlay.dataset.finalDevotionOverlayBound = 'true';
+      devotionOverlay.addEventListener('click', event => {
+        if (event.target === devotionOverlay) closeDevotionOverlayFallback(event);
+      });
+    }
+  }
+
+  window.openMobileDevotionsFromMenu = openDevotionsFromMobile;
+  window.setMobileLoveMenuOpen = setMobileMenuOpen;
+
+  bindCleanMobileMenu();
+  document.addEventListener('DOMContentLoaded', bindCleanMobileMenu);
+  window.addEventListener('load', bindCleanMobileMenu);
+  window.addEventListener('resize', () => {
+    if (!isMobile()) closeMobileMenu();
+  });
 })();
 </script>
 
