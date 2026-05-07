@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>For you 💌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="image" href="desktop.png" media="(min-width: 681px)" />
+  <link rel="preload" as="image" href="mobile.png" media="(max-width: 680px)" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <style>
@@ -5830,6 +5834,36 @@ body.mobile-menu-open .mobile-menu-icon::after {
       .aurora { transform:translate3d(calc(var(--mx) * 8px), calc(var(--my) * 8px), 0); }
     }
   </style>
+
+  <style id="performance-stability-patch">
+    /* Performance-only patch: keeps the same visuals while reducing JS-driven paint work. */
+    .floating-emoji,
+    .cursor-heart,
+    .click-burst-emoji,
+    .intro-particle {
+      contain: layout paint style;
+    }
+
+    @keyframes cursorHeartFloatOptimized {
+      0% {
+        opacity:0.94;
+        transform:translate(-50%,-50%) scale(1);
+      }
+      100% {
+        opacity:0;
+        transform:translate(calc(-50% + var(--trail-x, 0px)), calc(-50% - 38px)) scale(1.14);
+      }
+    }
+
+    .cursor-heart {
+      animation:cursorHeartFloatOptimized 900ms ease-out forwards;
+    }
+
+    @media (hover:none), (pointer:coarse) {
+      .cursor-heart { display:none !important; }
+    }
+  </style>
+
 </head>
 <body>
   <!-- Layered animated romantic background (light-pink / white / soft-red / blush) -->
@@ -5863,9 +5897,9 @@ body.mobile-menu-open .mobile-menu-icon::after {
         <div class="intro-copy-subtitle">choose the one you like the most and it will open your little surprise</div>
       </div>
       <div class="intro-flower-grid">
-        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 1"><img src="flower 1.png" alt="Flower 1" class="intro-flower-asset" draggable="false" /></button>
-        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 2"><img src="flower 2.png" alt="Flower 2" class="intro-flower-asset" draggable="false" /></button>
-        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 3"><img src="flower 3.png" alt="Flower 3" class="intro-flower-asset" draggable="false" /></button>
+        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 1"><img src="flower 1.png" alt="Flower 1" class="intro-flower-asset" draggable="false" decoding="async" /></button>
+        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 2"><img src="flower 2.png" alt="Flower 2" class="intro-flower-asset" draggable="false" decoding="async" /></button>
+        <button class="intro-flower-btn intro-flower-choice" aria-label="Pick flower 3"><img src="flower 3.png" alt="Flower 3" class="intro-flower-asset" draggable="false" decoding="async" /></button>
       </div>
       <div class="intro-note">tap any flower 🌸</div>
     </div>
@@ -6229,7 +6263,7 @@ I'll message you pag gising ko, MWA!
   <div class="vince-ai-fab-wrap" id="vinceAiFabWrap">
     <div class="vince-ai-tooltip">Talk to Vince</div>
     <button class="vince-ai-fab" id="vinceAiFab" type="button" aria-label="Talk to Vince" aria-controls="vinceAiPanel" aria-expanded="false">
-      <span class="vince-ai-avatar" aria-hidden="true"><img src="aiicon.png" alt="" draggable="false" /></span>
+      <span class="vince-ai-avatar" aria-hidden="true"><img src="aiicon.png" alt="" draggable="false" decoding="async" loading="lazy" /></span>
       <span class="vince-ai-pulse-dot" aria-hidden="true"></span>
     </button>
   </div>
@@ -6237,7 +6271,7 @@ I'll message you pag gising ko, MWA!
   <section class="vince-ai-panel" id="vinceAiPanel" aria-hidden="true" aria-label="Talk to Vince AI panel">
     <div class="vince-ai-header">
       <div class="vince-ai-title-row">
-        <div class="vince-ai-headshot" aria-hidden="true"><img src="aiicon.png" alt="" draggable="false" /></div>
+        <div class="vince-ai-headshot" aria-hidden="true"><img src="aiicon.png" alt="" draggable="false" decoding="async" loading="lazy" /></div>
         <div class="vince-ai-title-copy">
           <div class="vince-ai-title">Talk to Vince</div>
         </div>
@@ -6363,7 +6397,7 @@ I'll message you pag gising ko, MWA!
     import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getDatabase, ref, push, onChildAdded, query, limitToLast,
-      update, onValue, set, get, remove
+      update, onValue, set, get, remove, runTransaction
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
     import {
       getStorage, ref as storageRef,
@@ -8328,7 +8362,17 @@ const playPrevSong = () => playPrevSpotifyTrack();
 
 /* ── floating emojis ──────────────────────────────────────── */
 
+    const floatingEmojiMedia = window.matchMedia("(max-width: 680px)");
+    const getMaxFloatingEmojis = () => floatingEmojiMedia.matches ? 14 : 24;
+    let floatingEmojiTimer = 0;
+
+    function activeFloatingEmojiCount() {
+      return document.querySelectorAll(".floating-emoji").length;
+    }
+
     function createFloatingEmoji(){
+      if (document.hidden || activeFloatingEmojiCount() >= getMaxFloatingEmojis()) return;
+
       const el=document.createElement("div");
       const emoji=floatEmojis[Math.floor(Math.random()*floatEmojis.length)];
       const isRose=emoji==="🌹";
@@ -8345,30 +8389,45 @@ const playPrevSong = () => playPrevSpotifyTrack();
       el.style.setProperty("--dx",rand(120,240)+"px");
       el.style.setProperty("--dy",rand(120,260)+"px");
       el.style.setProperty("--rot",rand(-24,24)+"deg");
+      el.addEventListener("animationend",()=>el.remove(),{once:true});
       document.body.appendChild(el);
-      setTimeout(()=>el.remove(),dur*1000);
+      setTimeout(()=>el.remove(),(dur*1000)+500);
     }
+
+    function scheduleFloatingEmoji(delay=520){
+      window.clearTimeout(floatingEmojiTimer);
+      floatingEmojiTimer = window.setTimeout(() => {
+        createFloatingEmoji();
+        scheduleFloatingEmoji(520);
+      }, delay);
+    }
+
     for(let i=0;i<18;i++) setTimeout(createFloatingEmoji,i*220);
-    setInterval(createFloatingEmoji,520);
+    scheduleFloatingEmoji(520);
+
+    document.addEventListener("visibilitychange",()=>{
+      if (document.hidden) {
+        window.clearTimeout(floatingEmojiTimer);
+      } else {
+        scheduleFloatingEmoji(520);
+      }
+    });
 
     /* ── cursor trail ─────────────────────────────────────────── */
+    const cursorTrailQuery = window.matchMedia("(hover:hover) and (pointer:fine)");
     let lastTrail=0;
     document.addEventListener("mousemove",e=>{
-      if(Date.now()-lastTrail<40) return;
+      if (!cursorTrailQuery.matches || document.hidden) return;
+      if(Date.now()-lastTrail<56) return;
       lastTrail=Date.now();
       const t=document.createElement("div");
       t.className="cursor-heart";
       t.textContent=Math.random()>0.4?"💕":"🌹";
-      t.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;font-size:${rand(11,17)}px;opacity:0.94`;
+      t.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;font-size:${rand(11,17)}px`;
+      t.style.setProperty("--trail-x", `${(Math.random()-0.5)*14}px`);
+      t.addEventListener("animationend",()=>t.remove(),{once:true});
       document.body.appendChild(t);
-      let x=e.clientX,y=e.clientY,op=0.94,sc=1;
-      (function tick(){
-        y-=1.1;x+=(Math.random()-0.5)*0.4;op-=0.032;sc+=0.006;
-        t.style.top=y+"px";t.style.left=x+"px";t.style.opacity=op;
-        t.style.transform=`translate(-50%,-50%) scale(${sc})`;
-        op<=0?t.remove():requestAnimationFrame(tick);
-      })();
-    });
+    }, { passive:true });
 
     /* ── click message ────────────────────────────────────────── */
     function showCenterMessage(text){
@@ -8931,9 +8990,11 @@ const playPrevSong = () => playPrevSpotifyTrack();
 
     async function addReaction(msgKey,emoji){
       if(!msgKey) return;
-      onValue(ref(db,`messageReactions/${msgKey}/${encodeEmoji(emoji)}`),(snap)=>{
-        update(ref(db,`messageReactions/${msgKey}`),{[encodeEmoji(emoji)]:(snap.val()||0)+1});
-      },{onlyOnce:true});
+      try {
+        await runTransaction(ref(db,`messageReactions/${msgKey}/${encodeEmoji(emoji)}`), current => (Number(current) || 0) + 1);
+      } catch (error) {
+        console.error("Reaction update failed:", error);
+      }
     }
 
     const encodeEmoji=e=>[...e].map(c=>c.codePointAt(0).toString(16)).join("_");
@@ -10354,197 +10415,7 @@ updateProgressUI();
 </script>
 
 
-<script>
-(function initMobileHamburgerMenu() {
-  function start() {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const panel = document.getElementById('mobileMenuPanel');
-    const backdrop = document.getElementById('mobileMenuBackdrop');
-    const devotionMenuBtn = document.getElementById('mobileDevotionBtn');
-    const memoriesLink = document.getElementById('mobileMemoriesLink');
-    const desktopDevotionBtn = document.getElementById('devotionOpenBtn');
 
-    if (!menuBtn || !panel) return;
-
-    const isOpen = () => document.body.classList.contains('mobile-menu-open');
-
-    const setMenuOpen = open => {
-      document.body.classList.toggle('mobile-menu-open', open);
-      menuBtn.setAttribute('aria-expanded', String(open));
-      panel.setAttribute('aria-hidden', String(!open));
-      if (backdrop) backdrop.setAttribute('aria-hidden', String(!open));
-    };
-
-    menuBtn.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      setMenuOpen(!isOpen());
-    });
-
-    panel.addEventListener('click', event => {
-      event.stopPropagation();
-    });
-
-    backdrop?.addEventListener('click', () => setMenuOpen(false));
-
-    devotionMenuBtn?.addEventListener('click', event => {
-      event.preventDefault();
-      setMenuOpen(false);
-      window.setTimeout(() => desktopDevotionBtn?.click(), 120);
-    });
-
-    memoriesLink?.addEventListener('click', () => setMenuOpen(false));
-
-    document.addEventListener('click', () => {
-      if (isOpen()) setMenuOpen(false);
-    });
-
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && isOpen()) setMenuOpen(false);
-    });
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 680 && isOpen()) setMenuOpen(false);
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start);
-  } else {
-    start();
-  }
-})();
-</script>
-
-
-<script id="mobile-menu-safety-script">
-(function mobileMenuSafetyNet() {
-  function setMobileMenuOpen(open) {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const panel = document.getElementById('mobileMenuPanel');
-    const backdrop = document.getElementById('mobileMenuBackdrop');
-    document.body.classList.toggle('mobile-menu-open', !!open);
-    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(!!open));
-    if (panel) panel.setAttribute('aria-hidden', String(!open));
-    if (backdrop) backdrop.setAttribute('aria-hidden', String(!open));
-  }
-
-  function bindMobileMenu() {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const panel = document.getElementById('mobileMenuPanel');
-    const backdrop = document.getElementById('mobileMenuBackdrop');
-    const devotionMenuBtn = document.getElementById('mobileDevotionBtn');
-    const desktopDevotionBtn = document.getElementById('devotionOpenBtn');
-    const memoriesLink = document.getElementById('mobileMemoriesLink');
-
-    window.setMobileLoveMenuOpen = setMobileMenuOpen;
-
-    if (menuBtn && !menuBtn.dataset.mobileMenuSafetyBound) {
-      menuBtn.dataset.mobileMenuSafetyBound = 'true';
-      menuBtn.addEventListener('click', event => {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        setMobileMenuOpen(!document.body.classList.contains('mobile-menu-open'));
-      }, true);
-    }
-
-    if (panel && !panel.dataset.mobileMenuSafetyBound) {
-      panel.dataset.mobileMenuSafetyBound = 'true';
-      panel.addEventListener('click', event => event.stopPropagation(), true);
-    }
-
-    if (backdrop && !backdrop.dataset.mobileMenuSafetyBound) {
-      backdrop.dataset.mobileMenuSafetyBound = 'true';
-      backdrop.addEventListener('click', () => setMobileMenuOpen(false), true);
-    }
-
-    if (devotionMenuBtn && !devotionMenuBtn.dataset.mobileMenuSafetyBound) {
-      devotionMenuBtn.dataset.mobileMenuSafetyBound = 'true';
-      devotionMenuBtn.addEventListener('click', event => {
-        event.preventDefault();
-        event.stopPropagation();
-        setMobileMenuOpen(false);
-        window.setTimeout(() => desktopDevotionBtn?.click(), 120);
-      }, true);
-    }
-
-    if (memoriesLink && !memoriesLink.dataset.mobileMenuSafetyBound) {
-      memoriesLink.dataset.mobileMenuSafetyBound = 'true';
-      memoriesLink.addEventListener('click', () => setMobileMenuOpen(false), true);
-    }
-  }
-
-  bindMobileMenu();
-  document.addEventListener('DOMContentLoaded', bindMobileMenu);
-  window.addEventListener('load', bindMobileMenu);
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 680) setMobileMenuOpen(false);
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') setMobileMenuOpen(false);
-  });
-})();
-</script>
-
-
-<script id="mobile-devotion-direct-open-fix">
-(function mobileDevotionDirectOpenFix() {
-  function closeMobileMenu() {
-    const menuBtn = document.getElementById('mobileMenuBtn');
-    const panel = document.getElementById('mobileMenuPanel');
-    const backdrop = document.getElementById('mobileMenuBackdrop');
-
-    document.body.classList.remove('mobile-menu-open');
-    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
-    if (panel) panel.setAttribute('aria-hidden', 'true');
-    if (backdrop) backdrop.setAttribute('aria-hidden', 'true');
-  }
-
-  function openDevotionsFallback() {
-    if (typeof window.openDevotionsPanel === 'function') {
-      window.openDevotionsPanel();
-      return;
-    }
-
-    const devotionButton = document.getElementById('devotionOpenBtn');
-    if (devotionButton) {
-      devotionButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-      return;
-    }
-
-    const devotionOverlay = document.getElementById('devotionOverlay');
-    if (devotionOverlay) {
-      devotionOverlay.classList.add('open');
-      devotionOverlay.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('devotion-open');
-    }
-  }
-
-  window.openMobileDevotionsFromMenu = function openMobileDevotionsFromMenu(event) {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
-    }
-
-    closeMobileMenu();
-    window.setTimeout(openDevotionsFallback, 80);
-  };
-
-  function bindMobileDevotionButton() {
-    const mobileDevotionButton = document.getElementById('mobileDevotionBtn');
-    if (!mobileDevotionButton || mobileDevotionButton.dataset.directDevotionBound === 'true') return;
-
-    mobileDevotionButton.dataset.directDevotionBound = 'true';
-    mobileDevotionButton.addEventListener('click', window.openMobileDevotionsFromMenu, true);
-  }
-
-  bindMobileDevotionButton();
-  document.addEventListener('DOMContentLoaded', bindMobileDevotionButton);
-  window.addEventListener('load', bindMobileDevotionButton);
-})();
-</script>
 
 
 
@@ -10754,16 +10625,31 @@ updateProgressUI();
 (function initAuroraParallax(){
   const root = document.documentElement;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduce.matches) return; /* keep static for users who request reduced motion */
+  if (reduce.matches) return;
 
   let targetX = 0, targetY = 0;
   let curX = 0, curY = 0;
   let rafId = 0;
   let lastInputAt = 0;
   let idleSeed = Math.random() * 1000;
+  let lastWrittenX = 999;
+  let lastWrittenY = 999;
   const lerp = (a, b, t) => a + (b - a) * t;
 
+  function writeParallaxVars() {
+    if (Math.abs(curX - lastWrittenX) < 0.002 && Math.abs(curY - lastWrittenY) < 0.002) return;
+    lastWrittenX = curX;
+    lastWrittenY = curY;
+    root.style.setProperty('--mx', curX.toFixed(3));
+    root.style.setProperty('--my', curY.toFixed(3));
+  }
+
   function tick() {
+    if (document.hidden) {
+      rafId = 0;
+      return;
+    }
+
     const now = performance.now();
     const idle = now - lastInputAt > 2200;
     if (idle) {
@@ -10771,24 +10657,34 @@ updateProgressUI();
       targetX = Math.sin(idleSeed * 0.8) * 0.45;
       targetY = Math.cos(idleSeed * 0.6) * 0.45;
     }
+
     curX = lerp(curX, targetX, 0.06);
     curY = lerp(curY, targetY, 0.06);
-    root.style.setProperty('--mx', curX.toFixed(3));
-    root.style.setProperty('--my', curY.toFixed(3));
+    writeParallaxVars();
     rafId = requestAnimationFrame(tick);
+  }
+
+  function startTick() {
+    if (!rafId && !document.hidden) rafId = requestAnimationFrame(tick);
+  }
+
+  function stopTick() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
   }
 
   function setFromPoint(clientX, clientY) {
     const w = window.innerWidth || 1;
     const h = window.innerHeight || 1;
-    targetX = ((clientX / w) * 2) - 1;   /* -1..1 */
-    targetY = ((clientY / h) * 2) - 1;   /* -1..1 */
+    targetX = ((clientX / w) * 2) - 1;
+    targetY = ((clientY / h) * 2) - 1;
     lastInputAt = performance.now();
+    startTick();
   }
 
   let queued = false;
   function onMove(e) {
-    if (queued) return;
+    if (queued || document.hidden) return;
     queued = true;
     requestAnimationFrame(() => {
       queued = false;
@@ -10804,14 +10700,11 @@ updateProgressUI();
   window.addEventListener('touchstart', onMove, { passive:true });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      cancelAnimationFrame(rafId);
-    } else {
-      rafId = requestAnimationFrame(tick);
-    }
+    if (document.hidden) stopTick();
+    else startTick();
   });
 
-  rafId = requestAnimationFrame(tick);
+  startTick();
 })();
 </script>
 
