@@ -5973,10 +5973,15 @@ body.mobile-menu-open .mobile-menu-icon::after {
        own ::before (top-left light catch). pointer-events:none so
        it never blocks taps; sits below content via z-index. */
     .letter-card,
+    .devotion-shell { position:relative; isolation:isolate; }
+
+    /* These are position:fixed floating panels — only scope their stacking
+       context (a fixed element is already a positioned ancestor for its
+       ::before sheen). Do NOT override position here or they drop out of
+       fixed positioning into document flow (clipped at the page corner). */
     .chat-panel,
     .music-panel,
-    .mood-panel,
-    .devotion-shell { position:relative; isolation:isolate; }
+    .mood-panel { isolation:isolate; }
 
     .letter-card::after,
     .chat-panel::before,
