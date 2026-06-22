@@ -46,8 +46,8 @@
       /* ── LIQUID GLASS DESIGN TOKENS (frosted rose glass) ── */
       --glass-bg:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(255,240,247,0.30));
       --glass-bg-strong:linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,236,245,0.50));
-      --glass-blur:22px;
-      --glass-blur-strong:30px;
+      --glass-blur:18px;
+      --glass-blur-strong:22px;
       --glass-border:1px solid rgba(255,255,255,0.65);
       --glass-edge:inset 0 1px 0 rgba(255,255,255,0.85),inset 0 -1px 1px rgba(255,140,190,0.15);
       --glass-shadow:0 18px 44px -12px rgba(255,87,165,0.30),0 6px 18px -8px rgba(233,30,121,0.18);
@@ -5999,6 +5999,12 @@ body.mobile-menu-open .mobile-menu-icon::after {
     .mood-panel > *,
     .devotion-shell > * { position:relative; z-index:1; }
 
+    /* The sticky music header must stay ABOVE scrolling siblings.
+       The `> *` rule above flattens it to z-index:1 (equal to the
+       scrolling content that follows it in the DOM), which lets list
+       items paint over the pinned header on scroll. Restore its lead. */
+    .music-panel > .music-panel-top { z-index:3; }
+
     /* ── Button glassiness + buttery micro-interactions ──────────
        Reuse spring/smooth eases. Hover lift + active press. */
     .mood-send-btn.ready:active,
@@ -6066,6 +6072,28 @@ body.mobile-menu-open .mobile-menu-icon::after {
     .chat-bubble,
     .devotion-textarea,
     .daily-verse-text { overflow-wrap:anywhere; }
+
+    /* ── PERF: cap stacked heavy blur on mobile ─────────────────
+       A glass modal (shell) already sits inside a blurred overlay
+       backdrop, so two full-area heavy blurs stack on phones. Lighten
+       the inner-surface blur and the overlay backdrop on small screens
+       to avoid scroll/compositing jank. Readability is preserved by the
+       opaque-ish surface gradients, not the blur. */
+    @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      @media (max-width:680px) {
+        .letter-card,
+        .chat-panel,
+        .music-panel,
+        .mood-panel,
+        .devotion-shell,
+        .vince-ai-panel {
+          -webkit-backdrop-filter:blur(14px) saturate(160%) !important;
+          backdrop-filter:blur(14px) saturate(160%) !important;
+        }
+        .letter-overlay { -webkit-backdrop-filter:blur(12px) saturate(140%); backdrop-filter:blur(12px) saturate(140%); }
+        .devotion-overlay { -webkit-backdrop-filter:blur(12px) saturate(140%); backdrop-filter:blur(12px) saturate(140%); }
+      }
+    }
 
     /* Modals/panels must always be able to scroll if content
        exceeds a short viewport (e.g. landscape phones). */
