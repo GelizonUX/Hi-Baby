@@ -42,6 +42,17 @@
       --mood-opt-selected:rgba(255,200,230,0.55);
       --mood-opt-border:#ff6ab5;
       --mood-label:#c07090;
+
+      /* ── LIQUID GLASS DESIGN TOKENS (frosted rose glass) ── */
+      --glass-bg:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(255,240,247,0.30));
+      --glass-bg-strong:linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,236,245,0.50));
+      --glass-blur:22px;
+      --glass-blur-strong:30px;
+      --glass-border:1px solid rgba(255,255,255,0.65);
+      --glass-edge:inset 0 1px 0 rgba(255,255,255,0.85),inset 0 -1px 1px rgba(255,140,190,0.15);
+      --glass-shadow:0 18px 44px -12px rgba(255,87,165,0.30),0 6px 18px -8px rgba(233,30,121,0.18);
+      --glass-sheen:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.45) 50%,transparent 70%);
+      --glass-specular:radial-gradient(120% 90% at 14% 6%,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.12) 28%,transparent 60%);
     }
 
     html,body { width:100%; height:100%; }
@@ -5857,6 +5868,234 @@ body.mobile-menu-open .mobile-menu-icon::after {
 
     @media (hover:none), (pointer:coarse) {
       .cursor-heart { display:none !important; }
+    }
+  </style>
+
+  <!-- ══════════════════════════════════════════════════════════
+       LIQUID GLASS DESIGN SYSTEM (cohesive frosted-rose glass)
+       Loaded last so it refines surfaces consistently. Reuses the
+       --glass-* tokens + existing pink palette. Adds specular
+       highlights, light-catching edges, smoother micro-interactions,
+       and consolidates a few mobile/alignment/gap issues.
+       Fully reduced-motion aware + graceful no-backdrop-filter fallback.
+  ══════════════════════════════════════════════════════════ -->
+  <style id="liquid-glass-system">
+
+    /* ── Shared glassy surface treatment ─────────────────────────
+       Applied to the major panels/cards/modals. We layer a soft
+       specular highlight INTO the background so we don't disturb
+       existing ::before/::after sheens, then add translucency +
+       saturated blur + a light-catching edge. */
+    @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .letter-card,
+      .chat-panel,
+      .music-panel,
+      .mood-panel,
+      .devotion-shell {
+        background:
+          var(--glass-specular),
+          var(--glass-bg-strong) !important;
+        border:var(--glass-border) !important;
+        box-shadow:var(--glass-shadow),var(--glass-edge) !important;
+        -webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+      }
+
+      /* Vince AI panel already owns ::before/::after — keep those,
+         just make its base surface glassier + saturated. */
+      .vince-ai-panel {
+        background:
+          var(--glass-specular),
+          radial-gradient(circle at 95% 0%,rgba(255,178,225,0.34),transparent 42%),
+          radial-gradient(circle at 68% 28%,rgba(154,196,255,0.12),transparent 36%),
+          var(--glass-bg-strong) !important;
+        -webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        border:var(--glass-border) !important;
+      }
+
+      /* Daily verse card: lighter glass (it sits on the bright hero). */
+      .subtitle.daily-verse-card {
+        background:
+          var(--glass-specular),
+          radial-gradient(circle at 100% 0%,rgba(255,205,232,0.32) 0%,transparent 46%),
+          var(--glass-bg) !important;
+        border:var(--glass-border) !important;
+        box-shadow:var(--glass-shadow),var(--glass-edge) !important;
+        -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(170%) !important;
+        backdrop-filter:blur(var(--glass-blur)) saturate(170%) !important;
+      }
+
+      /* Mobile menu panel + items: liquid glass to match. */
+      @media (max-width:680px) {
+        .mobile-menu-panel {
+          background:
+            var(--glass-specular),
+            var(--glass-bg-strong) !important;
+          border:var(--glass-border) !important;
+          box-shadow:var(--glass-shadow),var(--glass-edge) !important;
+          -webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+          backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        }
+        .mobile-menu-item {
+          background:
+            linear-gradient(135deg,rgba(255,255,255,0.62),rgba(255,240,247,0.40)) !important;
+          box-shadow:0 10px 26px -10px rgba(255,87,165,0.26),var(--glass-edge) !important;
+          -webkit-backdrop-filter:blur(8px) saturate(150%);
+          backdrop-filter:blur(8px) saturate(150%);
+        }
+      }
+
+      /* Overlay backdrops: blur what's behind modals a touch more. */
+      .letter-overlay { -webkit-backdrop-filter:blur(20px) saturate(150%); backdrop-filter:blur(20px) saturate(150%); }
+      .devotion-overlay { -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%); }
+    }
+
+    /* ── Fallback: no backdrop-filter → use more opaque surfaces
+       so glass never becomes unreadable. */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .letter-card,
+      .chat-panel,
+      .music-panel,
+      .mood-panel,
+      .devotion-shell,
+      .vince-ai-panel,
+      .mobile-menu-panel {
+        background:linear-gradient(135deg,rgba(255,255,255,0.97),rgba(255,240,247,0.95)) !important;
+        border:1px solid rgba(255,255,255,0.85) !important;
+      }
+      .subtitle.daily-verse-card {
+        background:linear-gradient(145deg,rgba(255,255,255,0.95),rgba(255,244,250,0.92)) !important;
+      }
+    }
+
+    /* ── Specular sheen pseudo-element for surfaces WITHOUT their
+       own ::before (top-left light catch). pointer-events:none so
+       it never blocks taps; sits below content via z-index. */
+    .letter-card,
+    .chat-panel,
+    .music-panel,
+    .mood-panel,
+    .devotion-shell { position:relative; isolation:isolate; }
+
+    .letter-card::after,
+    .chat-panel::before,
+    .music-panel::before,
+    .mood-panel::before,
+    .devotion-shell::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      z-index:0;
+      background:linear-gradient(150deg,rgba(255,255,255,0.30) 0%,transparent 34%);
+      opacity:0.9;
+    }
+    /* Keep their existing children above the sheen. */
+    .letter-card > *,
+    .chat-panel > *,
+    .music-panel > *,
+    .mood-panel > *,
+    .devotion-shell > * { position:relative; z-index:1; }
+
+    /* ── Button glassiness + buttery micro-interactions ──────────
+       Reuse spring/smooth eases. Hover lift + active press. */
+    .mood-send-btn.ready:active,
+    .mood-add-btn:active,
+    .mood-custom-clear-btn:active,
+    .letter-save-btn:active,
+    .devotion-save-btn:active,
+    .mobile-menu-item:active { transition-duration:0.12s; }
+
+    .core-memories-btn,
+    .mobile-menu-btn { -webkit-backdrop-filter:blur(12px) saturate(150%); backdrop-filter:blur(12px) saturate(150%); }
+
+    /* Subtle moving sheen on key buttons (already present on some).
+       Add to devotion / letter save buttons which lacked it. */
+    .letter-save-btn,
+    .devotion-save-btn { position:relative; overflow:hidden; isolation:isolate; }
+    .letter-save-btn::after,
+    .devotion-save-btn::after {
+      content:"";
+      position:absolute; inset:0; border-radius:inherit; z-index:1;
+      background:var(--glass-sheen);
+      transform:translateX(-160%);
+      transition:transform 0.9s var(--ease-smooth);
+      pointer-events:none;
+    }
+    .letter-save-btn:hover::after,
+    .devotion-save-btn:hover::after { transform:translateX(160%); }
+
+    /* ── SMOOTHNESS / MOBILE / GAP / ALIGNMENT CONSOLIDATION ──── */
+
+    /* Smooth scrolling + momentum on all scrollable glass panels;
+       contain overscroll so the page behind doesn't jump. */
+    .letter-card,
+    .chat-feed,
+    .music-panel,
+    .mood-options,
+    .devotion-shell,
+    .devotion-list {
+      -webkit-overflow-scrolling:touch;
+      overscroll-behavior:contain;
+    }
+
+    /* Guarantee a comfortable >=44px tap target on small close/icon
+       buttons that were 32–36px (accessibility + mobile ergonomics). */
+    @media (max-width:680px) {
+      .close-btn,
+      .chat-close,
+      .mood-close-btn,
+      .devotion-close-btn,
+      .music-collapse-btn {
+        width:44px !important;
+        height:44px !important;
+        font-size:17px !important;
+      }
+      .mood-opt-remove {
+        width:26px !important;
+        height:26px !important;
+      }
+    }
+
+    /* Fix potential horizontal overflow sources: long unbreakable
+       strings inside chat/letter/devotion text wrap instead of
+       pushing the layout wider than the viewport. */
+    .love-note-body,
+    .chat-bubble,
+    .devotion-textarea,
+    .daily-verse-text { overflow-wrap:anywhere; }
+
+    /* Modals/panels must always be able to scroll if content
+       exceeds a short viewport (e.g. landscape phones). */
+    @media (max-height:560px) {
+      .letter-card { max-height:94svh; }
+      .devotion-shell { max-height:calc(100svh - 16px); }
+      .vince-ai-panel { min-height:240px; }
+    }
+
+    /* Avoid layout shift / scrollbar flash when a modal opens:
+       lock the body width while devotion/letter overlays are open. */
+    body.devotion-open { overscroll-behavior:none; }
+
+    /* ── Reduced-motion: curtail all new animation/sheen ──────── */
+    @media (prefers-reduced-motion: reduce) {
+      .letter-card::after,
+      .chat-panel::before,
+      .music-panel::before,
+      .mood-panel::before,
+      .devotion-shell::after { transition:none !important; }
+      .letter-save-btn::after,
+      .devotion-save-btn::after { display:none !important; }
+      .letter-card,
+      .chat-panel,
+      .music-panel,
+      .mood-panel,
+      .devotion-shell,
+      .vince-ai-panel,
+      .subtitle.daily-verse-card,
+      .mobile-menu-panel { transition:none !important; }
     }
   </style>
 
