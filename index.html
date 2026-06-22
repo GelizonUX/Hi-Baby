@@ -2253,8 +2253,8 @@ body.music-open .music-shell { z-index:43; }
     .intro-overlay::after { background:radial-gradient(circle at 72% 70%,rgba(255,255,255,0.45) 0%,transparent 18%),radial-gradient(circle at 28% 78%,rgba(255,123,191,0.22) 0%,transparent 20%); animation:auraMoveReverse 18s ease-in-out infinite; }
     @keyframes introFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
     .intro-choice-wrap { position:relative; z-index:10; display:flex; flex-direction:column; align-items:center; gap:28px; padding:24px; width:min(92vw,820px); }
-    .intro-copy { text-align:center; max-width:720px; animation:fadeSlideDown 0.8s var(--ease-out-expo) 0.1s both; }
-    .intro-copy-title { font-family:"Playfair Display",serif; font-size:clamp(28px,4vw,52px); line-height:1.08; color:var(--pink-7); margin-bottom:10px; text-shadow:0 12px 28px rgba(255,45,143,0.18),0 0 18px rgba(255,255,255,0.52); animation:introTitleFloat 3.8s ease-in-out infinite; }
+    .intro-copy { text-align:center; width:100%; max-width:720px; animation:fadeSlideDown 0.8s var(--ease-out-expo) 0.1s both; }
+    .intro-copy-title { font-family:"Playfair Display",serif; font-size:clamp(28px,4vw,52px); line-height:1.08; color:var(--pink-7); margin-bottom:10px; max-width:100%; overflow-wrap:break-word; text-wrap:balance; text-shadow:0 12px 28px rgba(255,45,143,0.18),0 0 18px rgba(255,255,255,0.52); animation:introTitleFloat 3.8s ease-in-out infinite; }
     .intro-copy-subtitle { font-size:clamp(14px,1.8vw,18px); line-height:1.75; color:var(--text-main); }
     @keyframes introTitleFloat { 0%{transform:translateY(0)} 25%{transform:translateY(-5px) scale(1.008)} 50%{transform:translateY(-2px)} 75%{transform:translateY(-6px) scale(1.005)} 100%{transform:translateY(0)} }
     .intro-flower-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; width:min(100%,760px); align-items:center; animation:fadeSlideUp 0.8s var(--ease-out-expo) 0.25s both; }
