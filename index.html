@@ -42,6 +42,17 @@
       --mood-opt-selected:rgba(255,200,230,0.55);
       --mood-opt-border:#ff6ab5;
       --mood-label:#c07090;
+
+      /* ── LIQUID GLASS DESIGN TOKENS (frosted rose glass) ── */
+      --glass-bg:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(255,240,247,0.30));
+      --glass-bg-strong:linear-gradient(135deg,rgba(255,255,255,0.72),rgba(255,236,245,0.50));
+      --glass-blur:18px;
+      --glass-blur-strong:22px;
+      --glass-border:1px solid rgba(255,255,255,0.65);
+      --glass-edge:inset 0 1px 0 rgba(255,255,255,0.85),inset 0 -1px 1px rgba(255,140,190,0.15);
+      --glass-shadow:0 18px 44px -12px rgba(255,87,165,0.30),0 6px 18px -8px rgba(233,30,121,0.18);
+      --glass-sheen:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.45) 50%,transparent 70%);
+      --glass-specular:radial-gradient(120% 90% at 14% 6%,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.12) 28%,transparent 60%);
     }
 
     html,body { width:100%; height:100%; }
@@ -2242,8 +2253,8 @@ body.music-open .music-shell { z-index:43; }
     .intro-overlay::after { background:radial-gradient(circle at 72% 70%,rgba(255,255,255,0.45) 0%,transparent 18%),radial-gradient(circle at 28% 78%,rgba(255,123,191,0.22) 0%,transparent 20%); animation:auraMoveReverse 18s ease-in-out infinite; }
     @keyframes introFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
     .intro-choice-wrap { position:relative; z-index:10; display:flex; flex-direction:column; align-items:center; gap:28px; padding:24px; width:min(92vw,820px); }
-    .intro-copy { text-align:center; max-width:720px; animation:fadeSlideDown 0.8s var(--ease-out-expo) 0.1s both; }
-    .intro-copy-title { font-family:"Playfair Display",serif; font-size:clamp(28px,4vw,52px); line-height:1.08; color:var(--pink-7); margin-bottom:10px; text-shadow:0 12px 28px rgba(255,45,143,0.18),0 0 18px rgba(255,255,255,0.52); animation:introTitleFloat 3.8s ease-in-out infinite; }
+    .intro-copy { text-align:center; width:100%; max-width:720px; animation:fadeSlideDown 0.8s var(--ease-out-expo) 0.1s both; }
+    .intro-copy-title { font-family:"Playfair Display",serif; font-size:clamp(28px,4vw,52px); line-height:1.08; color:var(--pink-7); margin-bottom:10px; max-width:100%; overflow-wrap:break-word; text-wrap:balance; text-shadow:0 12px 28px rgba(255,45,143,0.18),0 0 18px rgba(255,255,255,0.52); animation:introTitleFloat 3.8s ease-in-out infinite; }
     .intro-copy-subtitle { font-size:clamp(14px,1.8vw,18px); line-height:1.75; color:var(--text-main); }
     @keyframes introTitleFloat { 0%{transform:translateY(0)} 25%{transform:translateY(-5px) scale(1.008)} 50%{transform:translateY(-2px)} 75%{transform:translateY(-6px) scale(1.005)} 100%{transform:translateY(0)} }
     .intro-flower-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px; width:min(100%,760px); align-items:center; animation:fadeSlideUp 0.8s var(--ease-out-expo) 0.25s both; }
@@ -5857,6 +5868,262 @@ body.mobile-menu-open .mobile-menu-icon::after {
 
     @media (hover:none), (pointer:coarse) {
       .cursor-heart { display:none !important; }
+    }
+  </style>
+
+  <!-- ══════════════════════════════════════════════════════════
+       LIQUID GLASS DESIGN SYSTEM (cohesive frosted-rose glass)
+       Loaded last so it refines surfaces consistently. Reuses the
+       --glass-* tokens + existing pink palette. Adds specular
+       highlights, light-catching edges, smoother micro-interactions,
+       and consolidates a few mobile/alignment/gap issues.
+       Fully reduced-motion aware + graceful no-backdrop-filter fallback.
+  ══════════════════════════════════════════════════════════ -->
+  <style id="liquid-glass-system">
+
+    /* ── Shared glassy surface treatment ─────────────────────────
+       Applied to the major panels/cards/modals. We layer a soft
+       specular highlight INTO the background so we don't disturb
+       existing ::before/::after sheens, then add translucency +
+       saturated blur + a light-catching edge. */
+    @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .letter-card,
+      .chat-panel,
+      .music-panel,
+      .mood-panel,
+      .devotion-shell {
+        background:
+          var(--glass-specular),
+          var(--glass-bg-strong) !important;
+        border:var(--glass-border) !important;
+        box-shadow:var(--glass-shadow),var(--glass-edge) !important;
+        -webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+      }
+
+      /* Vince AI panel already owns ::before/::after — keep those,
+         just make its base surface glassier + saturated. */
+      .vince-ai-panel {
+        background:
+          var(--glass-specular),
+          radial-gradient(circle at 95% 0%,rgba(255,178,225,0.34),transparent 42%),
+          radial-gradient(circle at 68% 28%,rgba(154,196,255,0.12),transparent 36%),
+          var(--glass-bg-strong) !important;
+        -webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        border:var(--glass-border) !important;
+      }
+
+      /* Daily verse card: lighter glass (it sits on the bright hero). */
+      .subtitle.daily-verse-card {
+        background:
+          var(--glass-specular),
+          radial-gradient(circle at 100% 0%,rgba(255,205,232,0.32) 0%,transparent 46%),
+          var(--glass-bg) !important;
+        border:var(--glass-border) !important;
+        box-shadow:var(--glass-shadow),var(--glass-edge) !important;
+        -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(170%) !important;
+        backdrop-filter:blur(var(--glass-blur)) saturate(170%) !important;
+      }
+
+      /* Mobile menu panel + items: liquid glass to match. */
+      @media (max-width:680px) {
+        .mobile-menu-panel {
+          background:
+            var(--glass-specular),
+            var(--glass-bg-strong) !important;
+          border:var(--glass-border) !important;
+          box-shadow:var(--glass-shadow),var(--glass-edge) !important;
+          -webkit-backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+          backdrop-filter:blur(var(--glass-blur-strong)) saturate(180%) !important;
+        }
+        .mobile-menu-item {
+          background:
+            linear-gradient(135deg,rgba(255,255,255,0.62),rgba(255,240,247,0.40)) !important;
+          box-shadow:0 10px 26px -10px rgba(255,87,165,0.26),var(--glass-edge) !important;
+          -webkit-backdrop-filter:blur(8px) saturate(150%);
+          backdrop-filter:blur(8px) saturate(150%);
+        }
+      }
+
+      /* Overlay backdrops: blur what's behind modals a touch more. */
+      .letter-overlay { -webkit-backdrop-filter:blur(20px) saturate(150%); backdrop-filter:blur(20px) saturate(150%); }
+      .devotion-overlay { -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%); }
+    }
+
+    /* ── Fallback: no backdrop-filter → use more opaque surfaces
+       so glass never becomes unreadable. */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .letter-card,
+      .chat-panel,
+      .music-panel,
+      .mood-panel,
+      .devotion-shell,
+      .vince-ai-panel,
+      .mobile-menu-panel {
+        background:linear-gradient(135deg,rgba(255,255,255,0.97),rgba(255,240,247,0.95)) !important;
+        border:1px solid rgba(255,255,255,0.85) !important;
+      }
+      .subtitle.daily-verse-card {
+        background:linear-gradient(145deg,rgba(255,255,255,0.95),rgba(255,244,250,0.92)) !important;
+      }
+    }
+
+    /* ── Specular sheen pseudo-element for surfaces WITHOUT their
+       own ::before (top-left light catch). pointer-events:none so
+       it never blocks taps; sits below content via z-index. */
+    .letter-card,
+    .chat-panel,
+    .music-panel,
+    .mood-panel,
+    .devotion-shell { position:relative; isolation:isolate; }
+
+    .letter-card::after,
+    .chat-panel::before,
+    .music-panel::before,
+    .mood-panel::before,
+    .devotion-shell::after {
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      z-index:0;
+      background:linear-gradient(150deg,rgba(255,255,255,0.30) 0%,transparent 34%);
+      opacity:0.9;
+    }
+    /* Keep their existing children above the sheen. */
+    .letter-card > *,
+    .chat-panel > *,
+    .music-panel > *,
+    .mood-panel > *,
+    .devotion-shell > * { position:relative; z-index:1; }
+
+    /* The sticky music header must stay ABOVE scrolling siblings.
+       The `> *` rule above flattens it to z-index:1 (equal to the
+       scrolling content that follows it in the DOM), which lets list
+       items paint over the pinned header on scroll. Restore its lead. */
+    .music-panel > .music-panel-top { z-index:3; }
+
+    /* ── Button glassiness + buttery micro-interactions ──────────
+       Reuse spring/smooth eases. Hover lift + active press. */
+    .mood-send-btn.ready:active,
+    .mood-add-btn:active,
+    .mood-custom-clear-btn:active,
+    .letter-save-btn:active,
+    .devotion-save-btn:active,
+    .mobile-menu-item:active { transition-duration:0.12s; }
+
+    .core-memories-btn,
+    .mobile-menu-btn { -webkit-backdrop-filter:blur(12px) saturate(150%); backdrop-filter:blur(12px) saturate(150%); }
+
+    /* Subtle moving sheen on key buttons (already present on some).
+       Add to devotion / letter save buttons which lacked it. */
+    .letter-save-btn,
+    .devotion-save-btn { position:relative; overflow:hidden; isolation:isolate; }
+    .letter-save-btn::after,
+    .devotion-save-btn::after {
+      content:"";
+      position:absolute; inset:0; border-radius:inherit; z-index:1;
+      background:var(--glass-sheen);
+      transform:translateX(-160%);
+      transition:transform 0.9s var(--ease-smooth);
+      pointer-events:none;
+    }
+    .letter-save-btn:hover::after,
+    .devotion-save-btn:hover::after { transform:translateX(160%); }
+
+    /* ── SMOOTHNESS / MOBILE / GAP / ALIGNMENT CONSOLIDATION ──── */
+
+    /* Smooth scrolling + momentum on all scrollable glass panels;
+       contain overscroll so the page behind doesn't jump. */
+    .letter-card,
+    .chat-feed,
+    .music-panel,
+    .mood-options,
+    .devotion-shell,
+    .devotion-list {
+      -webkit-overflow-scrolling:touch;
+      overscroll-behavior:contain;
+    }
+
+    /* Guarantee a comfortable >=44px tap target on small close/icon
+       buttons that were 32–36px (accessibility + mobile ergonomics). */
+    @media (max-width:680px) {
+      .close-btn,
+      .chat-close,
+      .mood-close-btn,
+      .devotion-close-btn,
+      .music-collapse-btn {
+        width:44px !important;
+        height:44px !important;
+        font-size:17px !important;
+      }
+      .mood-opt-remove {
+        width:26px !important;
+        height:26px !important;
+      }
+    }
+
+    /* Fix potential horizontal overflow sources: long unbreakable
+       strings inside chat/letter/devotion text wrap instead of
+       pushing the layout wider than the viewport. */
+    .love-note-body,
+    .chat-bubble,
+    .devotion-textarea,
+    .daily-verse-text { overflow-wrap:anywhere; }
+
+    /* ── PERF: cap stacked heavy blur on mobile ─────────────────
+       A glass modal (shell) already sits inside a blurred overlay
+       backdrop, so two full-area heavy blurs stack on phones. Lighten
+       the inner-surface blur and the overlay backdrop on small screens
+       to avoid scroll/compositing jank. Readability is preserved by the
+       opaque-ish surface gradients, not the blur. */
+    @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      @media (max-width:680px) {
+        .letter-card,
+        .chat-panel,
+        .music-panel,
+        .mood-panel,
+        .devotion-shell,
+        .vince-ai-panel {
+          -webkit-backdrop-filter:blur(14px) saturate(160%) !important;
+          backdrop-filter:blur(14px) saturate(160%) !important;
+        }
+        .letter-overlay { -webkit-backdrop-filter:blur(12px) saturate(140%); backdrop-filter:blur(12px) saturate(140%); }
+        .devotion-overlay { -webkit-backdrop-filter:blur(12px) saturate(140%); backdrop-filter:blur(12px) saturate(140%); }
+      }
+    }
+
+    /* Modals/panels must always be able to scroll if content
+       exceeds a short viewport (e.g. landscape phones). */
+    @media (max-height:560px) {
+      .letter-card { max-height:94svh; }
+      .devotion-shell { max-height:calc(100svh - 16px); }
+      .vince-ai-panel { min-height:240px; }
+    }
+
+    /* Avoid layout shift / scrollbar flash when a modal opens:
+       lock the body width while devotion/letter overlays are open. */
+    body.devotion-open { overscroll-behavior:none; }
+
+    /* ── Reduced-motion: curtail all new animation/sheen ──────── */
+    @media (prefers-reduced-motion: reduce) {
+      .letter-card::after,
+      .chat-panel::before,
+      .music-panel::before,
+      .mood-panel::before,
+      .devotion-shell::after { transition:none !important; }
+      .letter-save-btn::after,
+      .devotion-save-btn::after { display:none !important; }
+      .letter-card,
+      .chat-panel,
+      .music-panel,
+      .mood-panel,
+      .devotion-shell,
+      .vince-ai-panel,
+      .subtitle.daily-verse-card,
+      .mobile-menu-panel { transition:none !important; }
     }
   </style>
 
