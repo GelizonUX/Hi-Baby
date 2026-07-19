@@ -6014,8 +6014,12 @@ body.mobile-menu-open .mobile-menu-icon::after {
        children of these containers, at higher specificity so they win.
        (.chat-close / .music-collapse-btn / .mood-close-btn are nested
        inside header divs, not direct children, so they're unaffected.) */
-    .letter-card > .close-btn { position:absolute; top:14px; right:14px; left:auto; }
-    .devotion-shell > .devotion-close-btn { position:absolute; top:14px; right:14px; left:auto; }
+    /* z-index:12 is REQUIRED: the `> *` rule forces every direct child to
+       z-index:1, and the close button is the FIRST child, so the header /
+       content that follows it in the DOM paints ON TOP and swallows the
+       clicks (button visible but not clickable). Raise it above content. */
+    .letter-card > .close-btn { position:absolute; top:14px; right:14px; left:auto; z-index:12; }
+    .devotion-shell > .devotion-close-btn { position:absolute; top:14px; right:14px; left:auto; z-index:12; }
 
     /* The sticky music header must stay ABOVE scrolling siblings.
        The `> *` rule above flattens it to z-index:1 (equal to the
