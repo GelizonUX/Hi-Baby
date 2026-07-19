@@ -508,6 +508,9 @@
       position:relative; z-index:1;
       display:flex; align-items:center; justify-content:space-between;
       margin-bottom:18px; padding-bottom:14px;
+      /* reserve space on the right so the meta badge never runs under the
+         absolutely-positioned close (✕) button at top:14/right:14 */
+      padding-right:44px;
       border-bottom:1px solid rgba(255,180,215,0.3);
     }
 
@@ -6004,6 +6007,16 @@ body.mobile-menu-open .mobile-menu-icon::after {
     .mood-panel > *,
     .devotion-shell > * { position:relative; z-index:1; }
 
+    /* The `> *` rule above flattens ABSOLUTELY-positioned direct-child
+       close buttons to position:relative, dropping them into normal flow
+       at the container's top-left (clipped, empty top strip). Restore the
+       absolute positioning for the two close buttons that ARE direct
+       children of these containers, at higher specificity so they win.
+       (.chat-close / .music-collapse-btn / .mood-close-btn are nested
+       inside header divs, not direct children, so they're unaffected.) */
+    .letter-card > .close-btn { position:absolute; top:14px; right:14px; left:auto; }
+    .devotion-shell > .devotion-close-btn { position:absolute; top:14px; right:14px; left:auto; }
+
     /* The sticky music header must stay ABOVE scrolling siblings.
        The `> *` rule above flattens it to z-index:1 (equal to the
        scrolling content that follows it in the DOM), which lets list
@@ -6106,6 +6119,27 @@ body.mobile-menu-open .mobile-menu-icon::after {
       .letter-card { max-height:94svh; }
       .devotion-shell { max-height:calc(100svh - 16px); }
       .vince-ai-panel { min-height:240px; }
+
+      /* Landscape / short viewports: the fixed chat & AI panels were
+         anchored by bottom with a tall fixed height, pushing their
+         header + close button above the top edge (unreachable) and
+         disabling scroll. Stretch them within the safe area, keep the
+         right-edge anchor, and make them scrollable. svh tracks the
+         visible viewport so mobile browser chrome doesn't clip them. */
+      .chat-panel {
+        top:8px;
+        bottom:8px;
+        height:auto;
+        max-height:calc(100svh - 16px);
+        overflow-y:auto;
+      }
+      .vince-ai-panel {
+        top:8px;
+        bottom:auto;
+        height:auto;
+        max-height:calc(100svh - 16px);
+        overflow-y:auto;
+      }
     }
 
     /* Avoid layout shift / scrollbar flash when a modal opens:
