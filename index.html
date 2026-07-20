@@ -6168,6 +6168,53 @@ body.mobile-menu-open .mobile-menu-icon::after {
       .subtitle.daily-verse-card,
       .mobile-menu-panel { transition:none !important; }
     }
+
+    /* ── FULL-SCREEN CHAT ON PHONES ─────────────────────────────
+       When the chat opens (chat bubble tap → .chat-panel.open), show it
+       as a full-screen sheet on phones (portrait AND landscape): header
+       pinned at the top below the notch, messages scroll in the middle,
+       composer pinned above the home indicator. !important + last chat
+       rule in source so it wins over the earlier docked-panel rules.
+       Desktop keeps the compact floating panel. */
+    @media (max-width:680px), (max-height:600px) {
+      .chat-panel {
+        inset:0 !important;
+        width:auto !important;
+        height:auto !important;
+        max-width:none !important;
+        max-height:none !important;
+        border:none !important;
+        border-radius:0 !important;
+        z-index:200 !important;
+        overflow:hidden !important;           /* the feed scrolls, not the panel */
+        /* kill the old centering patch's translateX(-50%) so the sheet
+           sits flush at inset:0. No `both` fill-mode on the animation
+           below → if it never runs, the panel is still visible + flush,
+           never stuck at an invisible from-state. */
+        transform:none !important;
+        transform-origin:center bottom !important;
+      }
+      /* clean slide-up sheet; !important beats the old patch's
+         `animation: mobileChatPanelPopIn … !important` on .chat-panel.open */
+      .chat-panel.open { animation:chatSheetIn 0.42s var(--ease-out-expo) !important; }
+
+      /* header clears the status bar / notch; keep the ✕ easy to hit */
+      .chat-header { padding-top:calc(14px + env(safe-area-inset-top)) !important; }
+      .chat-header-title { font-size:24px !important; }
+      .chat-close { width:42px !important; height:42px !important; font-size:18px !important; }
+
+      /* a little more breathing room for full-width messages */
+      .chat-feed { padding-left:16px !important; padding-right:16px !important; }
+
+      /* composer sits above the home indicator */
+      .chat-composer { padding-bottom:calc(12px + env(safe-area-inset-bottom)) !important; }
+    }
+    /* transform-only (no opacity) so the sheet is ALWAYS visible even if
+       the animation stalls — it just slides up rather than fading in. */
+    @keyframes chatSheetIn {
+      from { transform:translateY(26px); }
+      to   { transform:translateY(0); }
+    }
   </style>
 
 </head>
