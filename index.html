@@ -684,11 +684,11 @@
        The wrap is a flex column (bubble → meta → strip in DOM); use `order`
        to place the strip right under the bubble and a negative top margin so
        it overlaps the bubble's bottom edge. The timestamp (meta) drops below. */
-    .reaction-strip { display:none; gap:4px; margin-top:-12px; margin-bottom:1px; flex-wrap:wrap; position:relative; z-index:2; }
+    .reaction-strip { display:none; gap:4px; margin-top:-12px; margin-bottom:1px; flex-wrap:wrap; position:relative; z-index:2; pointer-events:none; }
     .chat-bubble-wrap .chat-meta { order:1; }
     .chat-bubble-wrap.riri  .reaction-strip { justify-content:flex-start; padding-left:10px; }
     .chat-bubble-wrap.vince .reaction-strip { justify-content:flex-end; padding-right:10px; }
-    .reaction-pill { display:inline-flex; align-items:center; gap:3px; background:rgba(255,255,255,0.88); border:1px solid rgba(255,183,214,0.5); border-radius:999px; padding:3px 8px; font-size:13px; cursor:pointer; transition:transform 0.25s var(--ease-spring),background 0.2s ease; box-shadow:0 4px 12px rgba(255,87,165,0.08); animation:reactionPop 0.35s var(--ease-spring); }
+    .reaction-pill { display:inline-flex; align-items:center; gap:3px; background:rgba(255,255,255,0.88); border:1px solid rgba(255,183,214,0.5); border-radius:999px; padding:3px 8px; font-size:13px; cursor:pointer; transition:transform 0.25s var(--ease-spring),background 0.2s ease; box-shadow:0 4px 12px rgba(255,87,165,0.08); animation:reactionPop 0.35s var(--ease-spring); pointer-events:auto; }
     .reaction-pill:hover { transform:scale(1.1) translateY(-1px); }
     .reaction-pill .r-count { font-size:11px; color:#b06882; font-weight:600; }
     @keyframes reactionPop { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
