@@ -680,10 +680,15 @@
     .mood-bubble-blue { background:linear-gradient(135deg,rgba(210,235,255,0.95),rgba(185,220,255,0.9)) !important; border-color:rgba(100,180,255,0.4) !important; }
 
     /* ── REACTION STRIP ────────────────────────────────────── */
-    .reaction-strip { display:none; gap:4px; margin-top:4px; flex-wrap:wrap; }
-    .chat-bubble-wrap.riri  .reaction-strip { justify-content:flex-start; }
-    .chat-bubble-wrap.vince .reaction-strip { justify-content:flex-end; }
-    .reaction-pill { display:inline-flex; align-items:center; gap:3px; background:rgba(255,255,255,0.88); border:1px solid rgba(255,183,214,0.5); border-radius:999px; padding:3px 8px; font-size:13px; cursor:pointer; transition:transform 0.25s var(--ease-spring),background 0.2s ease; box-shadow:0 4px 12px rgba(255,87,165,0.08); animation:reactionPop 0.35s var(--ease-spring); }
+    /* Messenger-style: the reaction hugs the bottom corner of the bubble.
+       The wrap is a flex column (bubble → meta → strip in DOM); use `order`
+       to place the strip right under the bubble and a negative top margin so
+       it overlaps the bubble's bottom edge. The timestamp (meta) drops below. */
+    .reaction-strip { display:none; gap:4px; margin-top:-12px; margin-bottom:1px; flex-wrap:wrap; position:relative; z-index:2; pointer-events:none; }
+    .chat-bubble-wrap .chat-meta { order:1; }
+    .chat-bubble-wrap.riri  .reaction-strip { justify-content:flex-start; padding-left:10px; }
+    .chat-bubble-wrap.vince .reaction-strip { justify-content:flex-end; padding-right:10px; }
+    .reaction-pill { display:inline-flex; align-items:center; gap:3px; background:rgba(255,255,255,0.88); border:1px solid rgba(255,183,214,0.5); border-radius:999px; padding:3px 8px; font-size:13px; cursor:pointer; transition:transform 0.25s var(--ease-spring),background 0.2s ease; box-shadow:0 4px 12px rgba(255,87,165,0.08); animation:reactionPop 0.35s var(--ease-spring); pointer-events:auto; }
     .reaction-pill:hover { transform:scale(1.1) translateY(-1px); }
     .reaction-pill .r-count { font-size:11px; color:#b06882; font-weight:600; }
     @keyframes reactionPop { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
@@ -703,8 +708,20 @@
     .chat-sender-select { border:none; outline:none; background:rgba(255,236,245,0.75); color:var(--text-soft); border-radius:999px; padding:7px 12px; font-size:13px; font-family:"Inter",sans-serif; cursor:pointer; }
 
     .chat-status-row { display:flex; align-items:center; justify-content:flex-start; min-height:16px; margin-bottom:8px; }
-    .chat-typing-indicator { font-size:11px; color:#b56c8d; opacity:0; transform:translateY(4px); transition:opacity 0.22s ease,transform 0.22s ease; pointer-events:none; }
-    .chat-typing-indicator.show { opacity:0.95; transform:translateY(0); }
+    /* Typing indicator lives INSIDE the feed as the last incoming bubble
+       (Messenger-style). Hidden = no layout space; shown = aligned to the
+       typing person's side. The empty composer status row is hidden. */
+    .chat-status-row { display:none; }
+    .chat-typing-indicator { display:none; align-self:flex-start; margin:1px 2px 2px; pointer-events:none; }
+    .chat-typing-indicator.show { display:block; animation:bubbleIn 0.35s var(--ease-spring); }
+    .chat-typing-indicator.typing-right { align-self:flex-end; }
+    .chat-typing-indicator.typing-right .typing-dots { border-radius:16px 16px 4px 16px; }
+    /* Messenger-style animated typing bubble: 3 bouncing dots */
+    .typing-dots { display:inline-flex; align-items:center; gap:5px; padding:9px 13px; border-radius:16px 16px 16px 4px; background:linear-gradient(180deg,#ffd8e9,#ffc7df); border:1px solid rgba(255,255,255,0.72); box-shadow:0 8px 20px rgba(255,87,165,0.12); }
+    .typing-dots > span { width:7px; height:7px; border-radius:50%; background:#c76b93; opacity:0.45; animation:typingBounce 1.25s infinite ease-in-out; }
+    .typing-dots > span:nth-child(2) { animation-delay:0.18s; }
+    .typing-dots > span:nth-child(3) { animation-delay:0.36s; }
+    @keyframes typingBounce { 0%,60%,100% { transform:translateY(0); opacity:0.4; } 30% { transform:translateY(-5px); opacity:1; } }
 
     .chat-reply-preview { display:none; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:8px; padding:10px 12px; border-radius:14px; background:rgba(255,236,245,0.72); border:1px solid rgba(255,183,214,0.4); }
     .chat-reply-preview.show { display:flex; animation:fadeSlideUp 0.25s var(--ease-out-expo); }
@@ -9107,11 +9124,19 @@ const playPrevSong = () => playPrevSpotifyTrack();
       const isVisible = !!otherState?.active && age < 7000;
 
       if (isVisible) {
-        chatTypingIndicator.textContent = `${senderLabel(other)} is typing...`;
+        // Messenger-style 3-dot typing bubble shown INSIDE the feed as the
+        // last incoming message (built once so the bounce runs continuously).
+        if (!chatTypingIndicator.querySelector(".typing-dots")) {
+          chatTypingIndicator.innerHTML = '<span class="typing-dots" role="status" aria-label="typing"><span></span><span></span><span></span></span>';
+        }
+        chatTypingIndicator.classList.toggle("typing-right", other === "vince");
+        if (chatFeed.lastElementChild !== chatTypingIndicator) {
+          chatFeed.appendChild(chatTypingIndicator); // move into the feed, keep it last
+        }
         chatTypingIndicator.classList.add("show");
+        chatFeed.scrollTop = chatFeed.scrollHeight;
         typingExpiryTimer = setTimeout(renderTypingIndicator, Math.max(250, 7100 - age));
       } else {
-        chatTypingIndicator.textContent = "";
         chatTypingIndicator.classList.remove("show");
       }
     }
@@ -9154,6 +9179,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
       if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • sending...`;
       tempWrap.dataset.pendingClientId = pendingId;
       chatFeed.appendChild(tempWrap);
+      if (chatTypingIndicator.classList.contains("show")) chatFeed.appendChild(chatTypingIndicator); // keep typing bubble last
       chatFeed.scrollTop = chatFeed.scrollHeight;
       pendingPhotoUploads.set(pendingId, { wrap: tempWrap, localUrl });
 
@@ -9448,6 +9474,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
       }
 
       chatFeed.appendChild(buildChatBubble(data,snap.key));
+      if (chatTypingIndicator.classList.contains("show")) chatFeed.appendChild(chatTypingIndicator); // keep typing bubble last
       chatFeed.scrollTop=chatFeed.scrollHeight;
       watchReactions(snap.key);
     });
