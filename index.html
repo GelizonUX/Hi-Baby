@@ -708,8 +708,14 @@
     .chat-sender-select { border:none; outline:none; background:rgba(255,236,245,0.75); color:var(--text-soft); border-radius:999px; padding:7px 12px; font-size:13px; font-family:"Inter",sans-serif; cursor:pointer; }
 
     .chat-status-row { display:flex; align-items:center; justify-content:flex-start; min-height:16px; margin-bottom:8px; }
-    .chat-typing-indicator { font-size:11px; color:#b56c8d; opacity:0; transform:translateY(4px); transition:opacity 0.22s ease,transform 0.22s ease; pointer-events:none; }
-    .chat-typing-indicator.show { opacity:1; transform:translateY(0); }
+    /* Typing indicator lives INSIDE the feed as the last incoming bubble
+       (Messenger-style). Hidden = no layout space; shown = aligned to the
+       typing person's side. The empty composer status row is hidden. */
+    .chat-status-row { display:none; }
+    .chat-typing-indicator { display:none; align-self:flex-start; margin:1px 2px 2px; pointer-events:none; }
+    .chat-typing-indicator.show { display:block; animation:bubbleIn 0.35s var(--ease-spring); }
+    .chat-typing-indicator.typing-right { align-self:flex-end; }
+    .chat-typing-indicator.typing-right .typing-dots { border-radius:16px 16px 4px 16px; }
     /* Messenger-style animated typing bubble: 3 bouncing dots */
     .typing-dots { display:inline-flex; align-items:center; gap:5px; padding:9px 13px; border-radius:16px 16px 16px 4px; background:linear-gradient(180deg,#ffd8e9,#ffc7df); border:1px solid rgba(255,255,255,0.72); box-shadow:0 8px 20px rgba(255,87,165,0.12); }
     .typing-dots > span { width:7px; height:7px; border-radius:50%; background:#c76b93; opacity:0.45; animation:typingBounce 1.25s infinite ease-in-out; }
@@ -9118,12 +9124,17 @@ const playPrevSong = () => playPrevSpotifyTrack();
       const isVisible = !!otherState?.active && age < 7000;
 
       if (isVisible) {
-        // Messenger-style 3-dot typing bubble (built once so the bounce
-        // animation runs continuously instead of restarting each tick).
+        // Messenger-style 3-dot typing bubble shown INSIDE the feed as the
+        // last incoming message (built once so the bounce runs continuously).
         if (!chatTypingIndicator.querySelector(".typing-dots")) {
           chatTypingIndicator.innerHTML = '<span class="typing-dots" role="status" aria-label="typing"><span></span><span></span><span></span></span>';
         }
+        chatTypingIndicator.classList.toggle("typing-right", other === "vince");
+        if (chatFeed.lastElementChild !== chatTypingIndicator) {
+          chatFeed.appendChild(chatTypingIndicator); // move into the feed, keep it last
+        }
         chatTypingIndicator.classList.add("show");
+        chatFeed.scrollTop = chatFeed.scrollHeight;
         typingExpiryTimer = setTimeout(renderTypingIndicator, Math.max(250, 7100 - age));
       } else {
         chatTypingIndicator.classList.remove("show");
@@ -9168,6 +9179,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
       if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • sending...`;
       tempWrap.dataset.pendingClientId = pendingId;
       chatFeed.appendChild(tempWrap);
+      if (chatTypingIndicator.classList.contains("show")) chatFeed.appendChild(chatTypingIndicator); // keep typing bubble last
       chatFeed.scrollTop = chatFeed.scrollHeight;
       pendingPhotoUploads.set(pendingId, { wrap: tempWrap, localUrl });
 
@@ -9462,6 +9474,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
       }
 
       chatFeed.appendChild(buildChatBubble(data,snap.key));
+      if (chatTypingIndicator.classList.contains("show")) chatFeed.appendChild(chatTypingIndicator); // keep typing bubble last
       chatFeed.scrollTop=chatFeed.scrollHeight;
       watchReactions(snap.key);
     });
