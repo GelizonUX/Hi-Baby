@@ -8361,19 +8361,31 @@ async function initSpotifyIntegration() {
     }
 
     function renderLetterContent(data) {
-      loveNoteTitle.textContent = data.title || DEFAULT_LETTER.title;
-      loveNoteBody.textContent  = data.body  || DEFAULT_LETTER.body;
+      const title = data.title ?? "";
+      const body  = data.body  ?? "";
+      loveNoteTitle.textContent = title;
+      loveNoteBody.textContent  = body;
+      // A deliberately blank letter shows nothing at all — collapse the empty
+      // elements so there's no stray heading gap, just a clean empty letter.
+      loveNoteTitle.hidden = !title;
+      loveNoteBody.hidden  = !body;
     }
 
     function loadLetter() {
       renderLetterDate();
       // listen for realtime updates from Firebase
       onValue(ref(db, "letterContent"), snap => {
-        const data = snap.val() || DEFAULT_LETTER;
+        const saved = snap.val();
+        // Use a saved letter EXACTLY as saved, so clearing the fields really
+        // does send a blank letter. Only fall back to the starter letter when
+        // nothing has ever been saved.
+        const data = saved
+          ? { title: saved.title ?? "", body: saved.body ?? "" }
+          : DEFAULT_LETTER;
         renderLetterContent(data);
         // sync edit fields if Vince is viewing
-        editLetterTitle.value = data.title || DEFAULT_LETTER.title;
-        editLetterBody.value  = data.body  || DEFAULT_LETTER.body;
+        editLetterTitle.value = data.title;
+        editLetterBody.value  = data.body;
       });
     }
 
@@ -8384,16 +8396,19 @@ async function initSpotifyIntegration() {
     letterSaveBtn.addEventListener("click", async () => {
       const newTitle = editLetterTitle.value.trim();
       const newBody  = editLetterBody.value.trim();
-      if (!newTitle && !newBody) return;
+      // Blank is allowed on purpose: clearing both fields sends an empty
+      // letter, so she opens it and there's nothing to read.
 
       try {
         letterSaveBtn.disabled = true;
         letterSaveBtn.textContent = "saving...";
         await set(ref(db, "letterContent"), {
-          title: newTitle || DEFAULT_LETTER.title,
-          body:  newBody  || DEFAULT_LETTER.body
+          title: newTitle,
+          body:  newBody
         });
-        letterSaveStatus.textContent = "saved! she'll see your new message 💗";
+        letterSaveStatus.textContent = (!newTitle && !newBody)
+          ? "saved! she'll open a blank letter 💌"
+          : "saved! she'll see your new message 💗";
         setTimeout(() => { letterSaveStatus.textContent = ""; }, 3000);
       } catch(e) {
         console.error(e);
