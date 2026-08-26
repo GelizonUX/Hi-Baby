@@ -9507,6 +9507,8 @@ const playPrevSong = () => playPrevSpotifyTrack();
     let voiceMeterId      = null;       // sampling timer (independent of rAF)
     let voicePreviewAudio = null;
     let voicePreviewRaf   = null;
+    let voicePreviewRetried  = false;   // data-URL fallback used at most once per blob
+    let voicePreviewFailedSrc = "";     // play() reject + error event = one failure, not two
     let voiceStatusTimer  = null;
     let vnActivePlayer    = null;       // only one voice note plays at a time
 
@@ -9672,6 +9674,9 @@ const playPrevSong = () => playPrevSpotifyTrack();
         try { voicePreviewAudio.removeAttribute("src"); voicePreviewAudio.load(); } catch (_) {}
         voicePreviewAudio = null;
       }
+      // Each new preview gets a fresh shot at the fallback.
+      voicePreviewRetried  = false;
+      voicePreviewFailedSrc = "";
       if (vnActivePlayer && vnActivePlayer.kind === "preview") vnActivePlayer = null;
     }
 
