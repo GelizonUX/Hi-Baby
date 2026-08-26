@@ -6312,7 +6312,8 @@ body.mobile-menu-open .mobile-menu-icon::after {
       transition:transform 0.25s var(--ease-spring), filter 0.2s ease;
     }
     /* invisible hit-area expansion → ≥44×44 tap target inside the pill */
-    .voice-toggle-btn::after { content:""; position:absolute; inset:-5px; border-radius:999px; }
+    /* inset:-6px → 44×44 even at the phone --vn-ctl of 40px (32 visual + 12) */
+    .voice-toggle-btn::after { content:""; position:absolute; inset:-6px; border-radius:999px; }
     .voice-toggle-btn:hover  { filter:brightness(1.06); }
     .voice-toggle-btn:active { transform:scale(0.92); }
     .voice-toggle-btn:disabled { opacity:0.6; cursor:default; }
@@ -6326,16 +6327,20 @@ body.mobile-menu-open .mobile-menu-icon::after {
 
     /* shared waveform widget (composer pill + message bubble) */
     .voice-wave { position:relative; flex:1 1 auto; min-width:0; height:calc(var(--vn-ctl) * 0.5); overflow:hidden; }
-    .vn-row { position:absolute; inset:0; display:flex; align-items:center; gap:2px; }
+    .vn-row { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; gap:2px; }
+    /* Bars are a FIXED 3px wide: letting them flex to fill made them wider than
+       they were tall on roomy composers, so the waveform read as a dotted line.
+       The 30% floor (matched by vnSetWave) keeps a silent bar taller than it is
+       wide, so quiet passages still read as bars rather than dots. */
     .vn-bar {
-      flex:1 1 0; min-width:2px; height:18%; border-radius:2px;
+      flex:0 1 3px; min-width:2px; max-width:3px; height:30%; border-radius:2px;
       background:rgba(255,120,180,0.34);
       transition:height 0.09s linear;
     }
     .vn-row.vn-fill { clip-path:inset(0 100% 0 0); transition:clip-path 0.08s linear; }
     .vn-row.vn-fill .vn-bar { background:linear-gradient(180deg,#ff6ab5,#ff137d); }
     /* fallback bounce when AnalyserNode isn't available */
-    @keyframes vnBarBounce { 0%,100% { height:20%; } 50% { height:78%; } }
+    @keyframes vnBarBounce { 0%,100% { height:30%; } 50% { height:82%; } }
     .voice-bar.is-recording.vn-css-anim .voice-wave .vn-row:not(.vn-fill) .vn-bar {
       animation:vnBarBounce 0.9s ease-in-out infinite;
       animation-delay:calc(var(--i,0) * 0.045s);
@@ -9499,6 +9504,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
     let voiceAC           = null;
     let voiceAnalyser     = null;
     let voiceRafId        = null;
+    let voiceMeterId      = null;       // sampling timer (independent of rAF)
     let voicePreviewAudio = null;
     let voicePreviewRaf   = null;
     let voiceStatusTimer  = null;
@@ -9551,7 +9557,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
         Array.prototype.forEach.call(row.children, (bar, i) => {
           const lv = Number((levels || [])[i]);
           const clamped = Number.isFinite(lv) ? Math.max(0, Math.min(9, lv)) : 0;
-          bar.style.height = `${(18 + clamped * 9.1).toFixed(1)}%`;
+          bar.style.height = `${(30 + clamped * 7.0).toFixed(1)}%`;   // 30%..93%, floor matches .vn-bar
         });
       });
     }
@@ -9599,8 +9605,28 @@ const playPrevSong = () => playPrevSpotifyTrack();
     }
 
     function vnClaimPlayback(player) {
-      if (vnActivePlayer && vnActivePlayer !== player) { try { vnActivePlayer.stop(); } catch (_) {} }
+      if (vnActivePlayer && vnActivePlayer !== player) {
+        try { vnActivePlayer.stop(); } catch (_) {}
+        // A note the USER never paused must not be left frozen at a partial fill
+        // with a stale mid-playback duration label — rewind it fully.
+        try { if (typeof vnActivePlayer.reset === "function") vnActivePlayer.reset(); } catch (_) {}
+      }
       vnActivePlayer = player;
+    }
+
+    /* iOS Safari has historically been flaky playing back an mp4 blob that
+       MediaRecorder just produced. If play() rejects (or the element errors),
+       re-derive the SAME recording as a data: URL once and retry. The upload
+       always uses the original blob — this only rescues local playback. */
+    function vnBlobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        try {
+          const fr = new FileReader();
+          fr.onload  = () => resolve(String(fr.result || ""));
+          fr.onerror = () => reject(fr.error || new Error("read failed"));
+          fr.readAsDataURL(blob);
+        } catch (err) { reject(err); }
+      });
     }
 
     function vnSetState(next) {
@@ -9625,6 +9651,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
 
     function vnStopMeter() {
       if (voiceRafId) { cancelAnimationFrame(voiceRafId); voiceRafId = null; }
+      if (voiceMeterId) { clearInterval(voiceMeterId); voiceMeterId = null; }
       if (voiceAnalyser) { try { voiceAnalyser.disconnect(); } catch (_) {} voiceAnalyser = null; }
       if (voiceAC) { const ac = voiceAC; voiceAC = null; try { ac.close(); } catch (_) {} }
       voiceBar.classList.remove("vn-css-anim");
@@ -9693,27 +9720,41 @@ const playPrevSong = () => playPrevSpotifyTrack();
         voiceAnalyser.smoothingTimeConstant = 0.6;
         src.connect(voiceAnalyser);           // deliberately NOT to destination (no echo)
         const buf = new Uint8Array(voiceAnalyser.fftSize);
-        const quiet = vnReducedMotion();
-        let last = 0;
-        const tick = () => {
-          if (!voiceAnalyser || voiceState !== "recording") { voiceRafId = null; return; }
-          voiceRafId = requestAnimationFrame(tick);
-          const now = performance.now();
-          if (now - last < 60) return;        // ~16 samples/sec
-          last = now;
+        // Reduced motion throttles the REPAINT rate but never stops it: the meter is
+        // the only confirmation the mic is hearing you, and a data readout is not a
+        // vestibular trigger. (The pulse ring and bar tweening are still suppressed
+        // in CSS.) Sampling itself always runs at full rate.
+        const paintGap = vnReducedMotion() ? 220 : 60;
+
+        // SAMPLING lives on an interval, not on rAF: browsers suspend rAF entirely
+        // while the tab is hidden, which flatlined the waveform whenever someone
+        // glanced at a notification mid-note. Intervals are throttled when hidden
+        // (~1Hz) but never stop, so the levels stay real.
+        const sample = () => {
+          if (!voiceAnalyser || voiceState !== "recording") return;
           voiceAnalyser.getByteTimeDomainData(buf);
           let sum = 0;
           for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; sum += v * v; }
           const rms = Math.sqrt(sum / buf.length);
           const lvl = Math.max(0, Math.min(9, Math.round(Math.pow(Math.min(1, rms * 4.2), 0.65) * 9)));
           voiceLevelHistory.push(lvl);
-          if (!quiet) {
-            const tail = voiceLevelHistory.slice(-VN_BARS);
-            while (tail.length < VN_BARS) tail.unshift(0);
-            vnSetWave(voiceWaveEl, tail);
-          }
         };
-        voiceRafId = requestAnimationFrame(tick);
+        voiceMeterId = setInterval(sample, 60);   // ~16 samples/sec while visible
+        sample();
+
+        // PAINTING stays on rAF so it stays in step with the compositor.
+        let lastPaint = 0;
+        const paint = () => {
+          if (!voiceAnalyser || voiceState !== "recording") { voiceRafId = null; return; }
+          voiceRafId = requestAnimationFrame(paint);
+          const now = performance.now();
+          if (now - lastPaint < paintGap) return;
+          lastPaint = now;
+          const tail = voiceLevelHistory.slice(-VN_BARS);
+          while (tail.length < VN_BARS) tail.unshift(0);
+          vnSetWave(voiceWaveEl, tail);
+        };
+        voiceRafId = requestAnimationFrame(paint);
       } catch (err) {
         console.warn("Voice note: level meter unavailable:", err);
         vnStopMeter();
@@ -9734,7 +9775,12 @@ const playPrevSong = () => playPrevSpotifyTrack();
     }
 
     async function vnStartRecording() {
-      if (voiceState !== "idle" || voiceStarting || voiceSending) return;   // double-tap guard
+      // Double-tap guard. Deliberately does NOT test voiceSending: by the time an
+      // upload is in flight, vnSendVoiceNote has already copied blob/url/levels into
+      // locals and called vnResetToIdle, so the composer is free and a fresh
+      // recording cannot disturb the send. Blocking here made 🎤 silently dead for
+      // the whole (multi-second, on mobile) upload window.
+      if (voiceState !== "idle" || voiceStarting) return;
       if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function" ||
           typeof MediaRecorder === "undefined") {
         vnStatus("Voice notes aren't supported on this browser.");
@@ -9775,7 +9821,29 @@ const playPrevSong = () => playPrevSpotifyTrack();
         return;
       }
 
+      // A voice note playing out loud would be captured by the mic — echo
+      // cancellation cannot remove a phone speaker. Silence it before capture starts.
+      if (vnActivePlayer) {
+        try { vnActivePlayer.stop(); } catch (_) {}
+        try { if (typeof vnActivePlayer.reset === "function") vnActivePlayer.reset(); } catch (_) {}
+        vnActivePlayer = null;
+      }
+
       voiceStream = stream;
+
+      // If the mic disappears mid-record (unplugged headset, device grabbed away)
+      // the track ends but MediaRecorder stays "recording" — the timer and the
+      // pulse ring would keep implying capture. Close the recording instead.
+      try {
+        stream.getAudioTracks().forEach(t => {
+          t.addEventListener("ended", () => {
+            if (voiceState !== "recording") return;
+            vnStatus("Your mic was disconnected — saved what we got.");
+            vnStopToPreview();
+          });
+        });
+      } catch (_) {}
+
       const picked = vnPickMime();
       voiceExt = picked.ext;
       voiceChunks = [];
@@ -9939,6 +10007,12 @@ const playPrevSong = () => playPrevSpotifyTrack();
         voiceLocalUrl = "";                       // ownership transferred — do NOT revoke here
         voiceRunToken++;
         vnResetToIdle({ revoke: false });
+        // Everything the upload needs now lives in locals and the composer is idle,
+        // so the send is no longer "in progress" as far as the composer is concerned.
+        // Releasing here lets a NEW recording start during the upload (D2) and keeps
+        // the close-the-chat observer able to discard that new recording.
+        voiceSending = false;
+        voiceBar.classList.remove("is-busy");
 
         const tempWrap = buildChatBubble(
           { sender, isVoice:true, voiceUrl:localUrl, duration:durationSec, voiceLevels:levelsStr, createdAt, replyTo },
