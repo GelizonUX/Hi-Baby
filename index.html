@@ -6232,6 +6232,189 @@ body.mobile-menu-open .mobile-menu-icon::after {
       from { transform:translateY(26px); }
       to   { transform:translateY(0); }
     }
+
+    /* ══════════════════════════════════════════════════════════
+       VOICE NOTES — composer states + in-feed voice bubbles
+       ══════════════════════════════════════════════════════════
+       Height stability (hard requirement): the composer row NEVER
+       reflows between IDLE / RECORDING / PREVIEW. The idle children
+       (📷 🎤 textarea 💌) always keep their space — they are only
+       faded + `visibility:hidden` — and the record/preview bar is an
+       absolutely-positioned overlay pinned to `inset:0` of the row.
+       There is literally nothing that can change the row's height.
+       `--vn-ctl` mirrors the control size the existing rules already
+       use (42px desktop, 40px at the ≤680px phone breakpoint) so the
+       new pill lines up with the camera / send buttons exactly. */
+    .chat-input-row { position:relative; --vn-ctl:42px; min-height:var(--vn-ctl); }
+    @media (max-width:680px) { .chat-input-row { --vn-ctl:40px; } }
+
+    /* mic button — same 42×42 pill language as .chat-photo-btn */
+    .chat-mic-btn { font-size:17px; }
+
+    /* idle controls fade out but KEEP their layout space */
+    .chat-input-row > .chat-photo-btn,
+    .chat-input-row > .chat-message-input,
+    .chat-input-row > .chat-send-btn {
+      opacity:1; visibility:visible;
+      transition:opacity 0.2s ease 0.05s, visibility 0s linear 0s,
+                 transform 0.3s var(--ease-spring), background 0.2s ease,
+                 filter 0.3s ease, box-shadow 0.25s ease;
+    }
+    .chat-input-row.voice-mode > .chat-photo-btn,
+    .chat-input-row.voice-mode > .chat-message-input,
+    .chat-input-row.voice-mode > .chat-send-btn {
+      opacity:0; visibility:hidden; pointer-events:none;
+      transition:opacity 0.16s ease, visibility 0s linear 0.16s;
+    }
+
+    .voice-bar {
+      position:absolute; inset:0; z-index:3;
+      display:flex; align-items:flex-end; gap:8px;
+      opacity:0; visibility:hidden; pointer-events:none;
+      transform:translateY(6px) scale(0.99); transform-origin:center bottom;
+      transition:opacity 0.18s ease, transform 0.32s var(--ease-spring),
+                 visibility 0s linear 0.18s;
+    }
+    .chat-input-row.voice-mode > .voice-bar {
+      opacity:1; visibility:visible; pointer-events:auto;
+      transform:translateY(0) scale(1);
+      transition:opacity 0.22s ease 0.04s, transform 0.36s var(--ease-spring) 0.04s,
+                 visibility 0s linear 0s;
+    }
+    /* must out-specify the .voice-mode > .voice-bar rule above, or the
+       "uploading" dim + input lock silently never applies */
+    .chat-input-row.voice-mode > .voice-bar.is-busy { pointer-events:none; opacity:0.72; }
+
+    /* 🗑 discard — inherits .chat-photo-btn geometry (42 / 40) */
+    .voice-discard-btn {
+      background:rgba(255,255,255,0.92); color:#c9587f; font-size:16px;
+      box-shadow:0 6px 16px rgba(255,80,158,0.12);
+    }
+    .voice-discard-btn:hover { background:rgba(255,232,241,0.98); }
+
+    /* the review pill: [▶/■] [waveform] [timer] */
+    .voice-pill {
+      flex:1 1 auto; min-width:0; height:var(--vn-ctl);
+      display:flex; align-items:center; gap:8px;
+      padding:0 12px 0 4px; border-radius:999px;
+      background:rgba(255,236,245,0.92);
+      border:1px solid rgba(255,255,255,0.8);
+      box-shadow:0 6px 16px rgba(255,80,158,0.10), inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .voice-toggle-btn {
+      position:relative; flex-shrink:0;
+      width:calc(var(--vn-ctl) - 8px); height:calc(var(--vn-ctl) - 8px);
+      border:none; border-radius:999px; cursor:pointer;
+      font-size:13px; line-height:1; color:#fff;
+      background:linear-gradient(135deg,#ff6ab5 0%,#ff137d 100%);
+      box-shadow:0 6px 14px rgba(255,41,133,0.24);
+      display:flex; align-items:center; justify-content:center;
+      transition:transform 0.25s var(--ease-spring), filter 0.2s ease;
+    }
+    /* invisible hit-area expansion → ≥44×44 tap target inside the pill */
+    /* inset:-6px → 44×44 even at the phone --vn-ctl of 40px (32 visual + 12) */
+    .voice-toggle-btn::after { content:""; position:absolute; inset:-6px; border-radius:999px; }
+    .voice-toggle-btn:hover  { filter:brightness(1.06); }
+    .voice-toggle-btn:active { transform:scale(0.92); }
+    .voice-toggle-btn:disabled { opacity:0.6; cursor:default; }
+    /* pulsing ring while recording — no layout change, pure box-shadow */
+    @keyframes vnPulseRing {
+      0%   { box-shadow:0 6px 14px rgba(255,41,133,0.24), 0 0 0 0   rgba(255,45,111,0.45); }
+      70%  { box-shadow:0 6px 14px rgba(255,41,133,0.24), 0 0 0 9px rgba(255,45,111,0); }
+      100% { box-shadow:0 6px 14px rgba(255,41,133,0.24), 0 0 0 0   rgba(255,45,111,0); }
+    }
+    .voice-bar.is-recording .voice-toggle-btn { animation:vnPulseRing 1.7s ease-out infinite; }
+
+    /* shared waveform widget (composer pill + message bubble) */
+    .voice-wave { position:relative; flex:1 1 auto; min-width:0; height:calc(var(--vn-ctl) * 0.5); overflow:hidden; }
+    .vn-row { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; gap:2px; }
+    /* Bars are a FIXED 3px wide: letting them flex to fill made them wider than
+       they were tall on roomy composers, so the waveform read as a dotted line.
+       The 30% floor (matched by vnSetWave) keeps a silent bar taller than it is
+       wide, so quiet passages still read as bars rather than dots. */
+    .vn-bar {
+      flex:0 1 3px; min-width:2px; max-width:3px; height:30%; border-radius:2px;
+      background:rgba(255,120,180,0.34);
+      transition:height 0.09s linear;
+    }
+    .vn-row.vn-fill { clip-path:inset(0 100% 0 0); transition:clip-path 0.08s linear; }
+    .vn-row.vn-fill .vn-bar { background:linear-gradient(180deg,#ff6ab5,#ff137d); }
+    /* fallback bounce when AnalyserNode isn't available */
+    @keyframes vnBarBounce { 0%,100% { height:30%; } 50% { height:82%; } }
+    .voice-bar.is-recording.vn-css-anim .voice-wave .vn-row:not(.vn-fill) .vn-bar {
+      animation:vnBarBounce 0.9s ease-in-out infinite;
+      animation-delay:calc(var(--i,0) * 0.045s);
+    }
+
+    .voice-time {
+      flex-shrink:0; min-width:34px; text-align:right;
+      font-size:11.5px; font-weight:600; color:#b0567f;
+      font-variant-numeric:tabular-nums; letter-spacing:0.01em;
+    }
+
+    /* inline status (permission denied / too short / failed) — floats
+       ABOVE the composer so it can never alter the composer's height */
+    .chat-composer { position:relative; }
+    .voice-status {
+      position:absolute; left:12px; right:12px; bottom:calc(100% + 4px); z-index:6;
+      pointer-events:none; padding:8px 12px; border-radius:12px;
+      font-size:11.5px; line-height:1.35; font-weight:600; text-align:center;
+      color:#8c3f5f; background:rgba(255,247,251,0.97);
+      border:1px solid rgba(255,183,214,0.55);
+      box-shadow:0 10px 26px rgba(255,87,165,0.16);
+      opacity:0; visibility:hidden; transform:translateY(6px);
+      transition:opacity 0.22s ease, transform 0.3s var(--ease-spring), visibility 0s linear 0.22s;
+    }
+    .voice-status.show {
+      opacity:1; visibility:visible; transform:translateY(0);
+      transition:opacity 0.22s ease, transform 0.3s var(--ease-spring), visibility 0s linear 0s;
+    }
+
+    /* ── voice message bubble in the feed ───────────────────── */
+    .chat-bubble.voice-bubble { padding:8px 10px; }
+    .vn-msg { display:flex; align-items:center; gap:9px; min-width:0; width:196px; max-width:100%; }
+    .vn-msg-btn {
+      position:relative; flex-shrink:0; width:34px; height:34px;
+      border:none; border-radius:999px; cursor:pointer;
+      font-size:12px; line-height:1; color:#fff;
+      background:linear-gradient(135deg,#ff6ab5 0%,#ff137d 100%);
+      box-shadow:0 5px 12px rgba(255,41,133,0.22);
+      display:flex; align-items:center; justify-content:center;
+      transition:transform 0.25s var(--ease-spring), filter 0.2s ease;
+    }
+    .vn-msg-btn::after { content:""; position:absolute; inset:-5px; border-radius:999px; }
+    .vn-msg-btn:hover  { filter:brightness(1.06); }
+    .vn-msg-btn:active { transform:scale(0.92); }
+    .chat-bubble-wrap.vince .vn-msg-btn {
+      background:linear-gradient(135deg,#6cc4ff 0%,#1f8fe0 100%);
+      box-shadow:0 5px 12px rgba(31,143,224,0.22);
+    }
+    .vn-msg-wave { position:relative; flex:1 1 auto; min-width:0; height:22px; overflow:hidden; }
+    .vn-msg .vn-bar { background:rgba(180,84,124,0.32); }
+    .vn-msg .vn-fill .vn-bar { background:linear-gradient(180deg,#ff5aa4,#ff2079); }
+    .chat-bubble-wrap.vince .vn-msg .vn-bar { background:rgba(58,120,170,0.28); }
+    .chat-bubble-wrap.vince .vn-msg .vn-fill .vn-bar { background:linear-gradient(180deg,#5cb8f5,#1f8fe0); }
+    .vn-msg-time {
+      flex-shrink:0; min-width:30px; text-align:right;
+      font-size:11px; font-weight:600; opacity:0.85;
+      font-variant-numeric:tabular-nums;
+    }
+    @media (max-width:680px) { .vn-msg { width:min(196px,58vw); } }
+
+    /* ── reduced motion: keep every voice affordance, drop the motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      .voice-bar,
+      .chat-input-row > .chat-photo-btn,
+      .chat-input-row > .chat-message-input,
+      .chat-input-row > .chat-send-btn,
+      .voice-status,
+      .vn-bar,
+      .vn-row.vn-fill { transition:none !important; }
+      .voice-bar { transform:none !important; }
+      .chat-input-row.voice-mode > .voice-bar { transform:none !important; }
+      .voice-bar.is-recording .voice-toggle-btn { animation:none !important; }
+      .voice-bar.is-recording.vn-css-anim .voice-wave .vn-row:not(.vn-fill) .vn-bar { animation:none !important; }
+    }
   </style>
 
 </head>
@@ -6694,13 +6877,27 @@ I'll message you pag gising ko, MWA!
         </div>
         <button class="chat-reply-close" id="chatReplyClose" aria-label="Clear reply">✕</button>
       </div>
+      <div class="voice-status" id="voiceStatus" role="status" aria-live="polite"></div>
       <div class="chat-input-row">
         <!-- photo button -->
         <button class="chat-photo-btn" id="chatPhotoBtn" title="Send a photo">📷</button>
         <input type="file" id="chatPhotoInput" accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.heif" style="display:none;" />
         <input type="file" id="chatCameraInput" accept="image/*" capture="environment" style="display:none;" />
+        <!-- voice note button (sits right beside the camera) -->
+        <button class="chat-photo-btn chat-mic-btn" id="chatMicBtn" type="button" title="Record a voice message" aria-label="Record a voice message" aria-pressed="false">🎤</button>
         <textarea id="chatMessageInput" class="chat-message-input" placeholder="type a message..."></textarea>
         <button id="chatSendBtn" class="chat-send-btn">💌</button>
+        <!-- RECORDING / PREVIEW overlay: absolutely fills the row so the
+             composer height can never change between states -->
+        <div class="voice-bar" id="voiceBar" aria-hidden="true">
+          <button class="chat-photo-btn voice-discard-btn" id="voiceDiscardBtn" type="button" title="Discard" aria-label="Discard voice message">🗑</button>
+          <div class="voice-pill">
+            <button class="voice-toggle-btn" id="voiceToggleBtn" type="button" title="Stop recording" aria-label="Stop recording"><span id="voiceToggleIcon">■</span></button>
+            <div class="voice-wave" id="voiceWave" aria-hidden="true"></div>
+            <div class="voice-time" id="voiceTime">0:00</div>
+          </div>
+          <button class="chat-send-btn voice-send-btn" id="voiceSendBtn" type="button" title="Send voice message" aria-label="Send voice message">➤</button>
+        </div>
       </div>
     </div>
   </div>
@@ -8674,6 +8871,7 @@ async function initSpotifyIntegration() {
     };
     const getMessagePreviewText = data => {
       if (!data) return "Message";
+      if (data.isVoice) return "🎤 Voice message";
       if (data.isPhoto) return "📷 Photo";
       return truncateChatPreview(data.text || "Message");
     };
@@ -8683,7 +8881,8 @@ async function initSpotifyIntegration() {
         key: activeReplyMessage.key || "",
         sender: activeReplyMessage.sender || "riri",
         text: activeReplyMessage.text || "Message",
-        isPhoto: !!activeReplyMessage.isPhoto
+        isPhoto: !!activeReplyMessage.isPhoto,
+        isVoice: !!activeReplyMessage.isVoice
       };
     };
 
@@ -9110,7 +9309,8 @@ const playPrevSong = () => playPrevSpotifyTrack();
         key: msgKey || "",
         sender: data.sender || "riri",
         text: getMessagePreviewText(data),
-        isPhoto: !!data.isPhoto
+        isPhoto: !!data.isPhoto,
+        isVoice: !!data.isVoice
       };
       renderReplyPreview();
       chatMessageInput.focus();
@@ -9263,6 +9463,767 @@ const playPrevSong = () => playPrevSpotifyTrack();
       await handleChatPhotoFile(chatCameraInput.files[0], chatCameraInput);
     });
 
+    /* ══════════════════════════════════════════════════════════
+       VOICE NOTES
+       ══════════════════════════════════════════════════════════
+       Composer state machine: idle → recording → preview → (send|discard).
+       Mirrors handleChatPhotoFile exactly for the send path (optimistic
+       bubble + pendingClientId dedupe + Storage upload + push). */
+    const chatInputRow    = document.querySelector(".chat-input-row");
+    const chatMicBtn      = document.getElementById("chatMicBtn");
+    const voiceBar        = document.getElementById("voiceBar");
+    const voiceDiscardBtn = document.getElementById("voiceDiscardBtn");
+    const voiceToggleBtn  = document.getElementById("voiceToggleBtn");
+    const voiceToggleIcon = document.getElementById("voiceToggleIcon");
+    const voiceWaveEl     = document.getElementById("voiceWave");
+    const voiceTimeEl     = document.getElementById("voiceTime");
+    const voiceSendBtn    = document.getElementById("voiceSendBtn");
+    const voiceStatusEl   = document.getElementById("voiceStatus");
+
+    const VN_BARS   = 22;
+    const VN_MIN_MS = 800;              // shorter than this = accidental tap
+    const VN_MAX_MS = 5 * 60 * 1000;    // hard cap, auto-stops into preview
+    const pendingVoiceUploads = new Map();
+
+    let voiceState        = "idle";     // idle | recording | preview
+    let voiceStarting     = false;      // double-tap guard across the await
+    let voiceSending      = false;
+    let voiceRunToken     = 0;          // invalidates in-flight async work
+    let voiceStream       = null;
+    let voiceRecorder     = null;
+    let voiceChunks       = [];
+    let voiceStopWaiters  = [];
+    let voiceExt          = "webm";
+    let voiceBlob         = null;
+    let voiceLocalUrl     = "";
+    let voiceStartAt      = 0;
+    let voiceDurationMs   = 0;
+    let voiceTimerId      = null;
+    let voiceLevelHistory = [];
+    let voiceLevels       = [];
+    let voiceAC           = null;
+    let voiceAnalyser     = null;
+    let voiceRafId        = null;
+    let voiceMeterId      = null;       // sampling timer (independent of rAF)
+    let voicePreviewAudio = null;
+    let voicePreviewRaf   = null;
+    let voicePreviewRetried  = false;   // data-URL fallback used at most once per blob
+    let voicePreviewFailedSrc = "";     // play() reject + error event = one failure, not two
+    let voiceStatusTimer  = null;
+    let vnActivePlayer    = null;       // only one voice note plays at a time
+
+    const vnReducedMotion = () => {
+      try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches === true; }
+      catch (_) { return false; }
+    };
+
+    const vnFormatTime = sec => {
+      const s = Math.max(0, Math.floor(Number(sec) || 0));
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+    };
+
+    /* levels travel as a compact digit string ("0358972…"), one char per bar */
+    const vnEncodeLevels = arr =>
+      (arr || []).slice(0, VN_BARS).map(v => String(Math.max(0, Math.min(9, Math.round(Number(v) || 0))))).join("");
+    const vnDecodeLevels = str =>
+      String(str || "").split("").map(c => { const n = parseInt(c, 10); return Number.isFinite(n) ? n : 0; });
+
+    /* deterministic stand-in waveform when no real levels were captured */
+    function vnFallbackLevels(seed) {
+      let h = 2166136261 >>> 0;
+      const s = String(seed || "vn");
+      for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+      const out = [];
+      for (let i = 0; i < VN_BARS; i++) { h = (Math.imul(h, 1103515245) + 12345) >>> 0; out.push(2 + ((h >>> 16) % 7)); }
+      return out;
+    }
+
+    function vnBuildWave(host, levels) {
+      host.innerHTML = "";
+      const base = document.createElement("div"); base.className = "vn-row";
+      const fill = document.createElement("div"); fill.className = "vn-row vn-fill";
+      for (let i = 0; i < VN_BARS; i++) {
+        const a = document.createElement("span"); a.className = "vn-bar"; a.style.setProperty("--i", i);
+        const b = document.createElement("span"); b.className = "vn-bar"; b.style.setProperty("--i", i);
+        base.appendChild(a); fill.appendChild(b);
+      }
+      host.appendChild(base); host.appendChild(fill);
+      vnSetWave(host, levels || []);
+      vnSetProgress(host, 0);
+      return host;
+    }
+
+    function vnSetWave(host, levels) {
+      if (!host) return;
+      host.querySelectorAll(".vn-row").forEach(row => {
+        Array.prototype.forEach.call(row.children, (bar, i) => {
+          const lv = Number((levels || [])[i]);
+          const clamped = Number.isFinite(lv) ? Math.max(0, Math.min(9, lv)) : 0;
+          bar.style.height = `${(30 + clamped * 7.0).toFixed(1)}%`;   // 30%..93%, floor matches .vn-bar
+        });
+      });
+    }
+
+    function vnSetProgress(host, ratio) {
+      if (!host) return;
+      const p = Math.max(0, Math.min(1, Number(ratio) || 0));
+      const fill = host.querySelector(".vn-fill");
+      if (fill) fill.style.clipPath = `inset(0 ${((1 - p) * 100).toFixed(2)}% 0 0)`;
+    }
+
+    function vnResampleLevels(history, n) {
+      if (!history || !history.length) return [];
+      const out = [];
+      for (let i = 0; i < n; i++) {
+        const a = Math.floor((i * history.length) / n);
+        const b = Math.max(a + 1, Math.floor(((i + 1) * history.length) / n));
+        let peak = 0;
+        for (let j = a; j < b && j < history.length; j++) peak = Math.max(peak, history[j]);
+        out.push(peak);
+      }
+      return out;
+    }
+
+    /* first supported container; iOS Safari only does audio/mp4 */
+    function vnPickMime() {
+      const opts = [
+        { mime: "audio/mp4",              ext: "m4a"  },
+        { mime: "audio/webm;codecs=opus", ext: "webm" },
+        { mime: "audio/webm",             ext: "webm" }
+      ];
+      if (typeof MediaRecorder !== "undefined" && typeof MediaRecorder.isTypeSupported === "function") {
+        for (const o of opts) { try { if (MediaRecorder.isTypeSupported(o.mime)) return o; } catch (_) {} }
+      }
+      return { mime: "", ext: "webm" };
+    }
+
+    function vnStatus(msg, ms = 3600) {
+      if (!voiceStatusEl) return;
+      if (voiceStatusTimer) { clearTimeout(voiceStatusTimer); voiceStatusTimer = null; }
+      if (!msg) { voiceStatusEl.classList.remove("show"); return; }
+      voiceStatusEl.textContent = msg;
+      voiceStatusEl.classList.add("show");
+      voiceStatusTimer = setTimeout(() => { voiceStatusEl.classList.remove("show"); voiceStatusTimer = null; }, ms);
+    }
+
+    function vnClaimPlayback(player) {
+      if (vnActivePlayer && vnActivePlayer !== player) {
+        try { vnActivePlayer.stop(); } catch (_) {}
+        // A note the USER never paused must not be left frozen at a partial fill
+        // with a stale mid-playback duration label — rewind it fully.
+        try { if (typeof vnActivePlayer.reset === "function") vnActivePlayer.reset(); } catch (_) {}
+      }
+      vnActivePlayer = player;
+    }
+
+    /* iOS Safari has historically been flaky playing back an mp4 blob that
+       MediaRecorder just produced. If play() rejects (or the element errors),
+       re-derive the SAME recording as a data: URL once and retry. The upload
+       always uses the original blob — this only rescues local playback. */
+    function vnBlobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        try {
+          const fr = new FileReader();
+          fr.onload  = () => resolve(String(fr.result || ""));
+          fr.onerror = () => reject(fr.error || new Error("read failed"));
+          fr.readAsDataURL(blob);
+        } catch (err) { reject(err); }
+      });
+    }
+
+    function vnSetState(next) {
+      voiceState = next;
+      const active = next !== "idle";
+      chatInputRow.classList.toggle("voice-mode", active);
+      voiceBar.classList.toggle("is-recording", next === "recording");
+      voiceBar.setAttribute("aria-hidden", active ? "false" : "true");
+      chatMicBtn.setAttribute("aria-pressed", active ? "true" : "false");
+      if (next === "recording") {
+        voiceToggleIcon.textContent = "■";
+        voiceToggleBtn.title = "Stop recording";
+        voiceToggleBtn.setAttribute("aria-label", "Stop recording");
+      } else if (next === "preview") {
+        voiceToggleIcon.textContent = "▶";
+        voiceToggleBtn.title = "Play";
+        voiceToggleBtn.setAttribute("aria-label", "Play recording");
+      }
+    }
+
+    function vnClearTimer() { if (voiceTimerId) { clearInterval(voiceTimerId); voiceTimerId = null; } }
+
+    function vnStopMeter() {
+      if (voiceRafId) { cancelAnimationFrame(voiceRafId); voiceRafId = null; }
+      if (voiceMeterId) { clearInterval(voiceMeterId); voiceMeterId = null; }
+      if (voiceAnalyser) { try { voiceAnalyser.disconnect(); } catch (_) {} voiceAnalyser = null; }
+      if (voiceAC) { const ac = voiceAC; voiceAC = null; try { ac.close(); } catch (_) {} }
+      voiceBar.classList.remove("vn-css-anim");
+    }
+
+    /* release the mic — no lingering recording indicator */
+    function vnReleaseStream() {
+      if (voiceStream) {
+        try { voiceStream.getTracks().forEach(t => t.stop()); } catch (_) {}
+        voiceStream = null;
+      }
+    }
+
+    function vnStopPreviewAudio() {
+      if (voicePreviewRaf) { cancelAnimationFrame(voicePreviewRaf); voicePreviewRaf = null; }
+      if (voicePreviewAudio) {
+        try { voicePreviewAudio.pause(); } catch (_) {}
+        try { voicePreviewAudio.removeAttribute("src"); voicePreviewAudio.load(); } catch (_) {}
+        voicePreviewAudio = null;
+      }
+      // Each new preview gets a fresh shot at the fallback.
+      voicePreviewRetried  = false;
+      voicePreviewFailedSrc = "";
+      if (vnActivePlayer && vnActivePlayer.kind === "preview") vnActivePlayer = null;
+    }
+
+    function vnResetToIdle(opts) {
+      const revoke = !opts || opts.revoke !== false;
+      vnClearTimer();
+      vnStopMeter();
+      vnStopPreviewAudio();
+      if (voiceRecorder) {
+        try { if (voiceRecorder.state !== "inactive") voiceRecorder.stop(); } catch (_) {}
+        voiceRecorder.ondataavailable = null;
+        voiceRecorder.onstop = null;
+        voiceRecorder.onerror = null;
+        voiceRecorder = null;
+      }
+      voiceStopWaiters.forEach(fn => { try { fn(); } catch (_) {} });
+      voiceStopWaiters = [];
+      vnReleaseStream();
+      if (revoke && voiceLocalUrl) { try { URL.revokeObjectURL(voiceLocalUrl); } catch (_) {} }
+      voiceLocalUrl = "";
+      voiceBlob = null;
+      voiceChunks = [];
+      voiceLevelHistory = [];
+      voiceLevels = [];
+      voiceDurationMs = 0;
+      voiceStartAt = 0;
+      voiceStarting = false;
+      voiceToggleBtn.disabled = false;
+      chatMicBtn.disabled = false;
+      voiceBar.classList.remove("is-busy");
+      voiceTimeEl.textContent = "0:00";
+      vnSetWave(voiceWaveEl, []);
+      vnSetProgress(voiceWaveEl, 0);
+      vnSetState("idle");
+    }
+
+    function vnStartMeter(stream) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) { voiceBar.classList.add("vn-css-anim"); return; }
+      try {
+        voiceAC = new AC();
+        if (voiceAC.state === "suspended" && voiceAC.resume) voiceAC.resume().catch(() => {});
+        const src = voiceAC.createMediaStreamSource(stream);
+        voiceAnalyser = voiceAC.createAnalyser();
+        voiceAnalyser.fftSize = 512;
+        voiceAnalyser.smoothingTimeConstant = 0.6;
+        src.connect(voiceAnalyser);           // deliberately NOT to destination (no echo)
+        const buf = new Uint8Array(voiceAnalyser.fftSize);
+        // Reduced motion throttles the REPAINT rate but never stops it: the meter is
+        // the only confirmation the mic is hearing you, and a data readout is not a
+        // vestibular trigger. (The pulse ring and bar tweening are still suppressed
+        // in CSS.) Sampling itself always runs at full rate.
+        const paintGap = vnReducedMotion() ? 220 : 60;
+
+        // SAMPLING lives on an interval, not on rAF: browsers suspend rAF entirely
+        // while the tab is hidden, which flatlined the waveform whenever someone
+        // glanced at a notification mid-note. Intervals are throttled when hidden
+        // (~1Hz) but never stop, so the levels stay real.
+        const sample = () => {
+          if (!voiceAnalyser || voiceState !== "recording") return;
+          voiceAnalyser.getByteTimeDomainData(buf);
+          let sum = 0;
+          for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; sum += v * v; }
+          const rms = Math.sqrt(sum / buf.length);
+          const lvl = Math.max(0, Math.min(9, Math.round(Math.pow(Math.min(1, rms * 4.2), 0.65) * 9)));
+          voiceLevelHistory.push(lvl);
+        };
+        voiceMeterId = setInterval(sample, 60);   // ~16 samples/sec while visible
+        sample();
+
+        // PAINTING stays on rAF so it stays in step with the compositor.
+        let lastPaint = 0;
+        const paint = () => {
+          if (!voiceAnalyser || voiceState !== "recording") { voiceRafId = null; return; }
+          voiceRafId = requestAnimationFrame(paint);
+          const now = performance.now();
+          if (now - lastPaint < paintGap) return;
+          lastPaint = now;
+          const tail = voiceLevelHistory.slice(-VN_BARS);
+          while (tail.length < VN_BARS) tail.unshift(0);
+          vnSetWave(voiceWaveEl, tail);
+        };
+        voiceRafId = requestAnimationFrame(paint);
+      } catch (err) {
+        console.warn("Voice note: level meter unavailable:", err);
+        vnStopMeter();
+        voiceBar.classList.add("vn-css-anim");
+      }
+    }
+
+    function vnAwaitStop() {
+      return new Promise(resolve => {
+        if (!voiceRecorder || voiceRecorder.state === "inactive") { resolve(); return; }
+        let done = false;
+        let guard = null;
+        const finish = () => { if (done) return; done = true; if (guard) clearTimeout(guard); resolve(); };
+        guard = setTimeout(finish, 3000);
+        voiceStopWaiters.push(finish);
+        try { voiceRecorder.stop(); } catch (_) { finish(); }
+      });
+    }
+
+    async function vnStartRecording() {
+      // Double-tap guard. Deliberately does NOT test voiceSending: by the time an
+      // upload is in flight, vnSendVoiceNote has already copied blob/url/levels into
+      // locals and called vnResetToIdle, so the composer is free and a fresh
+      // recording cannot disturb the send. Blocking here made 🎤 silently dead for
+      // the whole (multi-second, on mobile) upload window.
+      if (voiceState !== "idle" || voiceStarting) return;
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function" ||
+          typeof MediaRecorder === "undefined") {
+        vnStatus("Voice notes aren't supported on this browser.");
+        return;
+      }
+      const token = ++voiceRunToken;
+      voiceStarting = true;
+      chatMicBtn.disabled = true;
+      vnStatus("");
+
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        });
+      } catch (err) {
+        console.warn("Voice note: getUserMedia failed:", err);
+        const name = err && err.name ? err.name : "";
+        if (name === "NotAllowedError" || name === "SecurityError" || name === "PermissionDeniedError")
+          vnStatus("Mic access is blocked — allow the microphone in your browser settings.");
+        else if (name === "NotFoundError" || name === "DevicesNotFoundError" || name === "OverconstrainedError")
+          vnStatus("No microphone found.");
+        else if (name === "NotReadableError" || name === "TrackStartError")
+          vnStatus("Your mic is busy in another app.");
+        else
+          vnStatus("Couldn't start recording. Please try again.");
+        voiceStarting = false;
+        chatMicBtn.disabled = false;
+        vnResetToIdle();
+        return;
+      }
+
+      // the chat may have been closed / superseded while the prompt was up
+      if (token !== voiceRunToken || !chatPanel.classList.contains("open")) {
+        try { stream.getTracks().forEach(t => t.stop()); } catch (_) {}
+        voiceStarting = false;
+        chatMicBtn.disabled = false;
+        return;
+      }
+
+      // A voice note playing out loud would be captured by the mic — echo
+      // cancellation cannot remove a phone speaker. Silence it before capture starts.
+      if (vnActivePlayer) {
+        try { vnActivePlayer.stop(); } catch (_) {}
+        try { if (typeof vnActivePlayer.reset === "function") vnActivePlayer.reset(); } catch (_) {}
+        vnActivePlayer = null;
+      }
+
+      voiceStream = stream;
+
+      // If the mic disappears mid-record (unplugged headset, device grabbed away)
+      // the track ends but MediaRecorder stays "recording" — the timer and the
+      // pulse ring would keep implying capture. Close the recording instead.
+      try {
+        stream.getAudioTracks().forEach(t => {
+          t.addEventListener("ended", () => {
+            if (voiceState !== "recording") return;
+            vnStatus("Your mic was disconnected — saved what we got.");
+            vnStopToPreview();
+          });
+        });
+      } catch (_) {}
+
+      const picked = vnPickMime();
+      voiceExt = picked.ext;
+      voiceChunks = [];
+      voiceLevelHistory = [];
+      voiceBlob = null;
+
+      try {
+        voiceRecorder = picked.mime ? new MediaRecorder(stream, { mimeType: picked.mime }) : new MediaRecorder(stream);
+      } catch (err) {
+        try { voiceRecorder = new MediaRecorder(stream); voiceExt = "webm"; }
+        catch (err2) {
+          console.warn("Voice note: MediaRecorder unavailable:", err2);
+          vnStatus("Voice notes aren't supported on this browser.");
+          vnResetToIdle();
+          return;
+        }
+      }
+
+      voiceRecorder.ondataavailable = e => { if (e.data && e.data.size) voiceChunks.push(e.data); };
+      voiceRecorder.onerror = e => { console.warn("Voice note: recorder error", e); };
+      voiceRecorder.onstop = () => {
+        if (voiceChunks.length) {
+          const type = voiceChunks[0].type || picked.mime || "audio/webm";
+          voiceBlob = new Blob(voiceChunks, { type });
+        }
+        const waiters = voiceStopWaiters;
+        voiceStopWaiters = [];
+        waiters.forEach(fn => { try { fn(); } catch (_) {} });
+      };
+
+      try {
+        voiceRecorder.start(250);   // timeslice so chunks flush steadily
+      } catch (err) {
+        console.warn("Voice note: recorder.start failed:", err);
+        vnStatus("Couldn't start recording. Please try again.");
+        vnResetToIdle();
+        return;
+      }
+
+      voiceStartAt = Date.now();
+      voiceDurationMs = 0;
+      voiceStarting = false;
+      chatMicBtn.disabled = false;
+      voiceTimeEl.textContent = "0:00";
+      vnSetWave(voiceWaveEl, []);
+      vnSetProgress(voiceWaveEl, 0);
+      vnSetState("recording");
+      try { chatMessageInput.blur(); } catch (_) {}
+      vnStartMeter(stream);
+
+      voiceTimerId = setInterval(() => {
+        const ms = Date.now() - voiceStartAt;
+        voiceTimeEl.textContent = vnFormatTime(ms / 1000);
+        if (ms >= VN_MAX_MS) {
+          vnStatus("Voice notes are capped at 5 minutes.");
+          vnStopToPreview();
+        }
+      }, 200);
+    }
+
+    async function vnStopToPreview() {
+      if (voiceState !== "recording") return;
+      const token = voiceRunToken;
+      vnClearTimer();
+      voiceDurationMs = Date.now() - voiceStartAt;
+      voiceToggleBtn.disabled = true;
+
+      await vnAwaitStop();
+      if (token !== voiceRunToken) return;    // discarded / chat closed while stopping
+
+      vnStopMeter();
+      vnReleaseStream();
+      voiceToggleBtn.disabled = false;
+      voiceLevels = vnResampleLevels(voiceLevelHistory, VN_BARS);
+
+      if (!voiceBlob || voiceBlob.size < 256 || voiceDurationMs < VN_MIN_MS) {
+        vnStatus("That was too short — hold on a little longer.");
+        vnResetToIdle();
+        return;
+      }
+
+      voiceLocalUrl = URL.createObjectURL(voiceBlob);
+      if (!voiceLevels.length) voiceLevels = vnFallbackLevels(String(voiceDurationMs));
+      vnSetWave(voiceWaveEl, voiceLevels);
+      vnSetProgress(voiceWaveEl, 0);
+      voiceTimeEl.textContent = vnFormatTime(voiceDurationMs / 1000);
+      vnSetState("preview");
+    }
+
+    function vnPreviewTrack() {
+      if (!voicePreviewAudio || voicePreviewAudio.paused) { voicePreviewRaf = null; return; }
+      voicePreviewRaf = requestAnimationFrame(vnPreviewTrack);
+      const total = voiceDurationMs / 1000;
+      const t = voicePreviewAudio.currentTime || 0;
+      vnSetProgress(voiceWaveEl, total > 0 ? t / total : 0);
+      voiceTimeEl.textContent = vnFormatTime(total > 0 ? Math.min(t, total) : t);
+    }
+
+    /* idle UI for the preview player: never leave a stale mid-playback label */
+    function vnPreviewRestUI() {
+      voiceToggleIcon.textContent = "▶";
+      voiceToggleBtn.title = "Play";
+      voiceToggleBtn.setAttribute("aria-label", "Play recording");
+      if (voicePreviewRaf) { cancelAnimationFrame(voicePreviewRaf); voicePreviewRaf = null; }
+      voiceTimeEl.textContent = vnFormatTime(voiceDurationMs / 1000);
+    }
+    function vnPreviewReset() {
+      try { if (voicePreviewAudio) voicePreviewAudio.currentTime = 0; } catch (_) {}
+      vnPreviewRestUI();
+      vnSetProgress(voiceWaveEl, 0);
+    }
+    function vnPreviewGiveUp() {
+      vnPreviewReset();
+      vnStatus("Can't preview on this device — you can still send it.", 4200);
+    }
+
+    /* Playback failure is recoverable, never a dead end. Safari can refuse the
+       blob: URL of a just-recorded mp4; re-derive the SAME audio as a data: URL
+       and retry once. The upload path keeps using the original blob regardless. */
+    function vnPreviewFailed(err) {
+      if (!voicePreviewAudio) return;
+      const src = voicePreviewAudio.currentSrc || voicePreviewAudio.src || "";
+      if (voicePreviewFailedSrc === src) return;   // play() reject + error event = one failure
+      voicePreviewFailedSrc = src;
+      console.warn("Voice preview playback failed:", err);
+      if (voicePreviewRetried || !voiceBlob) { vnPreviewGiveUp(); return; }
+      voicePreviewRetried = true;
+      vnBlobToDataUrl(voiceBlob).then(url => {
+        if (voiceState !== "preview" || !voicePreviewAudio || !url) return;
+        try { voicePreviewAudio.pause(); } catch (_) {}
+        voicePreviewAudio.src = url;
+        try { voicePreviewAudio.load(); } catch (_) {}
+        const p = voicePreviewAudio.play();
+        if (p && typeof p.catch === "function") p.catch(vnPreviewFailed);
+      }).catch(e => { console.warn("Voice preview data-URL fallback failed:", e); vnPreviewGiveUp(); });
+    }
+
+    function vnPreviewToggle() {
+      if (voiceState !== "preview" || !voiceLocalUrl) return;
+      if (voicePreviewAudio && !voicePreviewAudio.paused) { try { voicePreviewAudio.pause(); } catch (_) {} return; }
+      if (!voicePreviewAudio) {
+        voicePreviewAudio = new Audio(voiceLocalUrl);
+        voicePreviewAudio.preload = "auto";
+        const player = {
+          kind: "preview",
+          stop:  () => { try { voicePreviewAudio && voicePreviewAudio.pause(); } catch (_) {} },
+          reset: vnPreviewReset
+        };
+        voicePreviewAudio.addEventListener("play", () => {
+          vnClaimPlayback(player);
+          voiceToggleIcon.textContent = "⏸";
+          voiceToggleBtn.title = "Pause";
+          voiceToggleBtn.setAttribute("aria-label", "Pause recording");
+          if (!voicePreviewRaf) voicePreviewRaf = requestAnimationFrame(vnPreviewTrack);
+        });
+        // user pause keeps the position (▶ resumes in place) but restores the label
+        voicePreviewAudio.addEventListener("pause", vnPreviewRestUI);
+        voicePreviewAudio.addEventListener("ended", vnPreviewReset);
+        voicePreviewAudio.addEventListener("error", vnPreviewFailed);
+      }
+      const p = voicePreviewAudio.play();
+      if (p && typeof p.catch === "function") p.catch(vnPreviewFailed);
+    }
+
+    function vnDiscard() {
+      if (voiceState === "idle") return;
+      voiceRunToken++;                 // invalidate any in-flight stop/preview work
+      vnResetToIdle();
+    }
+
+    async function vnSendVoiceNote() {
+      if (voiceSending || voiceState === "idle") return;
+      voiceSending = true;
+      voiceBar.classList.add("is-busy");
+      try {
+        if (voiceState === "recording") await vnStopToPreview();
+        if (voiceState !== "preview" || !voiceBlob || !voiceLocalUrl) return;
+
+        const blob        = voiceBlob;
+        const localUrl    = voiceLocalUrl;
+        const ext         = voiceExt || "webm";
+        const durationSec = Math.max(0.1, Math.round((voiceDurationMs / 1000) * 10) / 10);
+        const levelsStr   = vnEncodeLevels(voiceLevels.length ? voiceLevels : vnFallbackLevels(localUrl));
+        const sender      = chatSenderSelect.value;
+        const createdAt   = Date.now();
+        const replyTo     = buildReplyPayload();
+        const pendingId   = `pending-${createdAt}-${Math.random().toString(36).slice(2,8)}`;
+
+        // hand the blob URL over to the optimistic bubble, then free the composer
+        vnStopPreviewAudio();
+        voiceLocalUrl = "";                       // ownership transferred — do NOT revoke here
+        voiceRunToken++;
+        vnResetToIdle({ revoke: false });
+        // Everything the upload needs now lives in locals and the composer is idle,
+        // so the send is no longer "in progress" as far as the composer is concerned.
+        // Releasing here lets a NEW recording start during the upload (D2) and keeps
+        // the close-the-chat observer able to discard that new recording.
+        voiceSending = false;
+        voiceBar.classList.remove("is-busy");
+
+        const tempWrap = buildChatBubble(
+          { sender, isVoice:true, voiceUrl:localUrl, duration:durationSec, voiceLevels:levelsStr, createdAt, replyTo },
+          null
+        );
+        const meta = tempWrap.querySelector(".chat-meta-info");
+        if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • sending...`;
+        tempWrap.dataset.pendingClientId = pendingId;
+        chatFeed.appendChild(tempWrap);
+        if (chatTypingIndicator.classList.contains("show")) chatFeed.appendChild(chatTypingIndicator); // keep typing bubble last
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+        pendingVoiceUploads.set(pendingId, { wrap: tempWrap, localUrl });
+
+        try {
+          const path = `chatVoice/${Date.now()}-${pendingId}.${ext}`;
+          const sRef = storageRef(storage, path);
+          await uploadBytes(sRef, blob);
+          const finalVoiceUrl = await getDownloadURL(sRef);
+
+          await push(ref(db,"messages"), {
+            sender,
+            isVoice:true,
+            voiceUrl:finalVoiceUrl,
+            duration:durationSec,
+            voiceLevels:levelsStr,
+            createdAt:Date.now(),
+            pendingClientId:pendingId,
+            ...(replyTo ? { replyTo } : {})
+          });
+          clearReplyTarget();
+          stopTypingState(sender);
+        } catch (e) {
+          console.error("Voice note upload failed:", e);
+          if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • failed to send`;
+          tempWrap.style.opacity = "0.72";
+          pendingVoiceUploads.delete(pendingId);
+          vnStatus("Voice note failed to send.");
+        }
+      } finally {
+        voiceSending = false;
+        voiceBar.classList.remove("is-busy");
+      }
+    }
+
+    /* builds the player used by BOTH the optimistic bubble and the feed bubble */
+    function vnBuildMessageBody(data, msgKey) {
+      const box = document.createElement("div");
+      box.className = "vn-msg";
+      box.dataset.voiceUrl = data.voiceUrl || "";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "vn-msg-btn";
+      btn.title = "Play";
+      btn.setAttribute("aria-label", "Play voice message");
+      const icon = document.createElement("span");
+      icon.className = "vn-msg-ic";
+      icon.textContent = "▶";
+      btn.appendChild(icon);
+
+      const wave = document.createElement("div");
+      wave.className = "vn-msg-wave";
+      const decoded = data.voiceLevels ? vnDecodeLevels(data.voiceLevels) : [];
+      vnBuildWave(wave, decoded.length ? decoded : vnFallbackLevels(msgKey || data.voiceUrl || "vn"));
+
+      const total = Number(data.duration) > 0 ? Number(data.duration) : 0;
+      const time = document.createElement("div");
+      time.className = "vn-msg-time";
+      time.textContent = vnFormatTime(total);
+
+      box.appendChild(btn);
+      box.appendChild(wave);
+      box.appendChild(time);
+
+      let audio = null;
+      let raf = null;
+      const player = { kind:"feed", stop: () => { try { audio && audio.pause(); } catch (_) {} } };
+
+      const totalOf = () => (total > 0 ? total : (audio && Number.isFinite(audio.duration) ? audio.duration : 0));
+      const track = () => {
+        if (!audio || audio.paused) { raf = null; return; }
+        raf = requestAnimationFrame(track);
+        const dur = totalOf();
+        const t = audio.currentTime || 0;
+        vnSetProgress(wave, dur > 0 ? t / dur : 0);
+        time.textContent = vnFormatTime(dur > 0 ? Math.min(t, dur) : t);
+      };
+      const rest = () => {
+        icon.textContent = "▶";
+        btn.title = "Play";
+        btn.setAttribute("aria-label", "Play voice message");
+        if (raf) { cancelAnimationFrame(raf); raf = null; }
+      };
+
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const src = box.dataset.voiceUrl || "";
+        if (!src) { vnStatus("This voice note isn't ready yet."); return; }
+        if (!audio) {
+          audio = new Audio(src);
+          audio.preload = "auto";
+          audio.addEventListener("play", () => {
+            vnClaimPlayback(player);
+            icon.textContent = "⏸";
+            btn.title = "Pause";
+            btn.setAttribute("aria-label", "Pause voice message");
+            if (!raf) raf = requestAnimationFrame(track);
+          });
+          audio.addEventListener("pause", rest);
+          audio.addEventListener("ended", () => {
+            try { audio.currentTime = 0; } catch (_) {}
+            rest();
+            vnSetProgress(wave, 0);
+            time.textContent = vnFormatTime(totalOf());
+          });
+          audio.addEventListener("error", () => {
+            rest();
+            vnSetProgress(wave, 0);
+            vnStatus("Couldn't play that voice note.");
+          });
+        } else if (audio.src !== src && audio.paused) {
+          audio.src = src;
+        }
+        if (audio.paused) {
+          const p = audio.play();
+          if (p && typeof p.catch === "function") {
+            p.catch(err => { console.warn("Voice playback failed:", err); rest(); vnStatus("Couldn't play that voice note."); });
+          }
+        } else {
+          audio.pause();
+        }
+      });
+
+      /* used when the Firebase copy arrives and replaces the local blob URL */
+      box.vnAdoptUrl = url => {
+        if (!url) return;
+        box.dataset.voiceUrl = url;
+        if (audio && audio.paused) { try { audio.src = url; } catch (_) {} }
+      };
+      box.vnRevokeWhenIdle = url => {
+        if (!url) return;
+        const doRevoke = () => { try { URL.revokeObjectURL(url); } catch (_) {} };
+        if (!audio || audio.paused) { doRevoke(); return; }
+        const once = () => {
+          audio.removeEventListener("pause", once);
+          audio.removeEventListener("ended", once);
+          doRevoke();
+        };
+        audio.addEventListener("pause", once);
+        audio.addEventListener("ended", once);
+      };
+      return box;
+    }
+
+    vnBuildWave(voiceWaveEl, []);   // build the composer waveform once, up front
+
+    chatMicBtn.addEventListener("click", e => { e.preventDefault(); vnStartRecording(); });
+    voiceToggleBtn.addEventListener("click", e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (voiceState === "recording") vnStopToPreview();
+      else if (voiceState === "preview") vnPreviewToggle();
+    });
+    voiceDiscardBtn.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); vnDiscard(); });
+    voiceSendBtn.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); vnSendVoiceNote(); });
+
+    /* Closing the chat (✕, FAB toggle, or the music panel stealing it) must
+       stop + discard cleanly. Watching the class covers every close path. */
+    if (chatPanel && typeof MutationObserver !== "undefined") {
+      new MutationObserver(() => {
+        if (!chatPanel.classList.contains("open") && voiceState !== "idle" && !voiceSending) vnDiscard();
+      }).observe(chatPanel, { attributes:true, attributeFilter:["class"] });
+    }
+    window.addEventListener("pagehide", () => { voiceRunToken++; vnReleaseStream(); });
+
     /* ── photo lightbox ───────────────────────────────────────── */
     function openLightbox(src) {
       lightboxImg.src = src;
@@ -9306,7 +10267,9 @@ const playPrevSong = () => playPrevSpotifyTrack();
 
       const bubble=document.createElement("div");
 
-      if (data.isPhoto) {
+      if (data.isVoice) {
+        bubble.className = "chat-bubble voice-bubble";
+      } else if (data.isPhoto) {
         bubble.className = "chat-bubble photo-bubble";
       } else {
         bubble.className = "chat-bubble";
@@ -9321,13 +10284,17 @@ const playPrevSong = () => playPrevSpotifyTrack();
         replySender.textContent=senderLabel(data.replyTo.sender);
         const replyText=document.createElement("div");
         replyText.className="chat-reply-text";
-        replyText.textContent=data.replyTo.isPhoto ? "📷 Photo" : truncateChatPreview(data.replyTo.text || "Message", 52);
+        replyText.textContent=data.replyTo.isVoice ? "🎤 Voice message"
+                             : data.replyTo.isPhoto ? "📷 Photo"
+                             : truncateChatPreview(data.replyTo.text || "Message", 52);
         replyQuote.appendChild(replySender);
         replyQuote.appendChild(replyText);
         bubble.appendChild(replyQuote);
       }
 
-      if (data.isPhoto) {
+      if (data.isVoice) {
+        bubble.appendChild(vnBuildMessageBody(data, msgKey));
+      } else if (data.isPhoto) {
         const img = document.createElement("img");
         img.src = data.photoUrl || "";
         img.alt = "Photo";
@@ -9463,6 +10430,31 @@ const playPrevSong = () => playPrevSpotifyTrack();
     onChildAdded(query(ref(db,"messages"),limitToLast(200)),snap=>{
       const data=snap.val();
       const pendingId = data?.pendingClientId;
+
+      if (pendingId && pendingVoiceUploads.has(pendingId)) {
+        const pending = pendingVoiceUploads.get(pendingId);
+
+        if (pending?.wrap) {
+          pending.wrap.dataset.key = snap.key || "";
+          delete pending.wrap.dataset.pendingClientId;
+
+          const body = pending.wrap.querySelector(".vn-msg");
+          if (body && data?.voiceUrl && typeof body.vnAdoptUrl === "function") body.vnAdoptUrl(data.voiceUrl);
+
+          const meta = pending.wrap.querySelector(".chat-meta-info");
+          if (meta) meta.textContent = formatChatTimestamp(data.createdAt, data.sender);
+
+          if (pending?.localUrl && pending.localUrl !== data?.voiceUrl) {
+            if (body && typeof body.vnRevokeWhenIdle === "function") body.vnRevokeWhenIdle(pending.localUrl);
+            else { try { URL.revokeObjectURL(pending.localUrl); } catch (_) {} }
+          }
+
+          pendingVoiceUploads.delete(pendingId);
+          chatFeed.scrollTop = chatFeed.scrollHeight;
+          watchReactions(snap.key);
+          return;
+        }
+      }
 
       if (pendingId && pendingPhotoUploads.has(pendingId)) {
         const pending = pendingPhotoUploads.get(pendingId);
