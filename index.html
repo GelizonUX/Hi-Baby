@@ -9942,13 +9942,56 @@ const playPrevSong = () => playPrevSpotifyTrack();
       voiceTimeEl.textContent = vnFormatTime(total > 0 ? Math.min(t, total) : t);
     }
 
+    /* idle UI for the preview player: never leave a stale mid-playback label */
+    function vnPreviewRestUI() {
+      voiceToggleIcon.textContent = "▶";
+      voiceToggleBtn.title = "Play";
+      voiceToggleBtn.setAttribute("aria-label", "Play recording");
+      if (voicePreviewRaf) { cancelAnimationFrame(voicePreviewRaf); voicePreviewRaf = null; }
+      voiceTimeEl.textContent = vnFormatTime(voiceDurationMs / 1000);
+    }
+    function vnPreviewReset() {
+      try { if (voicePreviewAudio) voicePreviewAudio.currentTime = 0; } catch (_) {}
+      vnPreviewRestUI();
+      vnSetProgress(voiceWaveEl, 0);
+    }
+    function vnPreviewGiveUp() {
+      vnPreviewReset();
+      vnStatus("Can't preview on this device — you can still send it.", 4200);
+    }
+
+    /* Playback failure is recoverable, never a dead end. Safari can refuse the
+       blob: URL of a just-recorded mp4; re-derive the SAME audio as a data: URL
+       and retry once. The upload path keeps using the original blob regardless. */
+    function vnPreviewFailed(err) {
+      if (!voicePreviewAudio) return;
+      const src = voicePreviewAudio.currentSrc || voicePreviewAudio.src || "";
+      if (voicePreviewFailedSrc === src) return;   // play() reject + error event = one failure
+      voicePreviewFailedSrc = src;
+      console.warn("Voice preview playback failed:", err);
+      if (voicePreviewRetried || !voiceBlob) { vnPreviewGiveUp(); return; }
+      voicePreviewRetried = true;
+      vnBlobToDataUrl(voiceBlob).then(url => {
+        if (voiceState !== "preview" || !voicePreviewAudio || !url) return;
+        try { voicePreviewAudio.pause(); } catch (_) {}
+        voicePreviewAudio.src = url;
+        try { voicePreviewAudio.load(); } catch (_) {}
+        const p = voicePreviewAudio.play();
+        if (p && typeof p.catch === "function") p.catch(vnPreviewFailed);
+      }).catch(e => { console.warn("Voice preview data-URL fallback failed:", e); vnPreviewGiveUp(); });
+    }
+
     function vnPreviewToggle() {
       if (voiceState !== "preview" || !voiceLocalUrl) return;
       if (voicePreviewAudio && !voicePreviewAudio.paused) { try { voicePreviewAudio.pause(); } catch (_) {} return; }
       if (!voicePreviewAudio) {
         voicePreviewAudio = new Audio(voiceLocalUrl);
         voicePreviewAudio.preload = "auto";
-        const player = { kind: "preview", stop: () => { try { voicePreviewAudio && voicePreviewAudio.pause(); } catch (_) {} } };
+        const player = {
+          kind: "preview",
+          stop:  () => { try { voicePreviewAudio && voicePreviewAudio.pause(); } catch (_) {} },
+          reset: vnPreviewReset
+        };
         voicePreviewAudio.addEventListener("play", () => {
           vnClaimPlayback(player);
           voiceToggleIcon.textContent = "⏸";
@@ -9956,26 +9999,13 @@ const playPrevSong = () => playPrevSpotifyTrack();
           voiceToggleBtn.setAttribute("aria-label", "Pause recording");
           if (!voicePreviewRaf) voicePreviewRaf = requestAnimationFrame(vnPreviewTrack);
         });
-        voicePreviewAudio.addEventListener("pause", () => {
-          voiceToggleIcon.textContent = "▶";
-          voiceToggleBtn.title = "Play";
-          voiceToggleBtn.setAttribute("aria-label", "Play recording");
-          if (voicePreviewRaf) { cancelAnimationFrame(voicePreviewRaf); voicePreviewRaf = null; }
-        });
-        voicePreviewAudio.addEventListener("ended", () => {
-          try { voicePreviewAudio.currentTime = 0; } catch (_) {}
-          vnSetProgress(voiceWaveEl, 0);
-          voiceTimeEl.textContent = vnFormatTime(voiceDurationMs / 1000);
-        });
-        voicePreviewAudio.addEventListener("error", () => {
-          vnStatus("Couldn't play that back.");
-          voiceToggleIcon.textContent = "▶";
-        });
+        // user pause keeps the position (▶ resumes in place) but restores the label
+        voicePreviewAudio.addEventListener("pause", vnPreviewRestUI);
+        voicePreviewAudio.addEventListener("ended", vnPreviewReset);
+        voicePreviewAudio.addEventListener("error", vnPreviewFailed);
       }
       const p = voicePreviewAudio.play();
-      if (p && typeof p.catch === "function") {
-        p.catch(err => { console.warn("Voice preview playback failed:", err); vnStatus("Couldn't play that back."); });
-      }
+      if (p && typeof p.catch === "function") p.catch(vnPreviewFailed);
     }
 
     function vnDiscard() {
