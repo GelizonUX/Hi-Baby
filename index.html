@@ -9483,6 +9483,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
     const VN_BARS   = 22;
     const VN_MIN_MS = 800;              // shorter than this = accidental tap
     const VN_MAX_MS = 5 * 60 * 1000;    // hard cap, auto-stops into preview
+    const VN_INLINE_MAX_BYTES = 3 * 1024 * 1024;  // largest note we'll embed if Storage fails
     const pendingVoiceUploads = new Map();
 
     let voiceState        = "idle";     // idle | recording | preview
@@ -10062,10 +10063,24 @@ const playPrevSong = () => playPrevSpotifyTrack();
         pendingVoiceUploads.set(pendingId, { wrap: tempWrap, localUrl });
 
         try {
-          const path = `chatVoice/${Date.now()}-${pendingId}.${ext}`;
-          const sRef = storageRef(storage, path);
-          await uploadBytes(sRef, blob);
-          const finalVoiceUrl = await getDownloadURL(sRef);
+          let finalVoiceUrl = "";
+
+          /* Same safety net photos already have: if Storage rejects the
+             upload (rules not covering chatVoice/, offline, CORS…), fall
+             back to embedding the audio inline so the note still sends.
+             Bounded, because inline audio lives in the database forever and
+             every client downloads it with the chat history. */
+          try {
+            const path = `chatVoice/${Date.now()}-${pendingId}.${ext}`;
+            const sRef = storageRef(storage, path);
+            await uploadBytes(sRef, blob);
+            finalVoiceUrl = await getDownloadURL(sRef);
+          } catch (storageError) {
+            console.warn("Voice storage upload failed, falling back to inline audio:", storageError);
+            if (blob.size > VN_INLINE_MAX_BYTES) throw storageError;
+            finalVoiceUrl = await vnBlobToDataUrl(blob);
+            if (!finalVoiceUrl) throw storageError;
+          }
 
           await push(ref(db,"messages"), {
             sender,
@@ -10084,7 +10099,9 @@ const playPrevSong = () => playPrevSpotifyTrack();
           if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • failed to send`;
           tempWrap.style.opacity = "0.72";
           pendingVoiceUploads.delete(pendingId);
-          vnStatus("Voice note failed to send.");
+          // Name the cause so a repeat failure is diagnosable, not a mystery.
+          const code = (e && (e.code || e.name)) ? String(e.code || e.name) : "";
+          vnStatus(code ? `Voice note failed to send (${code}).` : "Voice note failed to send.", 5200);
         }
       } finally {
         voiceSending = false;
