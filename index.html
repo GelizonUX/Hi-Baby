@@ -9484,6 +9484,7 @@ const playPrevSong = () => playPrevSpotifyTrack();
     const VN_MIN_MS = 800;              // shorter than this = accidental tap
     const VN_MAX_MS = 5 * 60 * 1000;    // hard cap, auto-stops into preview
     const VN_INLINE_MAX_BYTES = 3 * 1024 * 1024;  // largest note we'll embed if Storage fails
+    const VN_BUILD = "v3";              // shown on failure so we can tell a cached page from a live one
     const pendingVoiceUploads = new Map();
 
     let voiceState        = "idle";     // idle | recording | preview
@@ -10099,9 +10100,14 @@ const playPrevSong = () => playPrevSpotifyTrack();
           if (meta) meta.textContent = `${formatChatTimestamp(createdAt, sender)} • failed to send`;
           tempWrap.style.opacity = "0.72";
           pendingVoiceUploads.delete(pendingId);
-          // Name the cause so a repeat failure is diagnosable, not a mystery.
-          const code = (e && (e.code || e.name)) ? String(e.code || e.name) : "";
-          vnStatus(code ? `Voice note failed to send (${code}).` : "Voice note failed to send.", 5200);
+          /* Make a repeat failure self-diagnosing: the build tag proves which
+             version the phone is actually running (cached HTML looks identical
+             otherwise), and the message text survives errors that carry no
+             .code — a bare "failed to send" told us nothing last time. */
+          const detail = (e && (e.code || e.message || e.name))
+            ? String(e.code || e.message || e.name).slice(0, 90)
+            : "no error detail";
+          vnStatus(`Voice note failed — ${VN_BUILD} — ${detail}`, 9000);
         }
       } finally {
         voiceSending = false;
