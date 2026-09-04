@@ -8570,6 +8570,35 @@ async function initSpotifyIntegration() {
       letterDateBadge.textContent = getFormattedDate();
     }
 
+    /* ── SOCKET-INDEPENDENT LETTER SYNC ─────────────────────────
+       Firebase's realtime socket is frozen by iOS while the page is
+       backgrounded or the phone is locked, so a write issued just before
+       locking can sit unsent for as long as the page stays asleep — that
+       is what made a 1:29am letter land near 2:00am. The Realtime
+       Database also speaks plain HTTPS: a REST write needs no socket, and
+       `keepalive` lets it finish even as the page is being backgrounded.
+       We fire both paths and take whichever lands first; they write the
+       identical value to the identical path, so it is idempotent. */
+    const LETTER_REST_URL = `${firebaseConfig.databaseURL}/letterContent.json`;
+
+    async function letterWriteViaRest(payload) {
+      const res = await fetch(LETTER_REST_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true,
+        cache: "no-store"
+      });
+      if (!res.ok) throw new Error(`letter REST write ${res.status}`);
+      return true;
+    }
+
+    async function letterReadViaRest() {
+      const res = await fetch(`${LETTER_REST_URL}?_=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`letter REST read ${res.status}`);
+      return await res.json();
+    }
+
     function renderLetterContent(data) {
       const title = data.title ?? "";
       const body  = data.body  ?? "";
@@ -8581,8 +8610,36 @@ async function initSpotifyIntegration() {
       loveNoteBody.hidden  = !body;
     }
 
+    function applyLetterSnapshot(saved, syncEditors) {
+      const data = saved
+        ? { title: saved.title ?? "", body: saved.body ?? "" }
+        : DEFAULT_LETTER;
+      renderLetterContent(data);
+      if (syncEditors) {
+        editLetterTitle.value = data.title;
+        editLetterBody.value  = data.body;
+      }
+    }
+
     function loadLetter() {
       renderLetterDate();
+
+      /* The socket is frozen while the page is asleep, so a letter written
+         while this tab was backgrounded would otherwise only appear when
+         the socket got round to reconnecting. Pull it over HTTPS the moment
+         the page is looked at again. Editors are left alone if they're
+         focused so an in-progress draft is never clobbered. */
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState !== "visible") return;
+        letterReadViaRest()
+          .then(saved => {
+            const editing = document.activeElement === editLetterTitle
+                         || document.activeElement === editLetterBody;
+            applyLetterSnapshot(saved, !editing);
+          })
+          .catch(() => { /* socket listener still covers us */ });
+      });
+
       // listen for realtime updates from Firebase
       onValue(ref(db, "letterContent"), snap => {
         const saved = snap.val();
@@ -8621,9 +8678,18 @@ async function initSpotifyIntegration() {
           ? ""
           : "you're offline — keep this page open, it'll send when you reconnect 💌";
 
-        const writing = set(ref(db, "letterContent"), {
-          title: newTitle,
-          body:  newBody
+        /* Race the realtime socket against a plain HTTPS write. The socket
+           can be suspended (locked phone / backgrounded tab); REST cannot.
+           Resolve on the first success, reject only if BOTH fail. */
+        const payload = { title: newTitle, body: newBody };
+        const viaSdk  = set(ref(db, "letterContent"), payload);
+        const viaRest = letterWriteViaRest(payload);
+        const writing = new Promise((resolve, reject) => {
+          let failed = 0, lastErr = null;
+          const ok   = () => resolve(true);
+          const fail = err => { lastErr = err; if (++failed === 2) reject(lastErr); };
+          viaSdk.then(ok, fail);
+          viaRest.then(ok, fail);
         });
 
         /* If the server hasn't acknowledged within a few seconds we are
