@@ -8566,7 +8566,12 @@ async function initSpotifyIntegration() {
        from a new one. Show when the letter was actually saved when we know
        it; fall back to today for letters written before we stored that. */
     function getFormattedDate(ts) {
-      const d = ts ? new Date(ts) : new Date();
+      // Accept a numeric string too: a timestamp typed into the Firebase
+      // console arrives as text, and new Date("1788542940000") is invalid.
+      const stamp = (typeof ts === "string" && ts.trim() !== "" && !Number.isNaN(Number(ts)))
+        ? Number(ts)
+        : ts;
+      const d = stamp ? new Date(stamp) : new Date();
       if (Number.isNaN(d.getTime())) return getFormattedDate(null);
       const day = d.toLocaleDateString("en-US", {
         weekday:"long", year:"numeric", month:"long", day:"numeric"
