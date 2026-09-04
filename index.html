@@ -8560,14 +8560,24 @@ async function initSpotifyIntegration() {
       body: "Hi baby, tulog pa ata ako pag nabasa mo 'to but hopefully gising na so i can call you haha\nthank you sa time last night, i really missed you so much! and thank you so solid na appreciation sa flowers, sorry if ginagawa kong flowershop yung room mo ahha a\n\nbut yeah, have a great day ahead galingan mo sa work, rest ka after ng mga gagawin mo, drink more water and if you're tired mag nap kaaa\n\nI'll message you pag gising ko, MWA!\n\n- Vince 💗🌹"
     };
 
-    function getFormattedDate() {
-      return new Date().toLocaleDateString("en-US", {
+    /* The badge used to always print "today" on whoever's phone was looking,
+       so a letter that hadn't synced yet still looked freshly written — which
+       is exactly why a stale letter opened at 2:05am was indistinguishable
+       from a new one. Show when the letter was actually saved when we know
+       it; fall back to today for letters written before we stored that. */
+    function getFormattedDate(ts) {
+      const d = ts ? new Date(ts) : new Date();
+      if (Number.isNaN(d.getTime())) return getFormattedDate(null);
+      const day = d.toLocaleDateString("en-US", {
         weekday:"long", year:"numeric", month:"long", day:"numeric"
       });
+      if (!ts) return day;
+      const time = d.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
+      return `${day} · ${time}`;
     }
 
-    function renderLetterDate() {
-      letterDateBadge.textContent = getFormattedDate();
+    function renderLetterDate(ts) {
+      letterDateBadge.textContent = getFormattedDate(ts);
     }
 
     /* ── SOCKET-INDEPENDENT LETTER SYNC ─────────────────────────
@@ -8615,6 +8625,7 @@ async function initSpotifyIntegration() {
         ? { title: saved.title ?? "", body: saved.body ?? "" }
         : DEFAULT_LETTER;
       renderLetterContent(data);
+      renderLetterDate(saved && saved.updatedAt);
       if (syncEditors) {
         editLetterTitle.value = data.title;
         editLetterBody.value  = data.body;
@@ -8650,6 +8661,7 @@ async function initSpotifyIntegration() {
           ? { title: saved.title ?? "", body: saved.body ?? "" }
           : DEFAULT_LETTER;
         renderLetterContent(data);
+        renderLetterDate(saved && saved.updatedAt);
         // sync edit fields if Vince is viewing
         editLetterTitle.value = data.title;
         editLetterBody.value  = data.body;
@@ -8681,7 +8693,9 @@ async function initSpotifyIntegration() {
         /* Race the realtime socket against a plain HTTPS write. The socket
            can be suspended (locked phone / backgrounded tab); REST cannot.
            Resolve on the first success, reject only if BOTH fail. */
-        const payload = { title: newTitle, body: newBody };
+        // Record when it was actually written, so the badge can show the real
+        // time instead of "today" — a stale letter is then obvious at a glance.
+        const payload = { title: newTitle, body: newBody, updatedAt: Date.now() };
         const viaSdk  = set(ref(db, "letterContent"), payload);
         const viaRest = letterWriteViaRest(payload);
         const writing = new Promise((resolve, reject) => {
