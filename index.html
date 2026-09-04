@@ -6985,6 +6985,19 @@ I'll message you pag gising ko, MWA!
     const db      = getDatabase(app);
     const storage = getStorage(app);
 
+    /* ── LIVE CONNECTION STATE ──────────────────────────────────
+       Firebase queues a write made while offline and resolves the
+       set() promise only once the server acknowledges it — it never
+       rejects. Without knowing whether we're connected, a save on a
+       dropped connection sits frozen at "saving..." for as long as the
+       connection is down, then completes silently much later. That is
+       exactly how a letter written at 1:29am only landed near 2:00am.
+       `.info/connected` is Firebase's own live connection flag. */
+    let fbConnected = true;
+    try {
+      onValue(ref(db, ".info/connected"), snap => { fbConnected = snap.val() === true; });
+    } catch (_) { /* keep optimistic if the flag is unavailable */ }
+
     /* ── DOM ─────────────────────────────────────────────────── */
     const introOverlay        = document.getElementById("introOverlay");
     const introFlowerChoices  = document.querySelectorAll(".intro-flower-choice");
@@ -8596,13 +8609,36 @@ async function initSpotifyIntegration() {
       // Blank is allowed on purpose: clearing both fields sends an empty
       // letter, so she opens it and there's nothing to read.
 
+      let slowTimer = null;
       try {
         letterSaveBtn.disabled = true;
         letterSaveBtn.textContent = "saving...";
-        await set(ref(db, "letterContent"), {
+
+        /* Say up front if we already know we're offline, instead of
+           showing a "saving..." that could hang for half an hour. The
+           write is still queued — Firebase will flush it on reconnect. */
+        letterSaveStatus.textContent = fbConnected
+          ? ""
+          : "you're offline — keep this page open, it'll send when you reconnect 💌";
+
+        const writing = set(ref(db, "letterContent"), {
           title: newTitle,
           body:  newBody
         });
+
+        /* If the server hasn't acknowledged within a few seconds we are
+           almost certainly queued behind a bad connection. Tell the truth
+           rather than leaving a frozen button. */
+        let settled = false;
+        writing.then(() => { settled = true; }, () => { settled = true; });
+        slowTimer = setTimeout(() => {
+          if (settled) return;
+          letterSaveBtn.textContent = "sending…";
+          letterSaveStatus.textContent = "still sending — keep this page open until it saves 💌";
+        }, 6000);
+
+        await writing;
+
         letterSaveStatus.textContent = (!newTitle && !newBody)
           ? "saved! she'll open a blank letter 💌"
           : "saved! she'll see your new message 💗";
@@ -8611,6 +8647,7 @@ async function initSpotifyIntegration() {
         console.error(e);
         letterSaveStatus.textContent = "couldn't save, try again 💔";
       } finally {
+        if (slowTimer) clearTimeout(slowTimer);
         letterSaveBtn.disabled = false;
         letterSaveBtn.textContent = "save message 💗";
       }
