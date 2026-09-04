@@ -9603,7 +9603,13 @@ const playPrevSong = () => playPrevSpotifyTrack();
     const VN_BARS   = 22;
     const VN_MIN_MS = 800;              // shorter than this = accidental tap
     const VN_MAX_MS = 5 * 60 * 1000;    // hard cap, auto-stops into preview
-    const VN_INLINE_MAX_BYTES = 3 * 1024 * 1024;  // largest note we'll embed if Storage fails
+    /* Inline audio is embedded in the `messages` node, which the chat
+       re-syncs in full (limitToLast 200) over the SAME WebSocket that
+       carries the letter. At ~17KB of base64 per second of audio, the old
+       3MB cap let one note add megabytes to every future page load and
+       starve everything else on that socket. Keep the fallback for short
+       notes only; anything longer must go to Storage. */
+    const VN_INLINE_MAX_BYTES = 400 * 1024;   // ~20s of audio, was 3MB
     const VN_BUILD = "v3";              // shown on failure so we can tell a cached page from a live one
     const pendingVoiceUploads = new Map();
 
@@ -10198,7 +10204,11 @@ const playPrevSong = () => playPrevSpotifyTrack();
             finalVoiceUrl = await getDownloadURL(sRef);
           } catch (storageError) {
             console.warn("Voice storage upload failed, falling back to inline audio:", storageError);
-            if (blob.size > VN_INLINE_MAX_BYTES) throw storageError;
+            if (blob.size > VN_INLINE_MAX_BYTES) {
+              const e = new Error("too long to send without Storage — allow chatVoice/ in your Storage rules");
+              e.code = "voice/too-long-for-inline";
+              throw e;
+            }
             finalVoiceUrl = await vnBlobToDataUrl(blob);
             if (!finalVoiceUrl) throw storageError;
           }
