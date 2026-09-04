@@ -9172,7 +9172,24 @@ const playPrevSong = () => playPrevSpotifyTrack();
     });
 
     /* ── letter ───────────────────────────────────────────────── */
-    const openLetter  = ()=>{ renderLetterDate(); letterOverlay.style.display="flex"; };
+    /* Opening the envelope used to trust whatever the socket listener had
+       last rendered. If that socket was asleep the letter shown was stale —
+       she opened it at 2:05am and saw the old letter while the new one was
+       already on the server, then it "appeared" at 2:30 when the socket
+       finally caught up. Re-read over HTTPS on every open: no socket needed,
+       lands in well under a second, and the overlay shows immediately either
+       way. Focused editors are left alone so a draft is never clobbered. */
+    const openLetter  = ()=>{
+      renderLetterDate();
+      letterOverlay.style.display="flex";
+      letterReadViaRest()
+        .then(saved => {
+          const editing = document.activeElement === editLetterTitle
+                       || document.activeElement === editLetterBody;
+          applyLetterSnapshot(saved, !editing);
+        })
+        .catch(() => { /* socket listener remains the fallback */ });
+    };
     const closeLetter = ()=>{ letterOverlay.style.display="none"; };
     openLetterBtn.addEventListener("click",openLetter);
     closeLetterBtn.addEventListener("click",closeLetter);
